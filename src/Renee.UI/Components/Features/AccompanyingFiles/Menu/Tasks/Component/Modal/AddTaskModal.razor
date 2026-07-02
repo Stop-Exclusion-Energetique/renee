@@ -1,0 +1,97 @@
+@using Renee.Application.Helpers
+@if (EditContext is not null)
+{
+	<EditForm EditContext="@EditContext"
+	          OnValidSubmit="@HandleValidSubmit">
+
+		<ObjectGraphDataAnnotationsValidator/>
+		<div class="container-items">
+			<h4 class="section-title">
+				@AccompanyingFileMenu.AddTask
+			</h4>
+
+			<div>
+				<OutlinedText @bind-Value="ViewModel.TaskName"
+				              EditContext="@EditContext"
+				              FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.TaskName)"
+				              IsRequired="true"
+				              Label="@AccompanyingFileMenu.TaskName"/>
+
+				<ValidationMessage For="@(() => ViewModel.TaskName)"/>
+			</div>
+
+			<div>
+					<div class="d-flex flex-column">
+						<label class="pure-material-textfield-outlined">
+							<ZeeInputDate @bind-Value="ViewModel.DueDate"
+									   @bind-Value:format="yyyy-MM-dd"
+									   min="@(DateTime.Now.ToString("yyyy-MM-dd"))"/>
+
+							<span>
+								@AccompanyingFileMenu.TaskDeadline
+								<span class="required"></span>
+							</span>
+						</label>
+					</div>
+					<ValidationMessage For="@(() => ViewModel.DueDate)"/>
+				</div>
+
+				<div>
+					<div class="d-flex flex-column">
+						<label class="pure-material-textfield-outlined">
+							<ZeeInputDate @bind-Value="ViewModel.StartDate"
+									   @bind-Value:format="yyyy-MM-dd"
+									   @bind-Value:after="@OnStartDateChanged"
+									   min="@(DateTime.Now.ToString("yyyy-MM-dd"))"/>
+
+							<span>
+								@AccompanyingFileMenu.TaskStartDate
+							</span>
+						</label>
+					</div>
+				</div>
+
+			<div>
+				<ZeeSelect @bind-CheckedValue="@ViewModel.AssignedTo"
+				           EditContext="@EditContext"
+				           ElementName="@($"task-user-{Guid.NewGuid()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AssignedTo)"
+				           IsMultiSelect="false"
+				           IsRequired="true"
+				           Items="@Users"
+				           Label="@AccompanyingFileMenu.TaskAssignee"
+						   ShouldSort="true" />
+
+				<ValidationMessage For="@(() => ViewModel.AssignedTo)"/>
+			</div>
+			<div>
+					<ZeeSelect @bind-CheckedValue="@ViewModel.TaskProgress"
+							   EditContext="@EditContext"
+							   ElementName="@($"task-progress-{Guid.NewGuid()}")"
+							   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.TaskProgress)"
+							   IsMultiSelect="false"
+							   Label="@AccompanyingFileMenu.TaskProgress"
+							   IsRequired="@(!IsStartDateInFuture)"
+							   IsDisabled="@IsStartDateInFuture"
+							   Items="@ProgressTasks"/>
+
+					<ValidationMessage For="@(() => ViewModel.TaskProgress)"/>
+				</div>
+
+			<div>
+				<ZeeSelect @bind-CheckedValue="@ViewModel.Priority"
+				           EditContext="@EditContext"
+				           ElementName="@($"task-priority-{Guid.NewGuid()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Priority)"
+				           IsMultiSelect="false"
+				           Label="@AccompanyingFileMenu.TaskPriority"
+				           Items="@TaskPriorities"/>
+			</div>
+		</div>
+
+		<div class="d-flex justify-content-end">
+			<ZeeButton IsSubmit="true"
+			           Text="@Labels.Submit"/>
+		</div>
+	</EditForm>
+}

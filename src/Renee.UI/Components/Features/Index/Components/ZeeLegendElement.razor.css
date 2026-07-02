@@ -1,0 +1,12 @@
+﻿.square {
+    width: 10px;
+    height: 10px;
+    align-self: center
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}

@@ -1,0 +1,44 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Renee - build: UI",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"src/Renee.UI",
+				"--configuration",
+				"Debug"
+			],
+			"problemMatcher": "$msCompile",
+			"group": "build"
+		},
+		{
+			"label": "Renee - build: MCP Server",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"mcpserver/Renee.McpServer",
+				"--configuration",
+				"Debug"
+			],
+			"problemMatcher": "$msCompile",
+			"group": "build"
+		},
+		{
+			"label": "Renee - build: All",
+			"dependsOn": [
+				"Renee - build: UI",
+				"Renee - build: MCP Server"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

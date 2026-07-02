@@ -1,0 +1,72 @@
+﻿
+.zeeButtonGroup {
+    display: flex;
+    align-items: center;
+    Gap: 3rem;
+    justify-content: right;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 2%;
+}
+
+
+.tab-menu ul {
+    list-style-type: none;
+    display: flex;
+    padding: 0;
+    justify-content: space-between;
+    background: var(--white);
+    gap: 0;
+}
+
+.tab-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1;
+    cursor: pointer;
+    clip-path: polygon(95% 0%, 100% 50%, 95% 100%, 0% 100%, 5% 50%, 0% 0%);
+    height: 50px;
+    padding: 10px 10px;
+    background: var(--grey);
+}
+
+    .tab-menu li a {
+        text-decoration: none;
+        color: #333;
+        padding: 8px 12px;
+        text-align: center;
+    }
+
+        .tab-menu li a:hover {
+            /* if needed */
+        }
+
+    .tab-menu li.active {
+        background: var(--primary);
+    }
+
+    .tab-menu li:first-of-type {
+        clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 0 50%, 0% 0%);
+    }
+
+    .tab-menu li:last-of-type {
+        clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%);
+    }
+
+.save-btn-container {
+    display: flex;
+    flex-direction: column;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    margin-top: 1em;
+    margin-left: 2%;
+    margin-right: 2%;
+    z-index: 3; /* fix zindex in ZeePhoneNumber */
+}
+
+.tab-title {
+    display: none;
+}

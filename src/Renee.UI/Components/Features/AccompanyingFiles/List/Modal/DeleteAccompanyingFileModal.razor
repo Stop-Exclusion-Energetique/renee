@@ -1,0 +1,51 @@
+﻿@using Renee.Application.CommandsUseCasesInput
+@using Renee.Application.Interfaces
+<h3 class="section-title">
+    @Labels.DeleteAccompanyingFileModalTitle
+</h3>
+
+@if (CanNotBedeleted)
+{
+    <div class="alert alert-info" role="alert">
+        @NoDeletionMessage
+    </div>
+}
+else
+{
+    <div>
+        <div class="grid">
+            <div>
+                @Labels.DeleteAccompanyingFileModalText
+            </div>
+        </div>
+    </div>
+
+    <div class="zeeButtonGroup">
+        <ZeeButton @onclick="HandleValidSubmit" Text="@Labels.Submit"/>
+        <ZeeButton @onclick="Cancel" Text="@Labels.Cancel"/>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid AccompanyingFileId { get; set; }
+    [Parameter] public string? NoDeletionMessage { get; set; }
+    [Parameter] public bool CanNotBedeleted { get; set; } = true;
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = default!;
+    [Inject] public IAccompanyingFileService AccompanyingFileService { get; set; } = null!;
+
+    public async Task HandleValidSubmit()
+    {
+        var result = await AccompanyingFileService.DeleteAccompanyingFile(new DeleteAccompanyingFileCommandInput(AccompanyingFileId));
+
+        NotificationService.Notify(new NotificationMessage
+        {
+            Severity = result.IsSuccess ? NotificationSeverity.Success : NotificationSeverity.Error,
+            Summary = result.Message,
+            Duration = 4000
+        });
+
+        if (result.IsSuccess && result.Value) await ModalInstance.CloseAsync();
+    }
+
+    public async Task Cancel() => await ModalInstance.CloseAsync(ModalResult.Ok());
+}

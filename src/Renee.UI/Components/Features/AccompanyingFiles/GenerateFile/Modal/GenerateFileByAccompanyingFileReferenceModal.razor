@@ -1,0 +1,29 @@
+﻿@using Renee.Application.Helpers
+<h3 class="title">@ModalTitle</h3>
+
+<EditForm EditContext="@_editContext" OnValidSubmit="@GenerateDocument">
+    <ObjectGraphDataAnnotationsValidator />
+    <div>
+        <OutlinedText Label="Référence du dossier"
+                      @bind-Value="@ViewModel.Reference"
+                      IsRequired
+                      EditContext="@_editContext"
+                      FieldIdentifier="@(FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Reference))" />
+        <ValidationMessage For="@(() => ViewModel.Reference)" />
+    </div>
+
+    <div class="button-div">
+        <ZeeButton Text="@GenerateFilesLabels.Cancel"
+                   @onclick="@(async () => await ModalInstance.CloseAsync())"
+                   DisplayBackground="DisplayEnumBackground.Red" />
+
+        <ZeeButton Text="@GenerateFilesLabels.Generate"
+                   DisplayBackground="DisplayEnumBackground.Red"
+                   IsSubmit="true" />
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <p style="color: red">@_errorMessage</p>
+}

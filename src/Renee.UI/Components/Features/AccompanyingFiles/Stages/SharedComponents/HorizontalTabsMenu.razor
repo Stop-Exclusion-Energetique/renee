@@ -1,0 +1,17 @@
+﻿<div class="tab-menu">
+	<ul>
+		@for (var i = 0; i < TabsList.Count; i++)
+		{
+			var currentTabIndex = i;
+
+			<li class="@(SelectedTab == i ? "active" : "")"
+			    id="@($"tab-{i + 1}")">
+				<a @onclick="() => OnChangeTab.InvokeAsync(currentTabIndex)">@TabsList[i]</a>
+			</li>
+		}
+	</ul>
+</div>
+
+<div class="tab-title-div">
+	<h1 class="tab-title">@TabsList[SelectedTab]</h1>
+</div>

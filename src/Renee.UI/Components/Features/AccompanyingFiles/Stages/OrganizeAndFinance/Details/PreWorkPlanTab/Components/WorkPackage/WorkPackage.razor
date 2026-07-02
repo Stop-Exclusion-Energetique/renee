@@ -1,0 +1,61 @@
+﻿@using Renee.Application.Helpers
+
+<CascadingValue Value="EditContext">
+    <div>
+        <ZeeSelect @bind-CheckedValues="SelectedWorkTypesIds"
+                   EditContext="EditContext"
+                   ElementName="@($"WorkTypes-{Guid.NewGuid()}")"
+                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WorkTypes)"
+                   IsMultiSelect="true"
+                   IsRequired="@ViewModel.IsRequired"
+                   Items="WorkTypes"
+                   Label="@Labels.RecommendedWork"
+                   OnNewValueSelected="@OnSelectedWorkTypeChanged"
+                   TItem="Guid"
+                   IsDisabled="@IsUserAllowedToEdit"
+                   ShouldSort="true">
+        </ZeeSelect>
+        <ValidationMessage For="() => ViewModel.WorkTypes" />
+
+        <div>
+            @foreach (var workType in ViewModel.WorkTypes)
+            {
+                <div>
+                    <OutlinedDouble @bind-Double="workType.Price"
+                                    EditContext="EditContext"
+                                    FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => workType.Price)"
+                                    IsNullable="true"
+                                    Label="@($"{workType.Label} (€ TTC)")"
+                                    IsRequired="@ViewModel.IsRequired"
+                                    Type="OutlinedDouble.TypeOfValue.Currency"
+                                    disabled="@IsUserAllowedToEdit">
+                    </OutlinedDouble>
+                    <ValidationMessage For="() => workType.Price" />
+
+                    <OutlinedText @bind-Value="workType.Description"
+                                  EditContext="EditContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => workType.Description)"
+                                  Label="@($"Précisions sur {workType.Label}")"
+                                  disabled="@IsUserAllowedToEdit">
+                    </OutlinedText>
+                </div>
+            }
+        </div>
+
+        <div>
+            <label>
+                @($"{Labels.TotalCostOfWorkPackage} {Index} {Labels.TotalEuroTtc}") :
+                <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.TotalPrice)</span>
+            </label>
+        </div>
+
+        <div>
+            <OutlinedText @bind-Value="ViewModel.EnergeticsEffectOfWorks"
+                          EditContext="EditContext"
+                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EnergeticsEffectOfWorks)"
+                          Label="@Labels.EnergeticsEffectOfWorks"
+                          disabled="@IsUserAllowedToEdit">
+            </OutlinedText>
+        </div>
+    </div>
+</CascadingValue>

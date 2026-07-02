@@ -1,0 +1,139 @@
+a {
+    color: var(--secondary);
+    display: inline-block;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.flex-container {
+    display: grid;
+    gap: 2% 1%;
+    grid-template-areas:
+        "top-1 top-2"
+        "top-1 top-2"
+        "bottom-1 bottom-1"
+        "bottom-2 bottom-2";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+}
+
+.item-a {
+    grid-area: top-1;
+}
+
+.item-b {
+    grid-area: top-2;
+    height: fit-content;
+}
+
+.item-c {
+    grid-area: bottom-1;
+}
+
+.item-d {
+    grid-area: bottom-2;
+    width: fit-content;
+}
+
+.grid-form {
+    display: grid;
+    grid-template-rows: auto;
+    row-gap: 10px;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+
+    display: inline;
+}
+
+.select:hover {
+    background-color: var(--sidebar);
+}
+
+h2 {
+    color: #cccccc;
+    display: inline-block;
+    font-size: 1.1429rem;
+    font-weight: 600;
+    margin: 40px 8px 10px 8px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h2.inactive {
+    color: #cccccc;
+}
+
+h2.active {
+    border-bottom: 2px solid #5fbae9;
+    color: #0d0d0d;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+    color: white;
+    display: inline-block;
+    font-size: 0.9286rem;
+    margin: 5px 20px 40px 20px;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
+    background-color: var(--primary);
+}
+
+input[type=text] {
+    background-color: #f6f6f6;
+    border: none;
+    border: 2px solid #f6f6f6;
+    border-radius: 5px 5px 5px 5px;
+    color: #0d0d0d;
+    display: inline-block;
+    font-size: 1.1429rem;
+    margin: 5px;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    width: 85%;
+}
+
+input[type=text]:focus {
+    background-color: #fff;
+    border-bottom: 2px solid #5fbae9;
+}
+
+input[type=text]::placeholder {
+    color: #cccccc;
+}
+
+*:focus {
+    outline: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .flex-container {
+        display: grid;
+        grid-template-areas:
+            "top-1"
+            "top-2"
+            "bottom-1"
+            "bottom-2";
+        grid-template-columns: 1fr;
+    }
+}

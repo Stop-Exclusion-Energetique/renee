@@ -1,0 +1,178 @@
+﻿@using Microsoft.Identity.Web
+@using Renee.Application.Abstraction.Query.SendEvent
+@using Renee.Application.CommandsUseCasesInput
+@using Renee.Application.Interfaces
+@using Renee.Domain
+@using System.Security.Claims
+@using Renee.UI.Components.ErrorHandling
+
+@attribute [Route(Endpoints.ExcelExport)]
+@attribute [Authorize]
+
+@inject IJSRuntime JsRuntime
+@inject IGenerateFilesService GenerateFileService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISendEventQuery SendEventQuery
+
+<AuthorizeView Context="_"
+            Roles="@($"{Renee.Domain.Constants.DiffuseCoordinatorRole}, {Renee.Domain.Constants.TargetedCoordinatorRole}, {Renee.Domain.Constants.SolidarBuilderRole}, {Renee.Domain.Constants.TerritorialBuilderRole}, {Renee.Domain.Constants.StructuralReferentRole}")">
+    <Authorized>
+        <div class="card">
+            <div class="zeeButtonGroup">
+                <div>
+                    <ZeeButton Text="@GenerateFilesLabels.AllFilesExport" @onclick="DownloadExcel" />
+                </div>
+                <div>
+                    <ZeeButton Text="@GenerateFilesLabels.BillingLogAndAdministrationExport" @onclick="DownloadBillingLogAndAdministrationExcel" />
+                </div>
+                @if (ShowWaitingMessage)
+                {
+                    @ExcelDataLabel.WaitingWhileExportingExcel
+                }
+            </div>
+        </div>
+
+        <p>@ExcelDataLabel.RgpdMessage</p>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [CascadingParameter(Name = "ZeeSpinner")]
+    public ZeeSpinner? ZeeSpinner { get; set; }
+
+    public bool ShowWaitingMessage { get; set; }
+
+    private async Task DownloadExcel()
+    {
+        ZeeSpinner?.DisplayLoading();
+        ShowWaitingMessage = true;
+
+        try
+        {
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            var userIdString = authState.User.GetNameIdentifierId();
+            var role = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdString) || string.IsNullOrWhiteSpace(role) || !Guid.TryParse(userIdString, out var userId))
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = ExcelDataLabel.Errors.ErrorWhileGeneratingExcelFile,
+                        Duration = 10000
+                    });
+                return;
+            }
+
+            var result = await GenerateFileService.ExportAccompanyingFileForExcel(userId, role);
+
+            if (!result.IsSuccess || result.Value is null)
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = result.Message,
+                        Duration = 10000
+                    });
+                return;
+            }
+
+            using var excelStream = result.Value;
+            using var streamRef = new DotNetStreamReference(stream: excelStream);
+
+            var fileName = $"export__renee_tous_les_dossiers_TZEE_{DateTime.Now:yyyy-MM-dd}.xlsx";
+
+            await JsRuntime.InvokeVoidAsync("downloadExcelFile", fileName, streamRef);
+            await SendEventQuery.Send(new CreateDocumentGenerationLogCommandInput(userId, fileName));
+        }
+        catch (Exception ex)
+        {
+            ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = ExcelDataLabel.Errors.ErrorWhileGeneratingExcelFile,
+                    Detail = ex.Message,
+                    Duration = 10000
+                });
+        }
+        finally
+        {
+            ShowWaitingMessage = false;
+            ZeeSpinner?.HideLoading();
+        }
+    }
+
+    private async Task DownloadBillingLogAndAdministrationExcel()
+    {
+        ZeeSpinner?.DisplayLoading();
+		ShowWaitingMessage = true;
+
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            var userIdString = authState.User.GetNameIdentifierId();
+            var role = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userIdString) || string.IsNullOrWhiteSpace(role) || !Guid.TryParse(userIdString, out var userId))
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = ExcelDataLabel.Errors.ErrorWhileGeneratingExcelFile,
+                        Duration = 10000
+                    });
+                return;
+            }
+
+            var result = await GenerateFileService.ExportAccompanyingFileBillingInformationAndAdministrativeData(userId, role);
+
+            if (!result.IsSuccess || result.Value is null)
+            {
+                ShowNotification(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = result.Message,
+                        Duration = 10000
+                    });
+                return;
+            }
+
+            using var excelStream = result.Value;
+            using var streamRef = new DotNetStreamReference(stream: excelStream);
+
+            var fileName = $"export__renee_journal_de_facturation_et_administration_TZEE_{DateTime.Now:yyyy-MM-dd}.xlsx";
+
+            await JsRuntime.InvokeVoidAsync("downloadExcelFile", fileName, streamRef);
+            await SendEventQuery.Send(new CreateDocumentGenerationLogCommandInput(userId, fileName));
+        }
+        catch (Exception ex)
+        {
+            ShowNotification(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = ExcelDataLabel.Errors.ErrorWhileGeneratingExcelFile,
+                    Detail = ex.Message,
+                    Duration = 10000
+                });
+        }
+        finally
+        {
+            ShowWaitingMessage = false;
+            ZeeSpinner?.HideLoading();
+        }
+    }
+
+	private void ShowNotification(NotificationMessage message)
+	{
+		NotificationService.Notify(message);
+	}
+}

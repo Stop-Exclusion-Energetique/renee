@@ -1,0 +1,111 @@
+﻿@using System.Globalization
+@using Renee.Application.Abstraction.Query.SendEvent
+@using Renee.Application.Helpers
+@using Renee.Application.Queries.AccompanyingFile
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.Index.GraphicsObjects
+@using Renee.UI.Components.Features.Index.Presenter
+@using Renee.UI.Components.Features.Index.ViewModel
+@inject ISendEventQuery QuerySender
+
+<ZeeSelect IsMultiSelect
+           Label="@IndexLabels.StartingDpe"
+           ShowLabelBefore="false"
+           Items="@ItemsList.DpeLabels"
+           @bind-CheckedValues="@DpeLabel"
+           OnNewValueSelected="OnDpeFilterChange"/>
+
+<RadzenChart>
+    <RadzenColumnSeries CategoryProperty="Name"
+                        Data="@AverageWorkCostByEstimatedJump"
+                        Fills="@(new List<string>
+                               {
+                                   "#429AD5",
+                                   "#071952",
+                                   "#FFA500",
+                                   "#FF0000",
+                                   "#00FF00"
+                               })"
+                        ValueProperty="VerticalAxisValue">
+
+        <TooltipTemplate Context="data">
+
+            <div>
+                <span>@data.Name</span> :
+                <strong>@($"{data.VerticalAxisValue.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</strong>
+            </div>
+
+        </TooltipTemplate>
+
+        <ChildContent>
+            <RadzenSeriesDataLabels Visible="true"/>
+        </ChildContent>
+    </RadzenColumnSeries>
+
+    <RadzenColumnOptions Radius="5" Width="50"/>
+
+    <RadzenValueAxis Min="0"
+                     Step="1"
+                     Visible="false"
+                     Formatter="@DisplayFormat">
+    </RadzenValueAxis>
+
+    <RadzenCategoryAxis Visible="false">
+    </RadzenCategoryAxis>
+
+    <RadzenLegend Visible="false"/>
+</RadzenChart>
+
+<div>
+    <ZeeLegendElement Color="#429AD5"
+                      Label="@Labels.ClassJump2"/>
+    <ZeeLegendElement Color="#071952"
+                      Label="@Labels.ClassJump3"/>
+    <ZeeLegendElement Color="#FFA500"
+                      Label="@Labels.ClassJump4"/>
+    <ZeeLegendElement Color="#FF0000"
+                      Label="@Labels.ClassJump5"/>
+    <ZeeLegendElement Color="#00FF00"
+                      Label="@Labels.ClassJump6"/>
+</div>
+
+@code {
+    [Parameter] public List<DpeLabel?>? DpeLabel { get; set; }
+    [Parameter] public EventCallback<List<DpeLabel?>?> DpeLabelChanged { get; set; }
+
+    [Parameter] public VerticalChart[] AverageWorkCostByEstimatedJump { get; set; } = new VerticalChart[Enum.GetNames<EstimatedJumpClass>().Length];
+    [Parameter] public EventCallback<VerticalChart[]> AverageWorkCostByEstimatedJumpChanged { get; set; }
+
+    [Parameter] public FilterViewModel Filter { get; set; } = default!;
+
+    [Parameter] public Guid UserId { get; set; }
+
+    [Parameter] public Func<object, string> DisplayFormat { get; set; } = default!;
+
+    public async Task OnDpeFilterChange()
+    {
+        var result = await QuerySender.Send(
+            new LoadFilteredDpeEstimatedJumpWorkCostTotalQuery
+            {
+                ConnectedUserId = UserId,
+                DateFrom = Filter.FromDate,
+                DateTo = Filter.ToDate,
+                SelectedReportingStructuresIds = Filter.SelectedReportingStructures,
+                SelectedSolidarBuilderIds = Filter.SelectedSolidarBuilder,
+                ShouldFilterOnUserAllAccompanyingFile = Filter.FilterValue == FilterValue.MyAllAccompanyingFile,
+                DpeLabelsFilter = DpeLabel
+            });
+
+        if (result.IsSuccess && result.Value is not null)
+        {
+            foreach (var averageTotalWorkCost in result.Value.EstimatedEnergyJumpCount)
+            {
+                var averageWorkCost = AverageWorkCostByEstimatedJump.First(n => n.Name == averageTotalWorkCost.Key.GetDescription());
+                averageWorkCost.VerticalAxisValue = Convert.ToInt32(averageTotalWorkCost.Value);
+            }
+        }
+
+        StateHasChanged();
+    }
+
+}

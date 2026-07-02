@@ -1,0 +1,25 @@
+@using Renee.Application.Interfaces
+@inject IUserValidationService UserValidationService
+@inject NavigationManager NavigationManager
+
+<p>@Labels.DeleteQuestionProfile</p>
+
+<ZeeButton DisplayBackground="DisplayEnumBackground.Red"
+           Icon="@Icons.Trash"
+           @onclick="Delete"
+           Text="@Labels.Delete">
+</ZeeButton>
+
+@code {
+
+	[Parameter] public Guid Id { get; set; }
+
+	[Parameter] public string? Email { get; set; }
+
+	private async Task Delete()
+	{
+		await UserValidationService.DeleteUser(Id, Email);
+		NavigationManager.NavigateTo(Endpoints.NewSubscriptionDisplay);
+	}
+
+}

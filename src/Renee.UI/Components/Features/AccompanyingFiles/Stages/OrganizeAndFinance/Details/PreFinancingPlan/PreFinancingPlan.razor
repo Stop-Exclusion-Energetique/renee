@@ -1,0 +1,364 @@
+﻿@using Renee.Application.Helpers
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreFinancingPlan.Components.FundingMode
+
+<p>
+    @if(IsThirdStage)
+    {
+        @RealiseAndFollowMilestone.Labels.FinalFinancialPlanWarning
+    }
+    else
+    {
+        @Labels.PreFinancialPlanWarning
+    }
+</p>
+
+<div class="tab-container">
+    <div class="column">
+        @if (ShouldDisplayCopropertyWorkFinanceSection)
+        {
+            <div class="card">
+                <h4 class="section-title">
+                    @Labels.CopropertyWorkFinanceTitle
+                </h4>
+
+                                <OutlinedText Label="@Labels.DateOfAgVote"
+                                                            disabled="true"
+                                                            Value="@DateOfAgVoteDisplay" />
+
+                <OutlinedDouble Label="@Labels.MprCoproAids"
+                                                                disabled="true"
+                                Double="@ViewModel.MprCoproAids"
+                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                <OutlinedDouble Label="@Labels.ComplementaryAids"
+                                                                disabled="true"
+                                Double="@ViewModel.ComplementaryCopropertyAids"
+                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                @if (ViewModel.CopropertyWorkPackages.Count > 0)
+                {
+                    <OutlinedDouble Label="@Labels.WorkPackageTotalCost"
+                                    disabled="true"
+                                    Double="@CopropertyWorkPackagesTotalPrice"
+                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                    @foreach (var workPackage in ViewModel.CopropertyWorkPackages)
+                    {
+                        var index = ViewModel.CopropertyWorkPackages.IndexOf(workPackage);
+
+                        <h4 class="section-title">
+                            @( $"{Labels.WorkQuote} {index + 1}" )
+                        </h4>
+
+                        @foreach (var workType in workPackage.WorkTypes)
+                        {
+                            var workTypeLabel = GetWorkTypeLabel(workType.Id);
+
+                            <OutlinedDouble Label="@($"{workTypeLabel} (€ TTC)")"
+                                                                                        disabled="true"
+                                            Double="@workType.Price"
+                                            Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                            <OutlinedText Label="@($"Précisions sur {workTypeLabel}")"
+                                                                                    disabled="true"
+                                          Value="@workType.Description" />
+                        }
+
+                        <OutlinedDouble Label="@($"{Labels.TotalCostOfWorkPackage} {index + 1} {Labels.TotalEuroTtc}")"
+                                                                                disabled="true"
+                                        Double="@workPackage.TotalPrice"
+                                        Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                        <OutlinedText Label="@Labels.EnergeticsEffectOfWorks"
+                                                                            disabled="true"
+                                      Value="@workPackage.EnergeticsEffectOfWorks" />
+                    }
+                }
+            </div>
+        }
+        <div class="card">
+            <h4 class="section-title">
+                @Labels.NationalHousingAgency
+            </h4>
+
+            <OutlinedDouble @bind-Double="@ViewModel.GuidedPathwayBonus"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.GuidedPathwayBonus)"
+                            IsNullable="true"
+                            Label="@Labels.GuidedPathwayBonus"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.CoOwnershipBonus"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CoOwnershipBonus)"
+                            IsNullable="true"
+                            Label="@Labels.CoOwnershipBonus"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.DecentHousingBonus"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DecentHousingBonus)"
+                            IsNullable="true"
+                            Label="@Labels.DecentHousingBonus"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.AdaptationBonus"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AdaptationBonus)"
+                            IsNullable="true"
+                            Label="@Labels.AdaptationBonus"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.ExitEnergySieveBonus"
+                            EditContext="@_editContext"
+                            IsNullable="true"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ExitEnergySieveBonus)"
+                            Label="@Labels.ExitEnergySieveBonus"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <label>
+                @Labels.NationalHousingAgencyAmount :
+                <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.NationalHousingAgencyTotal)</span>
+            </label>
+
+            <p class="anah-mention">@Labels.ProjectManagementSupportDeductionText</p>
+        </div>
+
+        <div class="card">
+            <h4 class="section-title">
+                @Labels.LocalPublicAid
+            </h4>
+
+            <OutlinedDouble @bind-Double="@ViewModel.Region"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Region)"
+                            IsNullable="true"
+                            Label="@Labels.RegionPreFinancingPlan"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.Department"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Department)"
+                            IsNullable="true"
+                            Label="@Labels.DepartmentPreFinancingPlan"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.PublicEstablishmentsIntercommunalCooperation"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PublicEstablishmentsIntercommunalCooperation)"
+                            IsNullable="true"
+                            Label="@Labels.PublicEstablishmentsIntercommunalCooperation"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.Municipality"    
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Municipality)"
+                            IsNullable="true"
+                            Label="@Labels.MunicipalityPreFinancingPlan"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <label>
+                    @Labels.LocalPublicAidTotalAmount :
+                <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.LocalPublicAidTotalAmount)</span>
+            </label>
+        </div>
+
+        <div class="card">
+            <h4 class="section-title">
+                @Labels.OtherPublicAid
+            </h4>
+
+            <OutlinedDouble @bind-Double="@ViewModel.DepartmentalHouseForDisabledPersons"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DepartmentalHouseForDisabledPersons)"
+                            IsNullable="true"
+                            Label="@Labels.DepartmentalHouseForDisabledPersonsPreFinancingPlan"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <OutlinedDouble @bind-Double="@ViewModel.FamilyAllowanceFund"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilyAllowanceFund)"
+                            IsNullable="true"
+                            Label="@Labels.FamilyAllowanceFund"
+                            Type="OutlinedDouble.TypeOfValue.Currency"
+                            disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+            <label>
+                @Labels.OtherPublicAidTotalAmount :
+                <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.OtherPublicAidTotalAmount)</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="column">
+        <div>
+            <div class="d-flex gap-1">
+                <ZeeToolTip InfoBullMessage="@Labels.RemainingAmountAfterPublicAidDeductionTooltipText" />
+                <label>
+                    @Labels.RemainingAmountAfterPublicAidDeduction :
+                    <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.RemainingAmountAfterPublicAidDeduction)</span>
+                </label>
+            </div>
+
+            <div class="card mt-2">
+                <h4 class="section-title">
+                    @Labels.PrivateAid
+                </h4>
+
+                <OutlinedDouble @bind-Double="@ViewModel.EnergySavingCertificates"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EnergySavingCertificates)"
+                                IsNullable="true"
+                                Label="@Labels.EnergySavingCertificatesPreFinancingPlan"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.PensionFund"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PensionFund)"
+                                IsNullable="true"
+                                Label="@Labels.PensionFund"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.UnderprivilegedHousingFoundation"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.UnderprivilegedHousingFoundation)"
+                                IsNullable="true"
+                                Label="@Labels.UnderprivilegedHousingFoundation"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@IsUserAllowedToEdit" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.LeroyMerlinFoundation"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.LeroyMerlinFoundation)"
+                                IsNullable="true"
+                                Label="@Labels.LeroyMerlinFoundation"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.WattForChangeFoundation"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WattForChangeFoundation)"
+                                IsNullable="true"
+                                Label="@Labels.WattForChangeFoundation"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.SocialProtectionGroup"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SocialProtectionGroup)"
+                                IsNullable="true"
+                                Label="@Labels.SocialProtectionGroup"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.StopEnergyExclusionFunds"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.StopEnergyExclusionFunds)"
+                                IsNullable="true"
+                                Label="@Labels.StopEnergyExclusionFunds"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit)" />
+
+                <p>@Labels.RemainingAmountCanBeAskedAfterStageTwoValidation</p>
+
+                @foreach (var funding in ViewModel.FundingModes)
+                {
+                    <FundingMode EditContext="@_editContext"
+                                 FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FundingModes)"
+                                 OnCheckDuplicateFundingModeName="@CheckDuplicateFundingModeName"
+                                 OnDeleteEvent="@OnDeleteFundingMode"
+                                 ViewModel="funding"
+                                 IsUserAllowedToEdit="@IsUserAllowedToEdit" />
+                }
+
+                @if (IsDuplicateFundingModeName)
+                {
+                    <span class="validation-message">@Labels.Errors.ExistingFundingModeName</span>
+                }
+
+                <ZeeButton CssClass="btn-full-width"
+                           @onclick="OnAddFundingMode"
+                           Text="@Labels.AddFinancingMode"
+                           disabled="@IsUserAllowedToEdit" />
+
+                <div>
+                    <label>
+                        @Labels.PrivateAidTotalAmount :
+                        <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(@ViewModel.PrivateAidTotalAmount)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="d-flex gap-1">
+                <ZeeToolTip InfoBullMessage="@Labels.RemaingAmountAfterPublicAndPrivateAidDeductionTooltipText" />
+                <label>
+                    @Labels.RemainingAmountAfterPublicAndPrivateAidDeduction :
+                    <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(ViewModel.RemainingAmountAfterPublicAndPrivateAidDeduction)</span>
+                </label>
+            </div>
+
+            <div class="card my-2">
+                <div class="d-flex gap-1">
+                    <ZeeToolTip InfoBullMessage="@Labels.BankLoanToolTipText" />
+                    <h4 class="section-title">
+                        @Labels.BankLoan
+                    </h4>
+                </div>
+
+                <OutlinedText @bind-Value="ViewModel.BankLoanType"
+                            EditContext="@_editContext"
+                            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.BankLoanType)"
+                            Label="@Labels.BankLoanType"
+                            disabled="@IsUserAllowedToEdit" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.ClassicBankLoan"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ClassicBankLoan)"
+                                Label="@Labels.ClassicBankLoan"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@IsUserAllowedToEdit" />
+
+                <h4 class="section-title">
+                    @Labels.OwnedFunds
+                </h4>
+
+                <OutlinedDouble @bind-Double="@ViewModel.HouseholdMaximumSavingAmountForRenovationProject"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HouseholdMaximumSavingAmountForRenovationProject)"
+                                IsNullable="true"
+                                Label="@Labels.HouseholdMaximumSavingAmountForRenovationProject"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                <OutlinedDouble @bind-Double="@ViewModel.MaximumAmountSupportFamilyMembersRenovationProject"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.MaximumAmountSupportFamilyMembersRenovationProject)"
+                                IsNullable="true"
+                                Label="@Labels.MaximumAmountSupportFamilyMembersRenovationProject"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@IsUserAllowedToEdit" />
+
+            </div>
+
+            <ZeeToolTip InfoBullMessage="@Labels.PreFinancingPlanBalancingTooltipText" />
+            <label>
+                @Labels.PreFinancingPlanBalancing :
+                <span class="@(GetPreFinancingPlanBalancingTextColor())">@StringHelper.DoubleToCurrencyFormat(ViewModel.PreFinancingPlanBalancing)</span>
+            </label>
+        </div>
+    </div>
+</div>

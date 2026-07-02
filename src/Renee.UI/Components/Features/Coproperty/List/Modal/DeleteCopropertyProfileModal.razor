@@ -1,0 +1,44 @@
+﻿@using Renee.Application.CommandsUseCasesInput
+@using Renee.Application.Interfaces
+<h3 class="section-title">
+    @Labels.DeleteCopropertyProfileModalTitle
+</h3>
+
+<div>
+    <div class="grid">
+        <div>
+            @Labels.DeleteCoproertyProfileModalText
+        </div>
+
+    </div>
+</div>
+
+<div class="zeeButtonGroup">
+    <ZeeButton @onclick="HandleValidSubmit" Text="@Labels.Submit"/>
+    <ZeeButton @onclick="Cancel" Text="@Labels.Cancel"/>
+</div>
+
+@code {
+    [Parameter] public Guid CopropertyProfileId { get; set; }
+
+    [Inject] public ICopropertyProfileService CopropertyProfileService { get; set; } = null!;
+
+
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = default!;
+
+    public async Task HandleValidSubmit()
+    {
+        var result = await CopropertyProfileService.DeleteCopropertyProfile(CopropertyProfileId);
+
+        NotificationService.Notify(new NotificationMessage
+        {
+            Severity = result.IsSuccess ? NotificationSeverity.Success : NotificationSeverity.Error,
+            Summary = result.Message,
+            Duration = 4000
+        });
+
+        if (result.IsSuccess && result.Value) await ModalInstance.CloseAsync();
+    }
+
+    public async Task Cancel() => await ModalInstance.CloseAsync(ModalResult.Ok());
+}

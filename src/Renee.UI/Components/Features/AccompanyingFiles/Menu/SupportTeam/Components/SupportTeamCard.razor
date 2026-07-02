@@ -1,0 +1,37 @@
+﻿<div class="card spaced">
+    <h4 class="card-title">@UserRole</h4>
+
+    <div class="inner-card-content">
+        <div>
+            @if (UserFullName is not null)
+            {
+                <div class="information">
+                    <img src="/images/menu-user.svg" />
+                    <span>@UserFullName</span>
+                </div>
+            }
+            @if (UserEmail is not null)
+            {
+                <div class="information">
+                    <img src="/images/menu-mail.svg" />
+                    <span>@UserEmail</span>
+                </div>
+            }
+            @if (UserPhone is not null)
+            {
+                <div class="information">
+                    <img src="/images/menu-phone.svg" />
+                    <span>@UserPhone</span>
+                </div>
+            }
+        </div>
+
+        @if (IsEditable)
+        {
+            <div class="edit-icon"
+                 @onclick="@OnClickEditSupportTeamMemberIcon">
+                    @((MarkupString)Icons.Svg.FileEdit)
+            </div>
+        }
+    </div>
+</div>

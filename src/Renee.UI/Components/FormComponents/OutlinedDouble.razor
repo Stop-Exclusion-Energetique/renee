@@ -1,0 +1,27 @@
+<div class="d-flex flex-column">
+	<label class="pure-material-textfield-outlined">
+		<input 
+			@attributes="AdditionalAttributes"
+			class="@(EditContext is not null ? EditContext.FieldCssClass(FieldIdentifier) : "")"
+			@onblur="OnBlur"
+			@onchange="OnValueChanged"
+			Placeholder=" "
+			type="text"
+			value="@DoubleAsString"/>
+		<span>
+			@Label
+			<span class="@(IsRequired ?? false ? "required" : "")"> </span>
+		</span>
+		@if (!string.IsNullOrEmpty(InfoBullMessage) || !string.IsNullOrEmpty(InfoBullTitle))
+		{
+			<ZeeToolTip 
+				InfoBullMessage="@InfoBullMessage"
+				InfoBullTitle="@InfoBullTitle"
+				style="position:absolute;right:0;margin-top: 10px; margin-right: 3px">
+			</ZeeToolTip>
+		}
+	</label>
+	<span class="validation-message">
+		@Validation
+	</span>
+</div>

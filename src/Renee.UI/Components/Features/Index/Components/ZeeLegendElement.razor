@@ -1,0 +1,9 @@
+﻿<div class="container">
+    <div class="square" style="background-color:@Color;"></div>
+    <span>@Label</span>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Color { get; set; } = string.Empty;
+}

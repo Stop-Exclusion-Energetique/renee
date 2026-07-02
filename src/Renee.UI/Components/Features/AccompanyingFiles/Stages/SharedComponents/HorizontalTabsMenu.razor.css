@@ -1,0 +1,122 @@
+﻿a {
+    color: var(--secondary);
+    display: inline-block;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.tab-menu ul {
+    list-style-type: none;
+    display: flex;
+    padding: 0;
+    justify-content: space-between;
+    background: var(--white);
+    gap: 0;
+}
+
+.tab-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1;
+    cursor: pointer;
+    clip-path: polygon(95% 0%, 100% 50%, 95% 100%, 0% 100%, 5% 50%, 0% 0%);
+    height: 50px;
+    padding: 10px 10px;
+    background: var(--grey);
+}
+
+.tab-menu li a {
+    text-decoration: none;
+    color: #333;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.tab-menu li.active {
+    background: var(--primary);
+}
+
+.tab-menu li:first-of-type {
+    clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 0 50%, 0% 0%);
+}
+
+.tab-menu li:last-of-type {
+    clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%);
+}
+
+.tab-title {
+    display: none;
+}
+
+@media (max-width: 1080px) {
+
+    #tab-1 a {
+        font-size: 0;
+    }
+
+    #tab-1 a::before {
+        content: "1.";
+        font-size: initial;
+    }
+
+    #tab-2 a {
+        font-size: 0;
+    }
+
+    #tab-2 a::before {
+        content: "2.";
+        font-size: initial;
+    }
+
+    #tab-3 a {
+        font-size: 0;
+    }
+
+    #tab-3 a::before {
+        content: "3.";
+        font-size: initial;
+    }
+
+    #tab-4 a {
+        font-size: 0;
+    }
+
+    #tab-4 a::before {
+        content: "4.";
+        font-size: initial;
+    }
+
+    #tab-5 a {
+        font-size: 0;
+    }
+
+    #tab-5 a::before {
+        content: "5.";
+        font-size: initial;
+    }
+
+    #tab-6 a {
+        font-size: 0;
+    }
+
+    #tab-6 a::before {
+        content: "6.";
+        font-size: initial;
+    }
+
+    .tab-title {
+        display: block;
+        color: var(--primary);
+        font-size: 2.1429rem;
+        font-style: normal;
+        font-weight: 400;
+    }
+
+    div.tab-title-div {
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-left: 15px;
+    }
+}

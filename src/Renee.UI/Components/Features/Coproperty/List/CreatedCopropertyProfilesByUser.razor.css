@@ -1,0 +1,19 @@
+﻿
+.page-title {
+    padding-bottom: 15px;
+    border-bottom : 2px solid black;
+}
+
+
+.create-copro {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    gap: 0.5em;
+}

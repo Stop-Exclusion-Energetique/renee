@@ -1,0 +1,35 @@
+@using Renee.Application.DTOs.AI
+@using Renee.Domain.ReneeError
+
+<ZeeButton @onclick="OpenModal"
+           Text="Analyse IA"
+           Icon="auto_awesome"
+           DisplayBackground="DisplayEnumBackground.Blue"
+           IsSubmit="false" />
+
+@code {
+    [Parameter, EditorRequired]
+    public Func<Task<ReneeOperationResult<AISynthesisResult>>> OnAnalyze { get; set; } = null!;
+
+    [Inject] private IModalService ModalService { get; set; } = null!;
+
+    private ReneeOperationResult<AISynthesisResult>? _cachedResult;
+
+    private void OpenModal()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(AISynthesisPanelContent.OnAnalyze), OnAnalyze)
+            .Add(nameof(AISynthesisPanelContent.InitialResult), _cachedResult)
+            .Add(nameof(AISynthesisPanelContent.OnResultCached), EventCallback.Factory.Create<ReneeOperationResult<AISynthesisResult>>(this, r => _cachedResult = r));
+
+        ModalService.Show<AISynthesisPanelContent>(
+            parameters,
+            new ModalOptions
+            {
+                Position = ModalPosition.Middle,
+                HideCloseButton = false,
+                HideHeader = true,
+                Size = ModalSize.Large
+            });
+    }
+}

@@ -1,0 +1,869 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using System.Globalization
+<div>
+    <div class="home-composition-header">
+        <img alt="home"
+             src="/images/home-composition-icon.svg"
+             width="50" />
+        <h3 class="section-title"
+            style="margin: 0;">
+            @Labels.HomeComposition
+        </h3>
+    </div>
+
+    <!-- Main Occupant -->
+    <div class="flex-container">
+        <div class="card grid-form">
+
+            <div class="occupant-title-and-image">
+                <img alt="occupant"
+                     src="/images/occupant-icon.svg"
+                     width="25" />
+                <h4 class="section-title"
+                    style="margin: 0;">
+                    @Labels.MainOccupant
+                </h4>
+            </div>
+
+            <OutlinedText EditContext="_editContext"
+                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.LastName)"
+                          IsInForm="false"
+                          IsRequired
+                          Label="@Labels.Name"
+                          @bind-Value="@_mainOccupantViewModel.LastName"
+                          disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+            <ValidationMessage For="@(() => _mainOccupantViewModel.LastName)" />
+
+            <OutlinedText EditContext="_editContext"
+                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.FirstName)"
+                          IsInForm="false"
+                          IsRequired
+                          Label="@Labels.FirstName"
+                          @bind-Value="@_mainOccupantViewModel.FirstName"
+                          disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+            <ValidationMessage For="@(() => _mainOccupantViewModel.FirstName)" />
+
+            <OutlinedText @bind-Value="@_mainOccupantViewModel.Trigram"
+                          EditContext="_editContext"
+                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.Trigram)"
+                          InfoBullMessage="@Labels.TrigramTooltipText"
+                          InfoBullTitle="@Labels.Trigram"
+                          IsInForm="false"
+                          IsRequired="true"
+                          Label="@Labels.Trigram"
+                          maxLength="3"
+                          disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+            <ValidationMessage For="@(() => _mainOccupantViewModel.Trigram)" />
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="_mainOccupantViewModel.Birthday"
+                                   @bind-Value:after="@(() => OnDateChanged(_mainOccupantViewModel))"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <span>
+                            @Labels.BirthdayOccupant
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => _mainOccupantViewModel.Birthday)" />
+            </div>
+
+            <div>
+                <OutlinedInt @bind-Intgr="@_mainOccupantViewModel.Age"
+                             EditContext="_editContext"
+                             FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.Age)"
+                             Label="@Labels.AgeOccupant"
+                             Type="OutlinedInt.TypeOfValue.Int"
+                             IsRequired="true"
+                             disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                </OutlinedInt>
+                <ValidationMessage For="@(() => _mainOccupantViewModel.Age)" />
+            </div>
+
+            <div style="margin-top: 10px;">
+                <h4 class="section-title">
+                    @Labels.ProfessionalSituation
+                </h4>
+            </div>
+
+            <div>
+                <ZeeSelect @bind-CheckedValue="@_mainOccupantViewModel.AskedCsp"
+                           EditContext="_editContext"
+                           ElementName="@($"csp-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.AskedCsp)"
+                           IsRequired="true"
+                           Items="@CsPs"
+                           Label="@Labels.SocioProfessionalCategory"
+                           TItem="SocioProfessionalCategory?"
+                           IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                           ShouldSort="true">
+                </ZeeSelect>
+                <ValidationMessage For="@(() => _mainOccupantViewModel.AskedCsp)" />
+            </div>
+
+            <div>
+                <OutlinedText @bind-Value="_mainOccupantViewModel.Profession"
+                              EditContext="_editContext"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.Profession)"
+                              IsInForm="false"
+                              IsRequired="false"
+                              Label="@Labels.Profession"
+                              disabled="@IsUserAllowedToEdit">
+                </OutlinedText>
+                <ValidationMessage For="@(() => _mainOccupantViewModel.Profession)" />
+            </div>
+        </div>
+
+        @if (string.IsNullOrEmpty(_mainOccupantViewModel.Age.ToString()) || _mainOccupantViewModel.Age >= Constants.CivilMajority)
+        {
+            <div class="card grid-form">
+                <h4 class="section-title ">
+                    @Labels.AdministrationContactOccupant
+                </h4>
+
+                <label>
+                    @Labels.PhoneNumberOccupant
+                </label>
+                <div>
+                    <ZeePhoneNumber @bind-BindingValue="_mainOccupantViewModel.PhoneNumber"
+                                    @bind-BindingValue:after="@(() =>
+					                                          {
+						                                          if (!string.IsNullOrEmpty(_mainOccupantViewModel.PhoneNumber)) CheckDuplicatePhoneNumber(_mainOccupantViewModel.PhoneNumber);
+					                                          })"
+                                    Class="form-control"
+                                    Disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </ZeePhoneNumber>
+                    <ValidationMessage For="@(() => _mainOccupantViewModel.PhoneNumber)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="_mainOccupantViewModel.Email"
+                                  @bind-Value:after="@(() =>
+					                                 {
+						                                 if (!string.IsNullOrEmpty(_mainOccupantViewModel.Email)) CheckDuplicateEmail(_mainOccupantViewModel.Email);
+					                                 })"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.Email)"
+                                  IsEmail=true
+                                  IsInForm=false
+                                  IsRequired=false
+                                  Label="@Labels.EmailOccupant"
+                                  disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => _mainOccupantViewModel.Email)" />
+                </div>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@_mainOccupantViewModel.AskedSocialProtectionFund"
+                               EditContext="_editContext"
+                               ElementName="@($"socialProtection-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.AskedSocialProtectionFund)"
+                               IsRequired="false"
+                               Items="@SocialProtectionFundList"
+                               Label="@Labels.SocialProtectionFund"
+                               TItem="SocialProtectionFund?"
+                               IsDisabled="@IsUserAllowedToEdit"
+                               ShouldSort="true">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => _mainOccupantViewModel.AskedSocialProtectionFund)" />
+                </div>
+
+                @if (_mainOccupantViewModel.AskedSocialProtectionFund is not null && _mainOccupantViewModel.AskedSocialProtectionFund.Equals(SocialProtectionFund.Other))
+                {
+                    <div>
+                        <OutlinedText @bind-Value="_mainOccupantViewModel.SocialProtectionFundFreeInput"
+                                      EditContext="_editContext"
+                                      FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.SocialProtectionFundFreeInput)"
+                                      IsInForm=false
+                                      IsRequired=true
+                                      Label="@Labels.OtherSocialProtectionFund"
+                                      disabled="@IsUserAllowedToEdit">
+                        </OutlinedText>
+                        <ValidationMessage For="() => _mainOccupantViewModel.SocialProtectionFundFreeInput" />
+                    </div>
+                }
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@_mainOccupantViewModel.AskedPensionFund"
+                               EditContext="_editContext"
+                               ElementName="@($"pensionFunds-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.AskedPensionFund)"
+                               IsRequired="false"
+                               Items="@PensionFundList"
+                               Label="@Labels.PensionFund"
+                               TItem="PensionFund?"
+                               IsDisabled="@IsUserAllowedToEdit"
+                               ShouldSort="true">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => _mainOccupantViewModel.AskedPensionFund)" />
+                </div>
+                @if (_mainOccupantViewModel.AskedPensionFund is not null && _mainOccupantViewModel.AskedPensionFund.Equals(PensionFund.Other))
+                {
+                    <div>
+                        <OutlinedText @bind-Value="_mainOccupantViewModel.PensionFundFreeInput"
+                                      EditContext="_editContext"
+                                      FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.PensionFundFreeInput)"
+                                      IsInForm=false
+                                      IsRequired=true
+                                      Label="@Labels.OtherPensionFund"
+                                      disabled="@IsUserAllowedToEdit">
+                        </OutlinedText>
+                        <ValidationMessage For="@(() => _mainOccupantViewModel.PensionFundFreeInput)" />
+                    </div>
+                }
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@_mainOccupantViewModel.AskedAdditionalFund"
+                               EditContext="_editContext"
+                               ElementName="@($"additionalFunds-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.AskedAdditionalFund)"
+                               IsRequired="false"
+                               Items="@AdditionnalFundList"
+                               Label="@Labels.AdditionalFund"
+                               TItem="AdditionalFund?"
+                               IsDisabled="@IsUserAllowedToEdit"
+                               ShouldSort="true" />
+                </div>
+                @if (_mainOccupantViewModel.AskedAdditionalFund is not null && _mainOccupantViewModel.AskedAdditionalFund.Equals(AdditionalFund.Other))
+                {
+                    <div>
+                        <OutlinedText @bind-Value="_mainOccupantViewModel.AdditionalFundFreeInput"
+                                      EditContext="_editContext"
+                                      FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _mainOccupantViewModel.AdditionalFundFreeInput)"
+                                      IsInForm=false
+                                      IsRequired=true
+                                      Label="@Labels.OtherAdditionalFund"
+                                      disabled="@IsUserAllowedToEdit">
+                        </OutlinedText>
+                        <ValidationMessage For="@(() => _mainOccupantViewModel.AdditionalFundFreeInput)" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="flex-container">
+        @foreach (var secondaryOccupantViewModel in _secondaryOccupantViewModels)
+        {
+            <div class="card grid-form">
+                <div class="occupant-title-and-image">
+                    <img alt="occupant"
+                         src="/images/occupant-icon.svg"
+                         width="25" />
+                    <h4 class="section-title"
+                        style="margin: 0;">
+                        @Labels.OccupantTitle @GetOccupantTitle(_secondaryOccupantViewModels.IndexOf(secondaryOccupantViewModel))
+                    </h4>
+                </div>
+
+                <OutlinedText @bind-Value="@secondaryOccupantViewModel.Trigram"
+                              EditContext="_editContext"
+                              FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => secondaryOccupantViewModel.Trigram)"
+                              InfoBullMessage="@Labels.TrigramTooltipText"
+                              InfoBullTitle="@Labels.Trigram"
+                              IsInForm=false
+                              Label="@Labels.Trigram"
+                              maxLength="3"
+                              disabled="@IsUserAllowedToEdit" />
+                <ValidationMessage For="@(() => secondaryOccupantViewModel.Trigram)" />
+
+                <div>
+                    <div class="d-flex flex-column">
+                        <label class="pure-material-textfield-outlined">
+                            <ZeeInputDate @bind-Value="secondaryOccupantViewModel.Birthday"
+                                       @bind-Value:after="@(() => OnDateChangeForSecondaryOccupant(secondaryOccupantViewModel))"
+                                       @bind-Value:format="yyyy-MM-dd"
+                                       disabled="@IsUserAllowedToEdit" />
+
+                            <span>@Labels.BirthdayOccupant</span>
+                        </label>
+                    </div>
+                    <ValidationMessage For="@(() => secondaryOccupantViewModel.Birthday)" />
+                </div>
+
+                <div>
+                    <OutlinedInt @bind-Intgr="@secondaryOccupantViewModel.Age"
+                                 EditContext="_editContext"
+                                 FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => secondaryOccupantViewModel.Age)"
+                                 IsRequired="false"
+                                 Label="@Labels.AgeOccupant"
+                                 Type="OutlinedInt.TypeOfValue.Int"
+                                 disabled="@IsUserAllowedToEdit">
+                    </OutlinedInt>
+                    <ValidationMessage For="@(() => secondaryOccupantViewModel.Age)" />
+                </div>
+
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="secondaryOccupantViewModel.IsDependent"
+                                   EditContext="_editContext"
+                                   ElementName="@($"isDependent-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => secondaryOccupantViewModel.IsDependent)"
+                                   IsRequired="false"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.SecondaryOccupantIsDependent"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => secondaryOccupantViewModel.IsDependent)" />
+                    </div>
+                </div>
+
+                <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                              Click="@(() => OnClickRemoveOccupant(_secondaryOccupantViewModels.IndexOf(secondaryOccupantViewModel)))"
+                              Icon="@Icons.DeleteButton"
+                              Size="ButtonSize.Large"
+                              style="margin-top: 10px;"
+                              Disabled="@IsUserAllowedToEdit" />
+
+            </div>
+        }
+    </div>
+
+    <div style="margin-top:10px;">
+        <div class="grid-container">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                          class="flex-button"
+                          Click="@(_ => OnClickAddOccupant())"
+                          Icon="@Icons.AddButton"
+                          Size="ButtonSize.Large"
+                          Text="@Labels.AddOccupant"
+                          Disabled="@IsUserAllowedToEdit" />
+        </div>
+    </div>
+
+    <div class="flex-container">
+        <div>
+            <div class="card grid-form">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.Household
+                    </h4>
+                </div>
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@HouseholdIdentityViewModel.HouseholdViewModel.AskedHouseholdTypology"
+                               EditContext="_editContext"
+                               ElementName="@($"household-typology-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.AskedHouseholdTypology)"
+                               Items="@HouseholdTypologies"
+                               Label="@Labels.HouseholdTypology"
+                               TItem="HouseholdTypology?"
+                               IsDisabled="@IsUserAllowedToEdit"
+                               IsRequired="true"
+                               ShouldSort="true">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => HouseholdIdentityViewModel.HouseholdViewModel.AskedHouseholdTypology)" />
+                </div>
+
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.FollowedBySocialWorker"
+                                   EditContext="_editContext"
+                                   ElementName="@($"socialWorker-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.FollowedBySocialWorker)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.HouseholdFollowedBySocialWorker"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.Disability"
+                                   EditContext="_editContext"
+                                   ElementName="@($"Degraded-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Disability)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.Disability"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.LongTermIllness"
+                                   EditContext="_editContext"
+                                   ElementName="@($"Degraded-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.LongTermIllness)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.LongTermIllness"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.LackOfAutonomy"
+                                   EditContext="_editContext"
+                                   ElementName="@($"autonomy-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.LackOfAutonomy)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.LackOfAutonomy"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+            </div>
+            <div class="card grid-form"
+                 style="margin-top: 10px;">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.CuratorshipTitle
+                    </h4>
+                </div>
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.Curatorship"
+                                   EditContext="_editContext"
+                                   ElementName="@($"Degraded-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Curatorship)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.Curatorship"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+                <div class="item-civility">
+                    <div class="item-civility">
+                        <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.Guardianship"
+                                   EditContext="_editContext"
+                                   ElementName="@($"Degraded-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Guardianship)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.Guardianship"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card grid-form">
+                <div>
+                    <h2 class="section-title">
+                        @Labels.Finance
+                    </h2>
+                </div>
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.HomeResources
+                    </h4>
+                </div>
+                <div>
+                    <OutlinedInt @bind-Intgr="@HouseholdIdentityViewModel.HouseholdViewModel.IncomeTaxReference"
+                                 EditContext="_editContext"
+                                 FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.IncomeTaxReference)"
+                                 IsMoneyField="true"
+                                 IsRequired="true"
+                                 Label="@Labels.IncomeTaxReference"
+                                 Type="OutlinedInt.TypeOfValue.Int"
+                                 disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                    <ValidationMessage For="@(() => HouseholdIdentityViewModel.HouseholdViewModel.IncomeTaxReference)" />
+                </div>
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.ResourcesTypology
+                    </h4>
+                </div>
+                <div>
+                    <ZeeSelect @bind-CheckedValues="@HouseholdIdentityViewModel.HouseholdViewModel.AskedResourcesTypology"
+                               EditContext="_editContext"
+                               ElementName="@($"resources-typology-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.AskedResourcesTypology)"
+                               IsMultiSelect="true"
+                               IsRequired="true"
+                               Items="@HouseholdResourcesTypologies"
+                               Label="@Labels.ResourcesTypology"
+                               OnNewValueSelected="OnNewAskedResourcesTypologyAdded"
+                               TItem="Guid?"
+                               IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                               ShouldSort="true">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => HouseholdIdentityViewModel.HouseholdViewModel.AskedResourcesTypology)" />
+
+                    @if (HouseholdIdentityViewModel.HouseholdViewModel.ResourceTypologieValues.Count > 0)
+                    {
+                        <ZeeChangeDisplay @bind-IsDisplaying="@ShouldDisplayResources"></ZeeChangeDisplay>
+                        if (ShouldDisplayResources)
+                        {
+                            <div class="resources-field-container">
+                                @foreach (var resource in HouseholdIdentityViewModel.HouseholdViewModel.ResourceTypologieValues)
+                                {
+                                    if (resource.Id != _noneOptionId)
+                                    {
+                                        <div class="resources-field-container-item">
+                                            <OutlinedDouble @bind-Double="@resource.Value"
+                                                            EditContext="_editContext"
+                                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => resource.Value)"
+                                                            Label="@resource.Name"
+                                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                                            IsRequired="true"
+                                                            IsNullable="true"
+                                                            disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                                            </OutlinedDouble>
+                                            <ValidationMessage For="@(() => resource.Value)" />
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+                <div>
+                    <label>
+                        @Labels.ResourcesSum :
+                        <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(HouseholdIdentityViewModel.HouseholdViewModel.ResourcesTotalValue)</span>
+                    </label>
+                </div>
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.EnergeticsExpense
+                    </h4>
+                </div>
+                <div>
+                    <div class="resources-field-container">
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.MonthlyEnergeticsExpense.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.MonthlyEnergeticsExpense.Value)"
+                                            Label="@Labels.MonthlyEnergecticsExpenses"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsRequired="true"
+                                            IsNullable="true"
+                                            InfoBullMessage= "@Labels.InfoEnergeticExpense"
+                                            InfoBullTitle="@Labels.InfoTitleEnergeticExpense"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                            <ValidationMessage For="@(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.MonthlyEnergeticsExpense.Value)" />
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Electricity.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Electricity.Value)"
+                                            Label="@Labels.Electricity"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Gas.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Gas.Value)"
+                                            Label="@Labels.Gaz"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Water.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Water.Value)"
+                                            Label="@Labels.Water"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                    </div>
+                    <ZeeSelect @bind-CheckedValues="@HouseholdIdentityViewModel.HouseholdViewModel.HeatingEnergiesValuesSelected"
+                               EditContext="_editContext"
+                               ElementName="@($"heating-energy-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.HeatingEnergiesValuesSelected)"
+                               IsMultiSelect="true"
+                               Items="@_householdHeatingEnergyList"
+                               Label="@Labels.HeatingEnergies"
+                               OnNewValueSelected="OnNewHeatingEnergyAdded"
+                               TItem="Guid?"
+                               IsDisabled="@IsUserAllowedToEdit"
+                               ShouldSort="true">
+                    </ZeeSelect>
+
+                    @if (HouseholdIdentityViewModel.HouseholdViewModel.HeatingEnergiesValues.Count > 0)
+                    {
+                        <ZeeChangeDisplay @bind-IsDisplaying="@ShouldDisplayHeatingEnergy"></ZeeChangeDisplay>
+                        if (ShouldDisplayHeatingEnergy)
+                        {
+                            <div class="resources-field-container">
+                                @foreach (var heatingEnergy in HouseholdIdentityViewModel.HouseholdViewModel.HeatingEnergiesValues)
+                                {
+                                    <div class="resources-field-container-item">
+                                        <OutlinedDouble @bind-Double="@heatingEnergy.Value"
+                                                        EditContext="_editContext"
+                                                        FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => heatingEnergy.Value)"
+                                                        Label="@heatingEnergy.Name"
+                                                        Type="OutlinedDouble.TypeOfValue.Currency"
+                                                        IsNullable="true"
+                                                        disabled="@IsUserAllowedToEdit">
+                                        </OutlinedDouble>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.HouseholdFixedExpense
+                    </h4>
+                </div>
+                <ZeeChangeDisplay @bind-IsDisplaying="@ShouldDisplayFixedExpense"></ZeeChangeDisplay>
+                @if (ShouldDisplayFixedExpense)
+                {
+                    <div class="resources-field-container">
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Housing.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Housing.Value)"
+                                            Label="@Labels.HousingExpenditure"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Phone.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Phone.Value)"
+                                            Label="@Labels.PhoneExpenditure"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Internet.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Internet.Value)"
+                                            Label="@Labels.Internet"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Taxes.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Taxes.Value)"
+                                            Label="@Labels.Tax"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.CreditRepayment.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.CreditRepayment.Value)"
+                                            Label="@Labels.RepaymentOfCredit"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Insurance.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Insurance.Value)"
+                                            Label="@Labels.Insurance"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Mutual.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Mutual)"
+                                            Label="@Labels.Mutual"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Children.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Children)"
+                                            Label="@Labels.ChildrenExpenditure"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                    </div>
+                }
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.HouseholdCurrentExpense
+                    </h4>
+                </div>
+                <ZeeChangeDisplay @bind-IsDisplaying="@ShouldDisplayCurrentExpense"></ZeeChangeDisplay>
+                @if (ShouldDisplayCurrentExpense)
+                {
+                    <div class="resources-field-container">
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Food.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Food.Value)"
+                                            Label="@Labels.Food"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Transport.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Transport.Value)"
+                                            Label="@Labels.Transport"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Leisure.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Leisure.Value)"
+                                            Label="@Labels.Leisure"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Health.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Health.Value)"
+                                            Label="@Labels.Health"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                    </div>
+                }
+                <div>
+                    <h4 class="section-title ">
+                        @Labels.HouseholdOccasionalExpense
+                    </h4>
+                </div>
+                <ZeeChangeDisplay @bind-IsDisplaying="@ShouldDisplayOccasionalExpense"></ZeeChangeDisplay>
+                @if (ShouldDisplayOccasionalExpense)
+                {
+                    <div class="resources-field-container">
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Clothing.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Clothing.Value)"
+                                            Label="@Labels.Clothing"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Travel.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Travel.Value)"
+                                            Label="@Labels.Travel"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                        <div class="resources-field-container-item">
+                            <OutlinedDouble @bind-Double="@HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Furniture.Value"
+                                            EditContext="_editContext"
+                                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Furniture.Value)"
+                                            Label="@Labels.Furniture"
+                                            Type="OutlinedDouble.TypeOfValue.Currency"
+                                            IsNullable="true"
+                                            disabled="@IsUserAllowedToEdit">
+                            </OutlinedDouble>
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <label>
+                        @Labels.HouseholdTotalExpense :
+                        <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(HouseholdIdentityViewModel.HouseholdViewModel.Expenses.Total)</span>
+                    </label>
+                </div>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="HouseholdIdentityViewModel.HouseholdViewModel.HasUnpaidEnergyBills"
+                               EditContext="_editContext"
+                               ElementName="@($"HasUnpaidEnergyBills-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => HouseholdIdentityViewModel.HouseholdViewModel.HasUnpaidEnergyBills)"
+                               IsRequired="true"
+                               Items="@ItemsList.NullableYesNoList"
+                               Label="@Labels.HasUnpaidEnergyBills"
+                               TItem="bool?"
+                               IsDisabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => HouseholdIdentityViewModel.HouseholdViewModel.HasUnpaidEnergyBills)" />
+                </div>
+                <div>
+                    <label>
+                        @Labels.EnergyEffortRate :
+                        <span style="font-weight: bold">
+                            @(((HouseholdIdentityViewModel.HouseholdViewModel.EnergyEffortRate ?? 0) / 100).ToString("0.##%", CultureInfo.InvariantCulture))
+                            <ZeeToolTip InfoBullMessage="@Labels.EnnergyEffortRateFormula"
+                                        InfoBullTitle="@Labels.ValueFormula" />
+                        </span>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        @Labels.AvailableBudget :
+                        <span style="font-weight: bold">@StringHelper.DoubleToCurrencyFormat(HouseholdIdentityViewModel.HouseholdViewModel.AvailableBudget)</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label>
+                        @Labels.DebtRate :
+                        <span style="font-weight: bold">@HouseholdIdentityViewModel.HouseholdViewModel.DebtRate @(HouseholdIdentityViewModel.HouseholdViewModel.DebtRate is not null ? Labels.PercentUnit : null)</span>
+                    </label>
+                </div>
+
+                @switch (HouseholdIdentityViewModel.HouseholdViewModel.DebtRate)
+                {
+                    case >= Constants.DebtRateForCredit:
+                        {
+                            if (HouseholdIdentityViewModel.HouseholdViewModel.DebtRate > Constants.OverIndebtednessRate)
+                            {
+                                <div>
+                                    @Labels.SignsOfOverIndebtedness
+                                </div>
+                            }
+
+                            <div>
+                                @Labels.CantHaveAid
+                            </div>
+                            break;
+                        }
+                    case > 0 and < Constants.DebtRateForCredit:
+                        <div>
+                            @Labels.CanHaveAid
+                        </div>
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+</div>

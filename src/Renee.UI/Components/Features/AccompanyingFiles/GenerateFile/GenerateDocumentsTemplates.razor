@@ -1,0 +1,37 @@
+﻿@using Renee.Application.Helpers
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.GenerateFile.Modal
+
+@attribute [Authorize]
+@attribute [Route(Endpoints.GenerateDocumentsTemplates)]
+
+@inject IModalService ModalService
+
+<h1>@Labels.GenerateDocuments</h1>
+
+<EditForm EditContext="@_editContext" OnValidSubmit="@ShowModal">
+    <ObjectGraphDataAnnotationsValidator />
+    <div class="card">
+        <div>
+            <ZeeSelect @bind-CheckedValue="@ViewModel.SelectedDocument"
+                       EditContext="_editContext"
+                       ElementName="@($"document-{Guid.NewGuid().ToString()}")"
+                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SelectedDocument)"
+                       IsMultiSelect="false"
+                       IsRequired="true"
+                       Items="@Documents"
+                       Label="@GenerateFilesLabels.SelectDocumentTemplate"
+                       TItem="Guid?"
+                       ShouldSort="true">
+            </ZeeSelect>
+            <ValidationMessage For="@(() => ViewModel.SelectedDocument)" />
+        </div>
+
+        <div class="zeeButtonGroup">
+            <ZeeButton IsSubmit="true"
+                       Text="@GenerateFilesLabels.GenerateAFile" />
+        </div>
+    </div>
+
+    <p>@ExcelDataLabel.RgpdMessage</p>
+</EditForm>

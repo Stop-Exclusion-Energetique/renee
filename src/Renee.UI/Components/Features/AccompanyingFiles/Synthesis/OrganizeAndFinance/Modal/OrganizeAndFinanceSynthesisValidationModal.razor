@@ -1,0 +1,99 @@
+﻿@using Renee.Application.Helpers
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3 class="section-title">
+	@Labels.SynthesisModalTitle
+</h3>
+
+<div>
+	<div class="grid">
+		<div>
+			@Labels.SynthesisAccompaniementValidityText
+		</div>
+
+		<ZeeToolTip InfoBullMessage="@Labels.OrganizeAndFinanceCeeProgramValidityCondition">
+		</ZeeToolTip>
+	</div>
+	<div>
+		<ZeeSelect CheckedValue="@ViewModel.IsAccompanyingFileValidatedForCeeProgram"
+				ElementName="@($"isFolderValidated-{Guid.NewGuid().ToString()}")"
+				IsDisabled="@(ViewModel.UserRole != Constants.DiffuseCoordinatorRole && ViewModel.UserRole != Constants.TargetedCoordinatorRole)"
+				IsMultiSelect="false"
+				Items="@ItemsList.YesNoList"
+				TItem="bool">
+		</ZeeSelect>
+	</div>
+</div>
+
+<div>
+	<OutlinedText @bind-Value="@ViewModel.AnahCategory"
+				IsInForm="false"
+				Label="@Labels.AnahCategory"
+				readonly="readonly">
+	</OutlinedText>
+</div>
+
+<div>
+	<OutlinedText @bind-Value="@ViewModel.OwnershipStatus"
+				IsInForm="false"
+				Label="@Labels.PropertyStatus"
+				readonly="readonly">
+	</OutlinedText>
+</div>
+
+@if (ViewModel.IsDpeLowerThanGes() >= 0)
+{
+	<div>
+		<OutlinedText @bind-Value="@ViewModel.DpeLabel"
+					IsInForm="false"
+					Label="@Labels.HouseEtiquette"
+					readonly="readonly">
+		</OutlinedText>
+	</div>
+}
+else
+{
+	<div>
+		<OutlinedText @bind-Value="@ViewModel.GesLabel"
+					IsInForm="false"
+					Label="@Labels.GesEtiquette"
+					readonly="readonly">
+		</OutlinedText>
+	</div>
+
+}
+
+<div>
+	<OutlinedText Label="@Labels.EstimatedEnergyClassJump"
+					readonly="readonly"
+					Type="OutlinedInt.TypeOfValue.Int"
+					Value="@ViewModel.EnergyClassJump"/>
+</div>
+
+@if(ViewModel.IsAccompanyingFileValidatedForCeeProgram)
+{
+	<div class="align-toggle">
+		<ZeeToggle @bind-Value="@ViewModel.IsUserAwareOfNoPossibilitiesToUpdateAccompanyingFile"
+						DisplayBackground="DisplayEnumBackground.Blue" />
+		<span>@Labels.NoMoreUpdateAllowedAfterValidation</span>
+	</div>
+}
+
+@if (!ViewModel.IsAccompanyingFileValidatedForCeeProgram)
+{
+	<div>
+		@Labels.CheckOnYourEt
+	</div>
+}
+
+<div class="zeeButtonGroup">
+	<ZeeButton @onclick="@Close"
+		Text="@Labels.Cancel">
+	</ZeeButton>
+	<ZeeButton disabled="@(ShouldSubmitButtonBeDisabled())"
+		DisplayBackground="DisplayEnumBackground.Blue"
+		IsSubmit="false"
+		@onclick="Submit"
+		Text="@Labels.Submit">
+	</ZeeButton>
+</div>

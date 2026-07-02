@@ -1,0 +1,12 @@
+Surface: 80 m²
+Surface habitable: 120 m²
+Année construction: 1975
+Date bâti: vers 1985
+Propriétaire: oui
+Locataire: oui
+Maison individuelle: oui
+Appartement collectif: oui
+DPE: E
+DPE: G
+Téléphone: 06 11 22 33 44
+Téléphone: 07 55 66 77 88

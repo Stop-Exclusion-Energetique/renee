@@ -1,0 +1,370 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.List.ContextMenu
+@using Renee.UI.Components.CGUHandling.CGUModal
+@using Renee.UI.Components.Features.ReneeAIChat
+
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<PageTitle>@Constants.Title</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <AccompanyingFileListContextMenu></AccompanyingFileListContextMenu>
+        <RadzenLayout>
+            <RadzenHeader>
+                <RadzenStack class="bg-header justify-content-between align-items-center"
+                             Gap="0"
+                             Orientation="Orientation.Horizontal">
+                    <div class="d-flex flex-row align-items-center">
+                        <RadzenSidebarToggle Click="@(() => _sidebar1Expanded = !_sidebar1Expanded)"
+                                             class="fixed-burger" />
+                        <img src="/images/Logo-Renee-fondrose.png"
+                             alt="logo"
+                             style="width:100px" />
+                    </div>
+
+                    <div>
+                        <span class="headBand-text">@Labels.ReneeHeadBandDescription</span>
+                    </div>
+
+                    <div style="width: 75px"
+                         @onclick="ShowProfileManagementModal">
+                        @((MarkupString)Icons.Svg.PictoProfil)
+                    </div>
+                </RadzenStack>
+            </RadzenHeader>
+            <RadzenSidebar @bind-Expanded="@_sidebar1Expanded"
+                           class="d-flex flex-column bg-sidebar">
+                <RadzenPanelMenu class="flex-grow-1 bg-sidebar">
+                    <ContextMenuTrigger Data="@Endpoints.Base" MenuId="myMenu">
+                        <RadzenPanelMenuItem class="fill-icon"
+                                             Path="@Endpoints.Base"
+                                             Text="@Labels.Home">
+                            <Template>
+                                <span class="svg-icon">@((MarkupString)Icons.Svg.HomeFill)</span>
+                                <span>@Labels.Home</span>
+                            </Template>
+                        </RadzenPanelMenuItem>
+                    </ContextMenuTrigger>
+                    <div class="bottom-menu-container">
+                        <span class="border-bottom-menu"></span>
+                    </div>
+                    <AuthorizeView Context="_"
+                                   Roles="@($"{Constants.AdminRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+                        <AuthorizeView Context="_adminContext"
+                                       Roles="@Constants.AdminRole">
+                            <ContextMenuTrigger Data="@Endpoints.ReportingStructureManagement" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow"
+                                                     Icon="@Icons.Account"
+                                                     Path="@Endpoints.ReportingStructureManagement"
+                                                     Text="@Labels.ManageReportingStructure" />
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                            <ContextMenuTrigger Data="@Endpoints.NewSubscriptionDisplay" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow"
+                                                     Icon="@Icons.Account"
+                                                     Path="@Endpoints.NewSubscriptionDisplay"
+                                                     Text="@Labels.ManageSubscriptions" />
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                            <ContextMenuTrigger Data="@Endpoints.DeletedAccountManagement" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow"
+                                                     Icon="@Icons.Account"
+                                                     Path="@Endpoints.DeletedAccountManagement"
+                                                     Text="@Labels.ManageDeletedAccount" />
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                            <ContextMenuTrigger Data="@Endpoints.UserCreatedAccompanyingFiles" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow"
+                                                     Path="@Endpoints.UserCreatedAccompanyingFiles">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.Folder2)</span>
+                                        <span>@Labels.AccompanyingFileList</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                            <ContextMenuTrigger Data="@Endpoints.Coproperty" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.Coproperty">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.Folder2)</span>
+                                        <span>@Labels.Coproperty</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                            <ContextMenuTrigger Data="@Endpoints.AnahCategory" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow"
+                                                     Icon="@Icons.Euro"
+                                                     Path="@Endpoints.AnahCategory"
+                                                     Text="@Labels.AnahCategories" />
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+
+                            <ContextMenuTrigger Data="@Endpoints.CguVersion" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.CguVersion">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.FileEdit)</span>
+                                        <span>@Labels.CguVersions</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+
+                        <ContextMenuTrigger Data="@Endpoints.ImportExcelFiles" MenuId="myMenu">
+                            <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                 Path="@Endpoints.ImportExcelFiles"
+                                                 Icon="get_app"
+                                                 Text="@Labels.ImportDataLabel" />
+                        </ContextMenuTrigger>
+                        <div class="bottom-menu-container">
+                            <span class="border-bottom-menu"></span>
+                        </div>
+                    </AuthorizeView>
+                    <AuthorizeView Context="_"
+                                   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.AssociationMemberRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.StructuralReferentRole}")">
+                        <ContextMenuTrigger Data="@Endpoints.UserCreatedAccompanyingFiles" MenuId="myMenu">
+                            <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                 Path="@Endpoints.UserCreatedAccompanyingFiles">
+                                <Template>
+                                    <span class="svg-icon">@((MarkupString)Icons.Svg.Folder2)</span>
+                                    <span>@Labels.AccompanyingFileList</span>
+                                </Template>
+                            </RadzenPanelMenuItem>
+                        </ContextMenuTrigger>
+                        <div class="bottom-menu-container">
+                            <span class="border-bottom-menu"></span>
+                        </div>
+                        <AuthorizeView Context="myTasksContext"
+                                       Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}")">
+                            <ContextMenuTrigger Data="@Endpoints.MyTasks" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.MyTasks">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.Edit)</span>
+                                        <span>@Labels.MyTasks</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+                        <AuthorizeView Context="coproperty">
+                            <ContextMenuTrigger Data="@Endpoints.Coproperty" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.Coproperty">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.Folder2)</span>
+                                        <span>@Labels.Coproperty</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+                        <AuthorizeView Context="quickAddContext"
+                                       Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.StructuralReferentRole}")">
+                            <ContextMenuTrigger Data="@Endpoints.QuickAddAccompanyingFile" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.QuickAddAccompanyingFile">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.New)</span>
+                                        <span>@Labels.AccompanyingFileCreation</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+
+                        <AuthorizeView Context="coproperty"
+                                       Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.StructuralReferentRole}")">
+                            <ContextMenuTrigger Data="@Endpoints.QuickAddCoproperty" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.QuickAddCoproperty">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.New)</span>
+                                        <span>@Labels.AddCoproperty</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+
+                        <AuthorizeView Context="remainingAmount"
+                                       Roles="@($"{Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.SolidarBuilderRole},{Constants.TerritorialBuilderRole}, {Constants.StructuralReferentRole}")">
+                            <ContextMenuTrigger Data="@Endpoints.RemainingAmountFound" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.RemainingAmountFound">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.PictoArgent)</span>
+                                        <span>@Labels.AskingRemainingAmountFound</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+                        <AuthorizeView Context="ExcelExport"
+                                       Roles="@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.StructuralReferentRole}")">
+                            <ContextMenuTrigger Data="@Endpoints.ExcelExport" MenuId="myMenu">
+                                <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                     Path="@Endpoints.ExcelExport">
+                                    <Template>
+                                        <span class="svg-icon">@((MarkupString)Icons.Svg.Create)</span>
+                                        <span>@GenerateFilesLabels.ExcelExport</span>
+                                    </Template>
+                                </RadzenPanelMenuItem>
+                            </ContextMenuTrigger>
+                            <div class="bottom-menu-container">
+                                <span class="border-bottom-menu"></span>
+                            </div>
+                        </AuthorizeView>
+                        <ContextMenuTrigger Data="@Endpoints.GenerateDocumentsTemplates" MenuId="myMenu">
+                            <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                 Path="@Endpoints.GenerateDocumentsTemplates">
+                                <Template>
+                                    <span class="svg-icon">@((MarkupString)Icons.Svg.Create)</span>
+                                    <span>@GenerateFilesLabels.GenerateDocuments</span>
+                                </Template>
+                            </RadzenPanelMenuItem>
+                        </ContextMenuTrigger>
+						<div class="bottom-menu-container">
+							<span class="border-bottom-menu"></span>
+						</div>
+                        <ContextMenuTrigger Data="@Endpoints.Resources" MenuId="myMenu">
+                            <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                 Path="@Endpoints.Resources">
+                                <Template>
+                                    <span class="svg-icon">@((MarkupString)Icons.Svg.Doc)</span>
+                                    <span>@Labels.Resources</span>
+                                </Template>
+                            </RadzenPanelMenuItem>
+                        </ContextMenuTrigger>
+                        <div class="bottom-menu-container">
+                            <span class="border-bottom-menu"></span>
+                        </div>
+                    </AuthorizeView>
+                    <AuthorizeView Context="innerContext"
+                                   Policy="CsvFileAccessPolicy">
+                        <ContextMenuTrigger Data="@Endpoints.ImportCsvFiles" MenuId="myMenu">
+                            <RadzenPanelMenuItem class="btn-hover-yellow fill-icon"
+                                                 Path="@Endpoints.ImportCsvFiles"
+                                                 Icon="get_app"
+                                                 Text="@Labels.ImportCsv" />
+                        </ContextMenuTrigger>
+                        <div class="bottom-menu-container">
+                            <span class="border-bottom-menu"></span>
+                        </div>
+                    </AuthorizeView>
+                </RadzenPanelMenu>
+                <RadzenPanelMenu class="d-flex flex-column bg-sidebar">
+                    <div class="align-self-center d-flex flex-row mb-1 ">
+                        <ZeeButton Icon="@Icons.Logout"
+                                   DisplayBackground="DisplayEnumBackground.Pink"
+                                   @onclick="Logout"
+                                   Text="@Labels.Logout" />
+                    </div>
+                </RadzenPanelMenu>
+            </RadzenSidebar>
+            <RadzenBody Style="background-color: white; padding:30px 30px 0 30px !important">
+                @if (_showBanner)
+                {
+                    <div class="app-banner app-banner--info">
+                        <span class="app-banner__message">@_bannerMessage</span>
+                        <button class="app-banner__close" @onclick="@(() => _showBanner = false)" aria-label="@Labels.Close">
+                            &times;
+                        </button>
+                    </div>
+                }
+                <CustomErrorBoundary @ref="errorBoundary">
+                    <ChildContent>
+                        <div style="display: block; min-height: calc(100% - 80px)">
+                            <ZeeSpinner>
+                                @Body
+                            </ZeeSpinner>
+                        </div>
+                        <div class="d-flex flex-row justify-content-between align-content-center"
+                             style="bottom: 0;width: calc(100% - 60px);position: relative;">
+                            <div class="d-flex flex-row flex-grow-1 align-items-center justify-content-center">
+                                <a class="a-no-style"
+                                   target="_blank"
+                                   href="legal/Conditions Générales Utilisation.pdf"
+                                   style="cursor:pointer">
+                                    @Labels.CGU
+                                </a>
+                                <span>&nbsp;•&nbsp;</span>
+                                <a class="a-no-style"
+                                   href="legal/Politique de confidentialité.pdf"
+                                   target="_blank">
+                                    @Labels.PrivacyPolicy
+                                </a>
+                                <span>&nbsp;•&nbsp;</span>
+                                <a class="a-no-style"
+                                   href="legal/Mentions légales.pdf"
+                                   target="_blank">
+                                    @Labels.LegalNotice
+                                </a>
+                                <span>&nbsp;•&nbsp;</span>
+                                <a class="a-no-style"
+                                   href="mailto:reneeadmin@stopexclusionenergetique.org">
+                                    @Labels.MailContact
+                                </a>
+                            </div>
+                            <img height="80"
+                                 alt="footer"
+                                 src="images/footer.png" />
+                        </div>
+                    </ChildContent>
+                    <ErrorContent Context="error_context">
+                        <h3>@Labels.Errors.UnhandledErrorOccured</h3>
+                    </ErrorContent>
+                </CustomErrorBoundary>
+            </RadzenBody>
+        </RadzenLayout>
+        <AIChatBasePage />
+    </Authorized>
+    <NotAuthorized>
+        <div class="page">
+            @Body
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+<RadzenNotification />
+
+<CGUModal Show="@CGUContext.ShouldShowModal" LabelCGU="@CGUContext.LatestVersionLabelFile" OnAccepted="HandleCGUAcceptedAsync"></CGUModal>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a class="reload"
+       href="">
+        Reload
+    </a>
+    <a class="dismiss">
+        🗙
+    </a>
+</div>

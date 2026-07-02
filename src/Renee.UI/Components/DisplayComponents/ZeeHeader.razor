@@ -1,0 +1,29 @@
+﻿<div class="align-items-end d-flex flex-row justify-content-between">
+	<h1 class="d-flex flex-row h1">
+		@if (DisplayReturn)
+		{
+			<ZeeButton DisplayBackground="DisplayEnumBackground.Empty"
+			           Icon="arrow_back"
+			           onclick="history.back();">
+			</ZeeButton>
+		}
+		@Title
+	</h1>
+	@if (ShouldRenderLogo)
+	{
+		<img alt="logo"
+		     class="m-2"
+		     src="/images/LogoStop.svg"
+		     width="100px"/>
+	}
+</div>
+
+@code {
+
+	[Parameter] public bool DisplayReturn { get; set; }
+
+	[Parameter] public string? Title { get; set; }
+
+	[Parameter] public bool ShouldRenderLogo { get; set; }
+
+}

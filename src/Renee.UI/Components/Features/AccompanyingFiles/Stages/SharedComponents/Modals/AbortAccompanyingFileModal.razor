@@ -1,0 +1,69 @@
+﻿@using Renee.Application.Helpers
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+
+<h3 class="title">@Labels.AbortAccompanyingFileModalTitle</h3>
+
+<EditForm EditContext="@_editContext"
+          OnValidSubmit="@AbortAccompanyingFile">
+    <ObjectGraphDataAnnotationsValidator />
+    <div class="card">
+        <div>
+            <ZeeSelect @bind-CheckedValue="@ViewModel.AbortReasonLabelId"
+                       EditContext="_editContext"
+                       ElementName="@($"abort-reason-{Guid.NewGuid().ToString()}")"
+                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AbortReasonLabelId)"
+                       IsMultiSelect="false"
+                       IsRequired="true"
+                       Items="@AbortReasonLabels"
+                       Label="@Labels.AbortReason"
+                       TItem="Guid ?"
+                       ShouldSort="true" />
+            <ValidationMessage For="@(() => ViewModel.AbortReasonLabelId)" />
+        </div>
+
+        <div>
+            <OutlinedTextArea @bind-Value="@ViewModel.AbortRequestDetails"
+                              EditContext="@_editContext"
+                              IsRequired="true"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AbortRequestDetails)"
+                              Label=@Labels.AbortRequestDetails />
+            <ValidationMessage For="@(() => ViewModel.AbortRequestDetails)" />
+        </div>
+
+        <div class="toggle">
+            <ZeeToggle Value="@ViewModel.IsBillingRequested"
+                       ValueChanged="@OnBillingRequestedChanged"
+                       EditContext="_editContext"
+                       FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IsBillingRequested)"
+                       DisplayBackground="DisplayEnumBackground.Blue" />
+
+            <span>Demande de facturation exceptionnelle du jalon interrompu</span>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <SynthesisFileLoader @bind-MemoryStreamFile="@ViewModel.AbortJustificationFileStream"
+                                 @bind-ErrorMessage="@ErrorMessage"
+                                 @bind-FileName="@_fileName"
+                                 OnChangeUpload="@OnChangeUpload"
+                                 ViewFile="@ViewFile"
+                                 IsFileRequired="@(ViewModel.IsBillingRequested == true)"
+                                 OnClickDeleteFile="@OnClickDeleteFile"
+                                 ShouldDisplaySubmissionButton="() => true"
+                                 IsAccompanyingFileWaitingForValidation="() => true"
+                                 IsUserAllowedToModifyDataFolder="() => true"
+                                 FileNotLoadedMessage="@Labels.AbortFile"
+                                 FileLoadedMessage="@($"{Labels.SupportingDocument} {_fileName} {Labels.FileLoaded}")" />
+        </div>
+        <ValidationMessage For="@(() => ViewModel.AbortJustificationFileStream)" />
+
+        <div class="zeeButtonGroup">
+            <ZeeButton Text="@Labels.Cancel"
+                       @onclick="@(async () => await ModalInstance.CloseAsync(ModalResult.Cancel()))"
+                       DisplayBackground="DisplayEnumBackground.Red" />
+
+            <ZeeButton Text="@Labels.Submit"
+                       DisplayBackground="DisplayEnumBackground.Red"
+                       IsSubmit="true" />
+        </div>
+    </div>
+</EditForm>

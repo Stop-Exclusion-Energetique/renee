@@ -1,0 +1,90 @@
+﻿@using Renee.Application.Helpers
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.UpdateProfileManagementModal)]
+@attribute [Authorize]
+
+<AuthorizeView Context="_">
+    <Authorized>
+        @if (EditContext is not null)
+        {
+            <EditForm EditContext="@EditContext"
+                      OnValidSubmit="@HandleValidSubmit">
+
+                <ObjectGraphDataAnnotationsValidator />
+                <div>
+                    <h3>@Labels.PersonalInformation</h3>
+                    <div>
+                        <OutlinedText @bind-Value="UpdateProfileManagementViewModel.LastName"
+                                      EditContext="@EditContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.LastName)"
+                                      IsRequired="true"
+                                      Label="@Labels.Name" />
+
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.LastName)" />
+                    </div>
+
+                    <div>
+                        <OutlinedText @bind-Value="UpdateProfileManagementViewModel.FirstName"
+                                      EditContext="@EditContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.FirstName)"
+                                      IsRequired="true"
+                                      Label="@Labels.FirstName">
+                        </OutlinedText>
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.FirstName)" />
+                    </div>
+                    <div>
+                        <OutlinedText @bind-Value="UpdateProfileManagementViewModel.Email"
+                                      EditContext="@EditContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.Email)"
+                                      IsRequired="true"
+                                      Label="@Labels.EmailAddress" />
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.Email)" />
+                    </div>
+
+                    <div>
+                        <OutlinedText @bind-Value="UpdateProfileManagementViewModel.PhoneNumber"
+                                      EditContext="@EditContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.PhoneNumber)"
+                                      IsRequired="true"
+                                      Label="@Labels.PhoneNumber" />
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.PhoneNumber)" />
+                    </div>
+                    <div>
+                        <OutlinedText @bind-Value="UpdateProfileManagementViewModel.SiretNumber"
+                                      EditContext="@EditContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.SiretNumber)"
+                                      IsRequired="true"
+                                      Label="@Labels.SiretNumber" />
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.SiretNumber)" />
+                    </div>
+
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="@UpdateProfileManagementViewModel.TerritoryId"
+                                   EditContext="@EditContext"
+                                   ElementName="@($"Department-{Guid.NewGuid()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UpdateProfileManagementViewModel.TerritoryId)"
+                                   IsRequired="false"
+                                   Items="Territories"
+                                   Label="@Labels.Territory"
+                                   TItem="Guid?"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => UpdateProfileManagementViewModel.TerritoryId)" />
+                    </div>
+                </div>
+                <div class="right-part">
+                    <ZeeButton @onclick="Cancel"
+                               Text="@Labels.Cancel">
+                    </ZeeButton>
+                    <ZeeButton IsSubmit="true"
+                               Text="@Labels.Submit" />
+
+                </div>
+            </EditForm>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

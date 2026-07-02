@@ -1,0 +1,29 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div>
+    <canvas id="@CanvasId" width="400" height="200"></canvas>
+</div>
+
+@code {
+    [Parameter] public string CanvasId { get; set; } = "myChart";
+
+    [Parameter] public string ChartType { get; set; } = "bar"; // Types : bar, line, pie, etc.
+
+    [Parameter] public string[] Labels { get; set; } = new[] { "A", "B", "C", "D", "E", "F", "G" };
+
+    [Parameter] public double[] Data { get; set; } = Array.Empty<double>();
+
+    [Parameter] public string[] BackgroundColors { get; set; } = new[] { "rgb(000, 128, 000)", "rgb(000, 255, 000)", "rgb(128, 255, 000)", "rgb(255, 255, 000)", "rgb(255, 128, 000)", "rgb(255, 128, 064)", "rgb(255, 000, 000)" };
+
+    public DotNetObjectReference<DpeChart>? DpeChartDotNetRef { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            DpeChartDotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("initializeChart", CanvasId, ChartType, Labels, Data, BackgroundColors);
+        }
+    }
+
+}

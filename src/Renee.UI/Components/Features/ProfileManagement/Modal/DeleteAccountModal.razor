@@ -1,0 +1,35 @@
+﻿@using Application.Helpers;
+
+<h4 class="section-title">
+    @Labels.DeleteAccompanyingFileModalTitle
+</h4>
+
+<div class="container">
+    <div>
+        <span>@Labels.DeleteAccountModalAccompanyingFileAttribution</span>
+        <ZeeSelect @bind-CheckedValue="@ViewModel.AreAccompanyingFileAttribuated"
+                   EditContext="@EditContext"
+                   ElementName="@($"accompanying-file-attribuated-{Guid.NewGuid().ToString()}")"
+                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AreAccompanyingFileAttribuated)"
+                   IsRequired="false"
+                   Items="@ItemsList.NullableYesNoList"
+                   ShowLabelBefore="false"
+                   TItem="bool?">
+        </ZeeSelect>
+    </div>
+
+    <div>
+        <span>@Labels.DeleteAccountModalAccountDeletionConfirmation</span>
+        <ZeeSelect @bind-CheckedValue="@ViewModel.IsAccountDeletionConfirmed"
+                   EditContext="@EditContext"
+                   ElementName="@($"account-deletion-confirmed-{Guid.NewGuid().ToString()}")"
+                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IsAccountDeletionConfirmed)"
+                   IsRequired="false"
+                   Items="@ItemsList.NullableYesNoList"
+                   ShowLabelBefore="false"
+                   TItem="bool?"
+                   OnNewValueSelected="@OnValueChanged"
+                   IsDisabled="@(ViewModel.AreAccompanyingFileAttribuated is null)">
+        </ZeeSelect>
+    </div>
+</div>

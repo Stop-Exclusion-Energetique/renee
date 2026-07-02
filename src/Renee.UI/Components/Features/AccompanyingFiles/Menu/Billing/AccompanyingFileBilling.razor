@@ -1,0 +1,283 @@
+@using Renee.Domain
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.ViewModel
+@using Renee.UI.Components.FormComponents
+@using Renee.Application.Helpers
+
+<EditForm EditContext="@BillingEditContext"
+          OnValidSubmit="@OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="billing-form">
+        <h4 class="section-title">@Domain.AccompanyingFileMenu.FacturationInformation</h4>
+
+        <div class="card">
+            <h4 class="section-title">@Domain.AccompanyingFileMenu.FirstJalonFacturation</h4>
+
+            <div>
+                <ZeeSelect @bind-CheckedValue="BillingLog.BilledJalon1"
+                           ElementName="@($"billedJalon1-{Guid.NewGuid()}")"
+                           EditContext="@BillingEditContext"
+                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BilledJalon1)"
+                           Items="@ItemsList.YesNoList"
+                           Label="@Domain.AccompanyingFileMenu.FirstJalonBilled"
+                           ShowLabelBefore="true"
+                           TItem="bool"
+                           IsDisabled="@FacturationFieldShouldBeDisabled()"
+                           OnNewValueSelected="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.First))" />
+                <ValidationMessage For="@(() => BillingLog.BilledJalon1)" />
+            </div>
+
+            <div>
+                <OutlinedDouble @bind-Double="BillingLog.AmountBilledFirstStage"
+                                ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.First))"
+                                EditContext="@BillingEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.AmountBilledFirstStage)"
+                                IsNullable="true"
+                                Label="@Domain.AccompanyingFileMenu.TotalAmountBilled"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@FacturationFieldShouldBeDisabled()" />
+                <ValidationMessage For="@(() => BillingLog.AmountBilledFirstStage)" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.FundraisingLauchDateForFirstStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.First)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.FundraisingLaunchDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.FundraisingLauchDateForFirstStage)" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.BillingCallNumber"
+                              @bind-Value="BillingLog.BillingCallNumberFirstStage"
+                              ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.First))"
+                              EditContext="@BillingEditContext"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BillingCallNumberFirstStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.InvoiceNumber"
+                              @bind-Value="BillingLog.InvoiceNumberFirstStage"
+                              EditContext="@BillingEditContext"
+                              ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.First))"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.InvoiceNumberFirstStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.BillingDateFirstStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.First)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.BillingDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.BillingDateFirstStage)" />
+            </div>
+
+            @if (ShowSubmitButtonForFirstFacturationData)
+            {
+                <div class="form-actions">
+                    <ZeeButton IsSubmit="true"
+                               Text="@Labels.Submit" />
+                </div>
+            }
+        </div>
+
+        <div class="card">
+            <h4 class="section-title">@Domain.AccompanyingFileMenu.SecondJalonFacturation</h4>
+
+            <div>
+                <ZeeSelect @bind-CheckedValue="BillingLog.BilledJalon2"
+                           ElementName="@($"billedJalon2-{Guid.NewGuid()}")"
+                           EditContext="@BillingEditContext"
+                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BilledJalon2)"
+                           Items="@ItemsList.YesNoList"
+                           Label="@Domain.AccompanyingFileMenu.SecondJalonBilled"
+                           ShowLabelBefore="true"
+                           TItem="bool"
+                           IsDisabled="@FacturationFieldShouldBeDisabled()"
+                           OnNewValueSelected="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Second))" />
+                <ValidationMessage For="@(() => BillingLog.BilledJalon2)" />
+            </div>
+
+            <div>
+                <OutlinedDouble @bind-Double="BillingLog.AmountBilledSecondStage"
+                                EditContext="@BillingEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.AmountBilledSecondStage)"
+                                IsNullable="true"
+                                ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Second))"
+                                Label="@Domain.AccompanyingFileMenu.TotalAmountBilled"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                disabled="@FacturationFieldShouldBeDisabled()" />
+                <ValidationMessage For="@(() => BillingLog.AmountBilledSecondStage)" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.FundraisingLauchDateForSecondStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.Second)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.FundraisingLaunchDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.FundraisingLauchDateForSecondStage)" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.BillingCallNumber"
+                              @bind-Value="BillingLog.BillingCallNumberSecondStage"
+                              EditContext="@BillingEditContext"
+                              @onchange="(ChangeEventArgs _) => OnFacturationDataChange.InvokeAsync(FacturationStage.Second)"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BillingCallNumberSecondStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.InvoiceNumber"
+                              @bind-Value="BillingLog.InvoiceNumberSecondStage"
+                              EditContext="@BillingEditContext"
+                              ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Second))"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.InvoiceNumberSecondStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.BillingDateSecondStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.Second)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.BillingDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.BillingDateSecondStage)" />
+            </div>
+
+            @if (ShowSubmitButtonForSecondFacturationData)
+            {
+                <div class="form-actions">
+                    <ZeeButton IsSubmit="true"
+                               Text="@Labels.Submit" />
+                </div>
+            }
+        </div>
+
+        <div class="card">
+            <h4 class="section-title">@Domain.AccompanyingFileMenu.ThirdJalonFacturation</h4>
+
+            <div>
+                <ZeeSelect @bind-CheckedValue="BillingLog.BilledJalon3"
+                           ElementName="@($"billedJalon3-{Guid.NewGuid()}")"
+                           EditContext="@BillingEditContext"
+                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BilledJalon3)"
+                           Items="@ItemsList.YesNoList"
+                           Label="@Domain.AccompanyingFileMenu.ThirdJalonBilled"
+                           ShowLabelBefore="true"
+                           TItem="bool"
+                           IsDisabled="@FacturationFieldShouldBeDisabled()"
+                           OnNewValueSelected="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third))" />
+                <ValidationMessage For="@(() => BillingLog.BilledJalon3)" />
+            </div>
+
+            <div>
+                <OutlinedDouble @bind-Double="BillingLog.AmountBilledThirdStage"
+                                EditContext="@BillingEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.AmountBilledThirdStage)"
+                                IsNullable="true"
+                                Label="@Domain.AccompanyingFileMenu.TotalAmountBilled"
+                                Type="OutlinedDouble.TypeOfValue.Currency"
+                                ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third))"
+                                disabled="@FacturationFieldShouldBeDisabled()" />
+                <ValidationMessage For="@(() => BillingLog.AmountBilledThirdStage)" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.FundraisingLauchDateForThirdStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.FundraisingLaunchDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.FundraisingLauchDateForThirdStage)" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.BillingCallNumber"
+                              @bind-Value="BillingLog.BillingCallNumberThirdStage"
+                              EditContext="@BillingEditContext"
+                              ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third))"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.BillingCallNumberThirdStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <OutlinedText IsInForm="false"
+                              Label="@Domain.AccompanyingFileMenu.InvoiceNumber"
+                              @bind-Value="BillingLog.InvoiceNumberThirdStage"
+                              EditContext="@BillingEditContext"
+                              ActionCallAfterChange="@(() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third))"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => BillingLog.InvoiceNumberThirdStage)"
+                              disabled="@FacturationFieldShouldBeDisabled()" />
+            </div>
+
+            <div>
+                <div class="d-flex flex-column">
+                    <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate @bind-Value="BillingLog.BillingDateThirdStage"
+                                   @bind-Value:format="yyyy-MM-dd"
+                                   @bind-Value:after="() => OnFacturationDataChange.InvokeAsync(FacturationStage.Third)"
+                                   disabled="@FacturationFieldShouldBeDisabled()" />
+                        <span>
+                            @Domain.AccompanyingFileMenu.BillingDate
+                            <span class="required"></span>
+                        </span>
+                    </label>
+                </div>
+                <ValidationMessage For="@(() => BillingLog.BillingDateThirdStage)" />
+            </div>
+
+            @if (ShowSubmitButtonForThirdFacturationData)
+            {
+                <div class="form-actions">
+                    <ZeeButton IsSubmit="true"
+                               Text="@Labels.Submit" />
+                </div>
+            }
+        </div>
+    </div>
+</EditForm>

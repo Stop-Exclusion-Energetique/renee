@@ -1,0 +1,69 @@
+﻿@using Renee.Application.Helpers
+<div class="tab-container">
+	<div class="card">
+		<h4 class="section-title">
+			@RealiseAndFollowMilestone.Labels.Evaluations
+		</h4>
+
+		<div class="container-field">
+			<div class="notation">
+				<div>
+					<label class="required">@RealiseAndFollowMilestone.Labels.WellBeingRating</label>
+					<ZeeSelect @bind-CheckedValue="ViewModel.WellBeingRating"
+					           EditContext="@_editContext"
+					           ElementName="@($"WellBeingRating-{Guid.NewGuid().ToString()}")"
+					           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WellBeingRating)"
+					           Items="@_notations"
+					           TItem="int?"
+							   IsDisabled="@IsUserAllowedToEdit" />
+				</div>
+
+				<ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.NotationTooltipText"
+				            style="margin-top: 1em"/>
+			</div>
+
+			<div class="notation">
+				<div>
+					<label class="required">@RealiseAndFollowMilestone.Labels.EducationalFrameworkRating</label>
+					<ZeeSelect @bind-CheckedValue="ViewModel.EducationalFrameworkRating"
+					           EditContext="@_editContext"
+					           ElementName="@($"EducationalFrameworkRating-{Guid.NewGuid().ToString()}")"
+					           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EducationalFrameworkRating)"
+					           Items="@_notations"
+					           TItem="int?"
+							   IsDisabled="@IsUserAllowedToEdit" />
+				</div>
+
+				<ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.NotationTooltipText"
+				            style="margin-top: 1em"/>
+			</div>
+
+			<div class="notation">
+				<div>
+					<label class="required">@RealiseAndFollowMilestone.Labels.FamilySatisfactionWithSupport</label>
+					<ZeeSelect @bind-CheckedValue="ViewModel.FamilySatisfactionWithSupport"
+					           EditContext="@_editContext"
+					           ElementName="@($"FamilySatisfactionWithSupport-{Guid.NewGuid().ToString()}")"
+					           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilySatisfactionWithSupport)"
+					           Items="@_notations"
+					           TItem="int?"
+							   IsDisabled="@IsUserAllowedToEdit" />
+				</div>
+
+				<ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.NotationTooltipText"
+				            style="margin-top: 1em"/>
+			</div>
+
+			<div>
+				<label>@RealiseAndFollowMilestone.Labels.IsBackToEmployment</label>
+				<ZeeSelect @bind-CheckedValue="ViewModel.IsBackToEmployment"
+				           EditContext="@_editContext"
+				           ElementName="@($"IsBackToEmployment-{Guid.NewGuid().ToString()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IsBackToEmployment)"
+				           Items="@ItemsList.NullableYesNoList"
+				           TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit" />
+			</div>
+		</div>
+	</div>
+</div>

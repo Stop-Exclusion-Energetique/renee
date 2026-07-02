@@ -1,0 +1,181 @@
+@using Renee.Domain.Enums
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.List.Components
+@using Renee.UI.Components.Features.AccompanyingFiles.List.Presenter
+@attribute [Route(Endpoints.UserCreatedAccompanyingFiles)]
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<AuthorizeView Context="_">
+	<Authorized>
+		<h1 class="page-title">@Labels.CreatedAccompanyingFileList</h1>
+
+		<div class="flex-filter-area">
+
+			<div class="grid-filter-area">
+				<AuthorizeView Context="EsContext"
+							Roles=@($"{Constants.SolidarBuilderRole}")>
+
+					<div>
+						<ZeeSelect @bind-CheckedValue="CreatedAccompanyingFileByUsersFilterViewModel.FilterContext"
+								@bind-CheckedValue:after="@(() => UpdateAccompanyingFilesList())"
+								IsMultiSelect="false"
+								Items="@(SelectedEsFilter.ToList())" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="Coordinator"
+							Roles="@($"{Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}")">
+					<div>
+						<ZeeSelect @bind-CheckedValue="CreatedAccompanyingFileByUsersFilterViewModel.FilterContext"
+								@bind-CheckedValue:after="@(() => UpdateAccompanyingFilesList())"
+								IsMultiSelect="false"
+								Items="@(SelectedCoordinatorFilter.ToList())" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="TerritorialBuilder"
+							Roles="@($"{Constants.TerritorialBuilderRole}")">
+					<div>
+						<ZeeSelect @bind-CheckedValue="CreatedAccompanyingFileByUsersFilterViewModel.FilterContext"
+								@bind-CheckedValue:after="@(() => UpdateAccompanyingFilesList())"
+								IsMultiSelect="false"
+								Items="@(SelectedTerritorialBuilderFilter.ToList())" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="Admin"
+							Roles="@Constants.AdminRole">
+					<div>
+						<ZeeSelect @bind-CheckedValue="CreatedAccompanyingFileByUsersFilterViewModel.FilterContext"
+								@bind-CheckedValue:after="@(() => UpdateAccompanyingFilesList())"
+								IsMultiSelect="false"
+								Items="@(SelectedAdminFilter.ToList())" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="TargertedCoordinator"
+							Roles="@Constants.TargetedCoordinatorRole">
+					<div>
+						<ZeeSelect @bind-CheckedValues="@CreatedAccompanyingFileByUsersFilterViewModel.Territories"
+								ElementName="@($"Territory-{Guid.NewGuid}")"
+								IsMultiSelect
+								Items="@TerritoryDisplayList"
+								Label="@Labels.FilterByTerritory"
+								OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+								ShowLabelBefore="false"
+								ShouldSort="true" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="AssoMemberContext"
+							Roles="@($"{Constants.AssociationMemberRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+					<div>
+						<ZeeSelect @bind-CheckedValues="CreatedAccompanyingFileByUsersFilterViewModel.ReportingStructureIdList"
+								ElementName="@($"reportingstructure-{Guid.NewGuid}")"
+								IsMultiSelect
+								Items="ReportingStructures"
+								Label="@Labels.FilterByReportingStructure"
+								OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+								ShowLabelBefore="false"
+								ShouldSort="true" />
+					</div>
+				</AuthorizeView>
+
+				<AuthorizeView Context="Coordinator"
+							Roles="@($"{Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+					<div>
+						<ZeeSelect @bind-CheckedValues="@CreatedAccompanyingFileByUsersFilterViewModel.SolidarBuildersList"
+								ElementName="@($"EsUSer-{Guid.NewGuid}")"
+								IsMultiSelect
+								Items="@SolidarBuilderDisplayList"
+								Label="@Labels.FilterBySolidarBuilder"
+								OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+								ShowLabelBefore="false"
+								ShouldSort="true" />
+					</div>
+				</AuthorizeView>
+
+				<div>
+					<ZeeSelect @bind-CheckedValues="@CreatedAccompanyingFileByUsersFilterViewModel.AccompanyingFileStages"
+							ElementName="@($"AccompanyingFileMilestone-{Guid.NewGuid}")"
+							IsMultiSelect
+							Items="@AccompanyingFileStages"
+							Label="@Labels.FilterByAccompanyingFileMilestone"
+							OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+							ShowLabelBefore="false"
+							ShouldSort="true" />
+				</div>
+				<div>
+					<ZeeSelect @bind-CheckedValues="@CreatedAccompanyingFileByUsersFilterViewModel.AccompanyingFileStatuses"
+							ElementName="@($"AccompanyingFileStatus-{Guid.NewGuid}")"
+							IsMultiSelect
+							Items="@AccompanyingFileStatus"
+							Label="@Labels.FilterByAccompanyingFileStatus"
+							OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+							ShowLabelBefore="false"
+							ShouldSort="true" />
+				</div>
+				<div>
+					<ZeeSelect @bind-CheckedValues="@CreatedAccompanyingFileByUsersFilterViewModel.AccompanyingFileNeedingBillings"
+							ElementName="@($"AccompanyingFileNeedingBilling-{Guid.NewGuid}")"
+							IsMultiSelect
+							Items="@AccompanyingFileNeedingBillingOptions.ToList()"
+							Label="@Labels.FilterByBillingStatus"
+							OnNewValueSelected="@(() => UpdateAccompanyingFilesList())"
+							ShowLabelBefore="false"
+							ShouldSort="true" />
+				</div>
+
+
+				<ZeeFilterField FilterValue="@CreatedAccompanyingFileByUsersFilterViewModel.FilterValue"
+								OnFilterValueChanged="@(value => UpdateAccompanyingFilesList(filterValue: value))" />
+			</div>
+
+			@string.Format(Labels.NumberOfDisplayedFiles, CreatedAccompanyingFilesListViewModel.TotalCount)
+		</div>
+
+		<AuthorizeView Context="Admin"
+					Roles="@($"{Constants.AssociationMemberRole}, {Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.StructuralReferentRole}")">
+			<div class="grid-container-sort-filter">
+				<ZeeSortButton OnSortingStateUpdate="@(state => UpdateAccompanyingFilesList(sortingState: state))"
+							SortingOn="@Labels.AccompanyingFileLastModificationDate"
+							SortingState="@CreatedAccompanyingFileByUsersFilterViewModel.SortingState" />
+			</div>
+		</AuthorizeView>
+
+		<div class="flex-container">
+
+			@if (CreatedAccompanyingFilesListViewModel.AccompanyingFiles.Count == 0)
+			{
+				<span>@Labels.NoAccompanyingFileMatchCriteria</span>
+			}
+
+			@foreach (var accompanyingFile in CreatedAccompanyingFilesListViewModel.AccompanyingFiles)
+			{
+				<AccompanyingFileCard OnAccompanyingFileDeleted="@LoadAccompanyingFilesAsync"
+									UserId="@_userId"
+									ViewModel="@accompanyingFile"
+									UserRole="@_userRole"
+									OnStateChanged="@LoadAccompanyingFilesAsync"
+									SelectedFilterContext="CreatedAccompanyingFileByUsersFilterViewModel.FilterContext"
+									IsDeadlineDateReached="@_isDeadlineDateReached" 
+									IsInTZEEProgram="@accompanyingFile.IsInTZEEProgram" />
+			}
+
+			@if (CreatedAccompanyingFilesListViewModel.AccompanyingFiles.Count > 0)
+			{
+				<ZeePager @bind-PageIndex="@_pageIndex"
+						@bind-PageSize="@_pageSize"
+						TotalCount="@CreatedAccompanyingFilesListViewModel.TotalCount"
+						PagingChanged="@OnPagingChanged" />
+			}
+		</div>
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

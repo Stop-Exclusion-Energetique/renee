@@ -1,0 +1,77 @@
+@typeparam TItem
+
+@if (Items is not null)
+{
+	@if (!IsMultiSelect && Items.Count < 6 && ShowLabelBefore)
+	{
+		<span class="@IsRequiredCssClass">@Label</span>
+	}
+
+	<section class="pure-material-select-outlined @(IsRequired != null && IsRequired.Value ? "required-after" : "")">
+
+		@if (IsMultiSelect)
+		{
+			<RadzenDropDown AllowClear="true"
+			                AllowFiltering="true"
+			                Change="OnListChanged"
+			                Chips="true"
+			                Data="Items"
+							FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+			                MaxSelectedLabels="100"
+			                Multiple="true"
+			                Name="@ElementName"
+			                Placeholder=@Label
+			                SearchTextChanged="SearchMethod"
+			                SelectAllText="@Labels.SelectAll"
+			                Style="width: 100%"
+			                TextProperty="Label"
+			                TValue="IEnumerable<TItem>"
+			                Value="CheckedValues"
+			                ValueProperty="Value"
+							Disabled="@IsDisabled">
+			</RadzenDropDown>
+		}
+		else if (Items.Count < 6)
+		{
+			foreach (var item in Items)
+			{
+				<div>
+					<input @attributes="AdditionalAttributes"
+					       checked="@(Compare(item.Value, CheckedValue))"
+					       disabled="@(IsDisabled && !Compare(item.Value, CheckedValue))"
+					       id="@ElementName-@item.Value?.ToString()"
+					       name="@ElementName"
+					       @onclick="@(() => OnCheckRadioClicked(item.Value))"
+					       type="radio"
+					       value="@item.Value?.ToString()">
+					<label for="@ElementName-@item.Value?.ToString()" 
+						   class="label">
+						<span class="item-label">@item.Label</span>
+					</label>
+				</div>
+			}
+		}
+		else
+		{
+			<RadzenDropDown AllowFiltering="true"
+			                Change="OnListChanged"
+			                Data="Items"
+			                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+			                Multiple="false"
+			                Name="@ElementName"
+			                Placeholder=@Label
+			                SearchTextChanged="SearchMethod"
+			                Style="width: 100% ;"
+			                TextProperty="Label"
+			                TValue="TItem"
+			                Value="CheckedValue"
+			                ValueProperty="Value"
+							Disabled="@IsDisabled">
+			</RadzenDropDown>
+		}
+		@if (IsMultiSelect || Items.Count >= 6)
+		{
+			<span class="@(IsVisible ? "visible " + IsRequiredCssClass : "hidden")">@Label</span>
+		}
+	</section>
+}

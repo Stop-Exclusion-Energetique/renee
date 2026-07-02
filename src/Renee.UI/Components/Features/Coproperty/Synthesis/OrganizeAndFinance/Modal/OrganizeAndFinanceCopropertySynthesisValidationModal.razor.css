@@ -1,0 +1,12 @@
+﻿.section-title {
+    color: var(--primary);
+}
+
+.zeeButtonGroup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

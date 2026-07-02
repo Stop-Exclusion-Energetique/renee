@@ -1,0 +1,223 @@
+@using Renee.Application.Helpers
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.RealizeAndFollowSynthesis + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        <div class="main-content">
+            @if (!ShouldDisplaySynthesis())
+            {
+                <p>
+                    <strong>@Labels.SynthesisNotAvailable</strong>
+                </p>
+            }
+            else
+            {
+                <h1 class="ml-3 rubric-title">@RealiseAndFollowMilestone.Labels.RealiseAndFollowSynthesisTitle</h1>
+                <div class="grid-container">
+                    <div class="card projectCost" style="height:fit-content">
+                        <div class="rubric">
+                            <h2 class="rubric-title">@RealiseAndFollowMilestone.Labels.ProjectCost</h2>
+                            <OutlinedDouble Double="@ViewModel.AccompanyingCost"
+                                            IsNullable="true"
+                                            Label="@RealiseAndFollowMilestone.Labels.AccompanyingCost"
+                                            readonly
+                                            Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                            <OutlinedDouble Double="@ViewModel.HouseholdAutoFinancing"
+                                            IsNullable="true"
+                                            Label="@RealiseAndFollowMilestone.Labels.HouseholdAutoFinancing"
+                                            readonly
+                                            Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                            @foreach (var invoiceSummaryWithIndex in ViewModel.InvoicesSummary.Select((item, i) => new { Item = item, Index = i }))
+                            {
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@($"{RealiseAndFollowMilestone.Labels.Invoice} {invoiceSummaryWithIndex.Index + 1}")</h3>
+                                    <OutlinedDouble Double="@invoiceSummaryWithIndex.Item.Key"
+                                                    Label="@($"{RealiseAndFollowMilestone.Labels.TotalCost} {invoiceSummaryWithIndex.Index + 1}")"
+                                                    readonly
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                    <OutlinedDouble Double="@invoiceSummaryWithIndex.Item.Value"
+                                                    Label="@RealiseAndFollowMilestone.Labels.BilledWorkForce"
+                                                    readonly
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card workSummary" style="height:fit-content">
+                        <div class="rubric">
+                            <h2 class="rubric-title">@RealiseAndFollowMilestone.Labels.WorkSummary</h2>
+                            <OutlinedText Label="@RealiseAndFollowMilestone.Labels.IntermediateAirtightnessTestResult"
+                                          readonly
+                                          Value="@ViewModel.IntermediateAirtightnessTestResult" />
+
+                            <OutlinedText Label="@RealiseAndFollowMilestone.Labels.WaterproofingTreatmentActions"
+                                          readonly
+                                          Value="@ViewModel.WaterproofingTreatmentActions" />
+
+                            <div>
+                                <label>
+                                    @RealiseAndFollowMilestone.Labels.EffectiveComplianceWithWorkRecommendations :
+                                    <span style="font-weight: bold">@StringHelper.BoolToString(ViewModel.HasEffectiveComplianceWithWorkRecommendations)</span>
+                                </label>
+                            </div>
+
+                            <div>
+                                <label>
+                                    @RealiseAndFollowMilestone.Labels.HasWorkEnablingHomeSupport :
+                                    <span style="font-weight: bold">@StringHelper.BoolToString(ViewModel.HasWorkEnablingHomeSupport)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card evaluations" style="height:fit-content">
+                        <div class="rubric">
+                            <h2 class="rubric-title">@RealiseAndFollowMilestone.Labels.Evaluations</h2>
+                            <OutlinedText Label="@RealiseAndFollowMilestone.Labels.WellBeingRating"
+                                          readonly
+                                          Value="@ViewModel.WellBeingRating.ToString()" />
+
+                            <OutlinedText Label="@RealiseAndFollowMilestone.Labels.EducationalFrameworkRating"
+                                          readonly
+                                          Value="@ViewModel.EducationalFrameworkRating.ToString()" />
+
+                            <OutlinedText Label="@RealiseAndFollowMilestone.Labels.FamilySatisfactionWithSupport"
+                                          readonly
+                                          Value="@ViewModel.FamilySatisfactionWithSupport.ToString()" />
+
+                            <div>
+                                <label>
+                                    @RealiseAndFollowMilestone.Labels.IsBackToEmployment :
+                                    <span style="font-weight: bold">@StringHelper.BoolToString(ViewModel.IsBackToEmployment)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card projectEnd" style="height:fit-content">
+                        <div class="rubric">
+                            <h2 class="rubric-title">@RealiseAndFollowMilestone.Labels.ProjectEnd</h2>
+                            <label class="pure-material-textfield-outlined">
+                                <ZeeInputDate @bind-Value="ViewModel.EndOfAccompanyingDate"
+                                           @bind-Value:format="yyyy-MM-dd"
+                                           readonly />
+
+                                <span>@RealiseAndFollowMilestone.Labels.EndOfAccompanyingDate</span>
+                            </label>
+
+                            <div>
+                                <label>
+                                    @RealiseAndFollowMilestone.Labels.AccompanyingTime
+                                    <span style="font-weight: bold">@ViewModel.AccompanyingTime</span>
+                                </label>
+                            </div>
+
+                            <label class="pure-material-textfield-outlined">
+                                <ZeeInputDate @bind-Value="ViewModel.EndOfEncounterDate"
+                                           @bind-Value:format="yyyy-MM-dd"
+                                           readonly />
+
+                                <span>@RealiseAndFollowMilestone.Labels.EndOfEncounterDate</span>
+                            </label>
+
+
+                            <OutlinedText Label="@Labels.AccompayingTimeDuration"
+                                          readonly
+                                          Value="@ViewModel.AccompanyingTimeDuration" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <div class="left-part">
+                        <div class="left-part-child">
+                            <SynthesisFileLoader @bind-MemoryStreamFile="@_workReceiptStream"
+                                                 @bind-ErrorMessage="@_workReceiptError"
+                                                 @bind-FileName="@_workReceiptPvFileName"
+                                                 OnChangeUpload="@UploadWorkReceiptPv"
+                                                 ViewFiles="@ViewFile"
+                                                 OnClickDeleteFile="@OnClickDeleteWorkReceiptPv"
+                                                 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                 FileNotLoadedMessage="@RealiseAndFollowMilestone.Labels.WorksReceiptPvFileLabel"
+                                                 FileLoadedMessage="@($"{Labels.SupportingDocument} {_workReceiptPvFileName} {Labels.FileLoaded}")"
+                                                 @bind-FileBytes="@_workReceiptPvData" />
+                        </div>
+
+                        <div class="left-part-child">
+                            <SynthesisFileLoader @bind-MemoryStreamFile="@_accompanyingFileReportStream"
+                                                 @bind-ErrorMessage="@_accompanyingFileReportError"
+                                                 @bind-FileName="@_accompanyingFileReportFileName"
+                                                 OnChangeUpload="@UploadAccompanyingFileReport"
+                                                 ViewFiles="@ViewFile"
+                                                 OnClickDeleteFile="@OnClickDeleteAccompanyingFileReport"
+                                                 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                 FileNotLoadedMessage="@RealiseAndFollowMilestone.Labels.AccompanyingFileReportLabel"
+                                                 FileLoadedMessage="@($"{Labels.SupportingDocument} {_accompanyingFileReportFileName} {Labels.FileLoaded}")"
+                                                 @bind-FileBytes="@_accompanyingFileReportData" />
+                        </div>
+
+                        <div class="left-part-child">
+                            <SynthesisFileLoader @bind-MemoryStreamFile="@_anahHelpObtentionFileStream"
+                                                 @bind-ErrorMessage="@_anahHelpObtentionFileError"
+                                                 @bind-FileName="@_anahHelpObtentionFileName"
+                                                 OnChangeUpload="@UploadAnahHelpObtentionFile"
+                                                 ViewFiles="@ViewFile"
+                                                 OnClickDeleteFile="@OnClickDeleteAnahHelpObtentionFile"
+                                                 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                 FileNotLoadedMessage="@RealiseAndFollowMilestone.Labels.AnahHelpObtentionFileLabel"
+                                                 FileLoadedMessage="@($"{Labels.SupportingDocument} {_anahHelpObtentionFileName} {Labels.FileLoaded}")"
+                                                 @bind-FileBytes="@_anahHelpObtentionFileData" />
+                        </div>
+                    </div>
+
+                    @if (ShouldDisplaySubmissionButton())
+                    {
+                        <div class="right-part">
+                            <ZeeButton @onclick="@OnClickCancelButton"
+                                       Text="@Labels.Cancel">
+                            </ZeeButton>
+                            <ZeeButton disabled="@(!AreSupportingDocumentsAsked)"
+                                       IsSubmit="true"
+                                       @onclick="OnSubmit"
+                                       Text="@Labels.Submit">
+                            </ZeeButton>
+                        </div>
+                    }
+
+                    @if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+                    {
+                        <div class="right-part">
+
+                            <ZeeButton IsSubmit="true"
+                                       @onclick="@(() => StageValidation(false))"
+                                       Text="Rejeter">
+                            </ZeeButton>
+                            <ZeeButton @onclick="@(() => StageValidation(true))"
+                                       Text="Valider">
+                            </ZeeButton>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

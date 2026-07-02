@@ -1,0 +1,35 @@
+﻿@using Application.Helpers;
+
+@if (EditContext is not null)
+{
+    <EditForm EditContext="@EditContext"
+              OnValidSubmit="@HandleSubmit">
+        <h4 class="section-title">
+            @Labels.UpdateSupportTeamModalTitle
+        </h4>
+
+        <p class="validation-message">
+            @Labels.UpdateSupportTeamWarningMessage
+        </p>
+
+        <div>
+            <ZeeSelect @bind-CheckedValue="@ViewModel.AssignedTo"
+                       EditContext="@EditContext"
+                       ElementName="@($"user-{Guid.NewGuid()}")"
+                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AssignedTo)"
+                       IsMultiSelect="false"
+                       IsRequired="false"
+                       Items="@Users"
+                       Label="@SupportTeamMemberRole"
+                       ShouldSort="true" />
+        </div>
+
+        <div class="zeeButtonGroup">
+            <ZeeButton @onclick="@Close"
+                       Text="@Labels.Cancel" />
+
+            <ZeeButton IsSubmit="true"
+                       Text="@Labels.Submit" />
+        </div>
+    </EditForm>
+}

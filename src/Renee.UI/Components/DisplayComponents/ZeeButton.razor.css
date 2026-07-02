@@ -1,0 +1,102 @@
+.btn-bg {
+    background: var(--primary) !important;
+    color: var(--white) !important;
+}
+
+.btn-pink {
+    background: #eb6d78 !important;
+    color: var(--white) !important;
+}
+
+.btn-dark-blue {
+    background: var(--dark-blue) !important;
+    color: var(--white) !important;
+}
+
+.btn-valid {
+    background: var(--green) !important;
+    color: var(--white) !important;
+}
+
+.btn-danger {
+    background: var(--red) !important;
+    color: var(--white) !important;
+}
+
+.btn-yellow {
+    background: var(--yellow) !important;
+    color: var(--black) !important;
+}
+
+.btn-hover-yellow:hover {
+    background-color: var(--yellow) !important;
+    color: var(--black) !important;
+}
+
+.btn-hover-yellow *:hover {
+    background-color: inherit !important;
+    color: inherit !important;
+}
+
+.btn-full-width {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.btn-disabled {
+    background: var(--grey) !important;
+    color: var(--white) !important;
+}
+
+.btn-white {
+    background-color: var(--white) !important;
+    color: var(--black) !important;
+    border: solid 1px var(--black);
+}
+
+.active {
+    background: var(--yellow) !important;
+    color: var(--black) !important;
+}
+
+.zee-button-icon {
+    font-size: 2.8571rem;
+}
+
+.zee-button-text {
+    font-size: 1.7857rem;
+}
+
+.zee-button-text-small {
+    font-size: 1.2857rem;
+}
+
+@media (max-width: 1080px) {
+
+    #identification-btn span {
+        font-size: 0 !important;
+    }
+
+    #identification-btn span::before {
+        content: "1.";
+        font-size: initial;
+    }
+
+    #organize-finance-btn span {
+        font-size: 0 !important;
+    }
+
+    #organize-finance-btn span::before {
+        content: "2.";
+        font-size: initial;
+    }
+
+    #realize-follow-btn span {
+        font-size: 0 !important;
+    }
+
+    #realize-follow-btn span::before {
+        content: "3.";
+        font-size: initial;
+    }
+}

@@ -1,0 +1,15 @@
+Adresse: 8 impasse des Lilas
+Code postal: 69003
+
+Occupant: Lefebvre Michel
+Né le: 03/04/1958
+Téléphone: 07 45 12 89 63
+Email: michel.lefebvre@gmail.com
+Profession: Retraité
+
+Type de logement: Appartement collectif
+Surface: 58 m²
+Année de construction: 1972
+Nombre de pièces: 3
+Statut: Locataire
+Suivi travailleur social: Oui

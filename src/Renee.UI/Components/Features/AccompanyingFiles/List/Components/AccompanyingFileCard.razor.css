@@ -1,0 +1,231 @@
+﻿.accompanyingFile-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 1em;
+    width: 100%;
+    border: 2px solid #896aab;
+    border-radius: 25px;
+}
+
+.card-items {
+    display: grid;
+    grid-template-columns: auto 1fr 2fr 2fr 1fr 1fr 1fr 1fr;
+}
+
+.card-items-in-charge {
+    display: grid;
+    grid-template-columns: auto 1fr 2fr 2fr 2fr 1fr 1fr 1fr;
+}
+
+.card-item{
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #896aab;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.fixed-width {
+    width: 250px;
+}
+
+.card-item-label {
+    color: var(--renee-secondary-purple);
+    font-size: small;
+}
+
+.card-item-value {
+    width: 100%;
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    height: 100%;
+    text-align: center;
+}
+
+.card-btn-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 50px);
+    justify-items: center;
+}
+
+.card-btn {
+    border: none;
+    background: none;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+.card-btn-fake{
+    height:30px;
+    width: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+.btn1 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 5px;
+}
+
+.btn2 {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 5px;
+}
+
+.btn3 {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 5px;
+}
+
+.btn4 {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 5px;
+    padding-left: 2px;
+}
+
+.btn-full {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+    width: 100%;
+    margin-inline: 7px;
+    margin-top: 5px;
+    margin-bottom: -5px;
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    color: var(--primary);
+    background: white;
+    justify-self: center;
+}
+
+.approve-folder-icon {
+    display: flex;
+    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.visual-indicators {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 15px;
+    font-size: 0.7857rem;
+}
+
+.indicator {
+    background-color: var(--yellow);
+    padding: 9px;
+    border-radius: 15px;
+}
+
+.facturation-info {
+    cursor: help;
+}
+
+.affected-folder {
+    background-color: #dcb9e142;
+}
+
+.icon-available{
+    display: flex;
+    fill: var(--primary);
+    height: 50px !important;
+    width: 50px !important;
+}
+
+.icon-disable{
+    display: flex;
+    fill: var(--dark-grey);
+    height: 50px !important;
+    width: 50px !important;
+}
+
+
+.without-solidar-builders {
+    background-color: #eb6d78;
+}
+
+.badge-with-billing {
+    background-color: #f4a460;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 4px;
+    white-space: nowrap;
+}
+
+.badge-without-billing {
+    background-color: #d3d3d3;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 4px;
+    white-space: nowrap;
+}
+
+@media (max-width: 1350px) {
+
+    .accompanyingFile-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-items-in-charge {
+        padding-top: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .card-items {
+        padding-top: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .card-btn-container{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+        width: auto;
+        height: unset;
+    }
+
+    .btn-full {
+        flex-basis: 100%; 
+    }
+
+    .btn1, .btn2, .btn3, .btn4 {
+        flex: 0 0 auto;
+    }
+    
+    .card-item {
+        border-right: none;
+    }
+
+    .fixed-width {
+        width: 100%;
+    }
+
+    .approve-folder-icon {
+        margin-top: 10px;
+    }
+
+    .visual-indicators {
+        margin-top: 10px;
+    }
+}

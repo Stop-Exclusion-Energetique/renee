@@ -1,0 +1,57 @@
+﻿@using Renee.Application.Helpers
+
+<EditForm EditContext="@_editContext"
+          OnValidSubmit="OnValidSubmit">
+    <ObjectGraphDataAnnotationsValidator />
+    <div>
+        <OutlinedText EditContext="_editContext"
+                      Label="@Labels.Name"
+                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserDetailsViewModel.LastName)"
+                      @bind-Value="UserDetailsViewModel.LastName" />
+    </div>
+    <div>
+        <OutlinedText EditContext="_editContext"
+                      Label="@Labels.FirstName"
+                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserDetailsViewModel.FirstName)"
+                      @bind-Value="UserDetailsViewModel.FirstName" />
+    </div>
+    <div>
+        <ZeeSelect @bind-CheckedValue="@UserDetailsViewModel.ReportingStructureId"
+                   EditContext="_editContext"
+                   ElementName="@($"ReportingStructure-{Guid.NewGuid()}")"
+                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserDetailsViewModel.ReportingStructureId)"
+                   IsRequired="false"
+                   Items="ReportingStructures"
+                   Label="@Labels.StructureAssociated"
+                   TItem="Guid?">
+        </ZeeSelect>
+    </div>
+
+    <div>
+        <ZeeSelect @bind-CheckedValue="@UserDetailsViewModel.UserRoleId"
+                   EditContext="_editContext"
+                   ElementName="@($"AskedRole-{Guid.NewGuid()}")"
+                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserDetailsViewModel.UserRoleId)"
+                   IsRequired="false"
+                   Items="Roles"
+                   Label="@Labels.AskedRole"
+                   TItem="Guid?">
+        </ZeeSelect>
+    </div>
+
+    <div class="align-items-end d-flex flex-row item-c" style="padding-top:10px">
+        <span class="mr-2">
+            <ZeeButton DisplayBackground="DisplayEnumBackground.Green"
+                       Text="@Labels.Approve"
+                       @onclick="OnValidSubmit"
+                       IsSubmit="true">
+            </ZeeButton>
+        </span>
+        <span>
+            <ZeeButton DisplayBackground="DisplayEnumBackground.Red"
+                       Text="@Labels.Cancel"
+                       @onclick="(async () => await ModalInstance.CloseAsync(ModalResult.Ok()))">
+            </ZeeButton>
+        </span>
+    </div>
+</EditForm>

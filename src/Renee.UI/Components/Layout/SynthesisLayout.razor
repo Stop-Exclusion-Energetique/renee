@@ -1,0 +1,47 @@
+﻿@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.ErrorHandling
+@inherits LayoutComponentBase
+@layout MainLayout
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        <HorizontalHeadband AccompanyingFileNumber="@(string.IsNullOrEmpty(SynthesisLayoutManager.AssociatedResourceReference) ? Labels.AccompanyingFileNumber : SynthesisLayoutManager.AssociatedResourceReference)"
+                            ShowSynthesisTitle="true" />
+        @if (SynthesisLayoutManager.ShouldDisplayNavigationButton)
+        {
+            <div class="nav-container">
+                <ZeeButton CssClass="@(SynthesisLayoutManager.AccompanyingFileStage == AccompanyingFileStage.Identify ? "active" : null)"
+                           DisplayBackground="DisplayEnumBackground.White"
+                           id="identification-btn"
+                           IsSmallButtonType="true"
+                           @onclick="RedirectToIdentifySynthesis"
+                           ContextMenuRedirectUrl="@($"{(SynthesisLayoutManager.IsAccompanyingFile ? Endpoints.IdentificationSynthesis : Endpoints.CopropertyIdentificationSynthesis) }/{SynthesisLayoutManager.AssociatedResourceId}")"
+                           Text="@Labels.IdentificationSynthesisButtonTitle" />
+
+                <ZeeButton CssClass="@(SynthesisLayoutManager.AccompanyingFileStage == AccompanyingFileStage.OrganizingAndFinancing ? "active" : null)"
+                           DisplayBackground="DisplayEnumBackground.White"
+                           id="organize-finance-btn"
+                           IsSmallButtonType="true"
+                           @onclick="RedirectToOrganizeAndFinanceSynthesis"
+                           ContextMenuRedirectUrl="@($"{(SynthesisLayoutManager.IsAccompanyingFile ? Endpoints.OrganizeAndFinanceSynthesis : Endpoints.CopropertyOrganizeAndFinanceSynthesis)}/{SynthesisLayoutManager.AssociatedResourceId}")"
+                           Text="@Labels.OrganizeAndFinanceSynthesisButtonTitle" />
+
+                <ZeeButton CssClass="@(SynthesisLayoutManager.AccompanyingFileStage == AccompanyingFileStage.RealisationAndFollowing ? "active" : null)"
+                           DisplayBackground="DisplayEnumBackground.White"
+                           id="realize-follow-btn"
+                           IsSmallButtonType="true"
+                           @onclick="RedirectToRealizeAndFollowSynthesis"
+                           ContextMenuRedirectUrl="@($"{(SynthesisLayoutManager.IsAccompanyingFile ? Endpoints.RealizeAndFollowSynthesis : Endpoints.CopropertyRealizeAndFollow)}/{SynthesisLayoutManager.AssociatedResourceId}")"
+                           Text="@Labels.RealizeAndFollowSynthesisButtonTitle" />
+            </div>
+        }
+
+        @Body
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

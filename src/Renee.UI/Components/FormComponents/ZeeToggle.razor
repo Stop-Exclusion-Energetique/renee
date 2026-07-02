@@ -1,0 +1,58 @@
+﻿<div @attributes="AdditionalAttributes">
+	<label class="switch">
+		<input @bind="Value"
+		       class="switch-input"
+		       id="@ToggleName"
+		       type="checkbox"/>
+		<span class="switch-label @(
+		                          Value.HasValue && Value.Value
+			                          ? DisplayBackground switch
+			                          {
+				                          DisplayEnumBackground.Yellow => "label-yellow",
+				                          DisplayEnumBackground.Pink => "label-pink",
+				                          DisplayEnumBackground.Blue => "label-blue",
+				                          _ => "label-pink"
+			                          }
+			                          : "")"
+		      data-off="@(IsTextPresent ? Labels.No : "")"
+		      data-on="@(IsTextPresent ? Labels.Yes : "")">
+		</span>
+		<span class="switch-handle">
+		</span>
+	</label>
+</div>
+
+@code {
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+	private bool? _value = null;
+
+#pragma warning disable BL0007
+	[Parameter]
+	public bool? Value
+	{
+		get => _value;
+		set
+		{
+			if (value == _value) return;
+			_value = value == true;
+			ValueChanged.InvokeAsync(_value);
+			EditContext?.NotifyFieldChanged(FieldIdentifier);
+		}
+	}
+#pragma warning restore BL0007
+
+	[Parameter] public EventCallback<bool?> ValueChanged { get; set; }
+
+	[Parameter] public EditContext? EditContext { get; set; }
+
+	[Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+
+	[Parameter] public string? ToggleName { get; set; }
+
+	[Parameter] public DisplayEnumBackground DisplayBackground { get; set; }
+
+	[Parameter] public bool IsTextPresent { get; set; }
+}

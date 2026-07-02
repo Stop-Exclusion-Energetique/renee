@@ -1,0 +1,207 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+<div class="@($"accompanyingFile-card {GetAccompanyingFileCardBackground()}")">
+	<div class="@(IsUserAllowedToModifyDataFolder() ? "card-items-in-charge" : "card-items")">
+		<div class="card-item fixed-width">
+			<div class="card-item-label">
+				@Labels.AccompanyingFileReference
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Reference</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.Name
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@($"{ViewModel.LastName} {ViewModel.FirstName}")</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceAddress
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Address</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceStage
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Stage.GetDescription()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceStatus
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Status.GetDescription()</span>
+			</div>
+			@if (ViewModel.Status == AccompanyingFileStatus.WaitingForAbortion)
+			{
+				<span class="@(ViewModel.IsBillingRequested ? "badge-with-billing" : "badge-without-billing")">
+					@(ViewModel.IsBillingRequested ? Labels.BillingBadgeWithBilling : Labels.BillingBadgeWithoutBilling)
+				</span>
+			}
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceOpeningDate
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.OpeningDateUtc.ToShortDateString()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.LastModificationDate
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.LastModificationDateUtc.ToShortDateString()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AccompanyingFileClosedDate
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@(ViewModel.ClosedDateUtc.HasValue ? @ViewModel.ClosedDateUtc.Value.ToShortDateString() : null)</span>
+			</div>
+		</div>
+	</div>
+	<div class="card-btn-container">
+		<AuthorizeView>
+			<Authorized>
+				<AuthorizeView Context="_"
+				Roles="@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+					@if (IsUserAllowedToModifyDataFolder())
+					{
+						<ContextMenuTrigger Data="ViewModel.EditUrl" MenuId="myMenu">
+							<button class="btn1 card-btn"
+							@onclick="OnEdit">
+								<span class="icon-available" alt="@Labels.EditAccompanyingFileButtonAltText">
+									@((MarkupString)Icons.Svg.PictoRedigerFiche2)
+								</span>
+							</button>
+						</ContextMenuTrigger>
+					}
+					else
+					{
+						<div class="btn1 card-btn-fake">
+							<span class="icon-disable">
+								@((MarkupString)Icons.Svg.PictoRedigerFiche2)
+							</span>
+						</div>
+					}
+
+					@if (IsUserAllowedToModifyDataFolder())
+					{
+						<button class="btn2 card-btn"
+						id="delete-btn"
+						@onclick="OnDeleteAccompanyingFile">
+							<span class="icon-available">
+								@((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+							</span>
+						</button>
+					}
+					else
+					{
+						<div class="btn2 card-btn-fake">
+							<span class="icon-disable">
+								@((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+							</span>
+						</div>
+					}
+				</AuthorizeView>
+
+				<ContextMenuTrigger Data="ViewModel.ShowAccompanyingFileTeamUrl" MenuId="myMenu">
+					<button class="btn3 card-btn"
+					@onclick="@(() => NavigationManager.NavigateTo(ViewModel.ShowAccompanyingFileTeamUrl))">
+						<span class="icon-available">
+							@((MarkupString)Icons.Svg.PictoFicheDossier)
+						</span>
+
+					</button>
+				</ContextMenuTrigger>
+
+				@if (ShownSynthesisButton())
+				{
+					<ContextMenuTrigger Data="ViewModel.ShowSynthesisUrl" MenuId="myMenu">
+						<button class="btn4 card-btn"
+						@onclick="@(() => NavigationManager.NavigateTo(ViewModel.ShowSynthesisUrl))">
+							<span class="icon-available"
+							alt="@Labels.ShowSynthesisButtonAltText">
+								@((MarkupString)Icons.Svg.PictoFiche)
+							</span>
+						</button>
+					</ContextMenuTrigger>
+				}
+				else
+				{
+					<div class="btn4 card-btn-fake">
+						<span class="icon-disable">
+							@((MarkupString)Icons.Svg.PictoFiche)
+						</span>
+					</div>
+				}
+				<AuthorizeView Context="_"
+							Roles="@($"{Constants.AdminRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+					@if (CanActOnFile)
+					{
+						@if (IsAccompanyingFileWaitingForValidation())
+						{
+							<ContextMenuTrigger Data="@ViewModel.SynthesisUrl" style="display:contents;" MenuId="myMenu">
+								<button class="card-btn btn-full"
+								@onclick="@AnalyzeToValidate">
+									@Labels.CheckSynthesis
+								</button>
+							</ContextMenuTrigger>
+						}
+
+						@if (IsAccompanyingFileWaitingForAbortValidation())
+						{
+							<button class="card-btn btn-full" @onclick="@ShowAbortRequestDetails">
+								@Labels.CheckAbortRequest
+							</button>
+						}
+					}
+				</AuthorizeView>
+			</Authorized>
+		</AuthorizeView>
+	</div>
+	
+	<AuthorizeView Context="_"
+				Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}")">
+		<Authorized>
+			<div class="visual-indicators">
+				@if (ShouldAccompanyingFileBeFiledToAnah)
+				{
+					<div class="indicator" id="anah">
+						<span>@Labels.AccompanyingFileHaveToBeFiledToAnahIndicatorText</span>
+						<ZeeToolTip InfoBullTitle="@Labels.AccompanyingFileHaveToBeFiledToAnahTooltipTitle"
+									InfoBullMessage="@Labels.AccompanyingFileHaveToBeFiledToAnahTooltipMessage"
+									Width="20"/>
+					</div>
+				}
+
+				@if (!string.IsNullOrEmpty(ViewModel.StageFacturationLabel))
+				{
+					<div class="indicator facturation-info" title="@StageFacturationTooltip">
+						<span >@ViewModel.StageFacturationLabel</span>
+					</div>
+				}
+
+				@if (!string.IsNullOrEmpty(ViewModel.AbortLabel))
+				{
+					<div class="indicator facturation-info">
+						<span class="facturation-text">@ViewModel.AbortLabel</span>
+					</div>
+				}
+			</div>
+		</Authorized>
+	</AuthorizeView>
+</div>

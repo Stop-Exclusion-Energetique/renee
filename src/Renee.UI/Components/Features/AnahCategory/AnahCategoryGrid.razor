@@ -1,0 +1,613 @@
+@using Renee.Application.DTOs.Administration
+@using Renee.Domain.Entity
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.AnahCategory)]
+@attribute [Authorize]
+
+
+<AuthorizeView Context="_"
+               Roles="@Constants.AdminRole">
+    <Authorized>
+        <ZeeHeader DisplayReturn="true"
+                   ShouldRenderLogo="true"
+                   Title="@Labels.AnahCategoryTitle">
+        </ZeeHeader>
+        <div class="d-flex flex-column my-2">
+            <div class="my-3">
+
+                <h2>@AnahTableLabels.AnahCategoriesInIleDeFrance</h2>
+
+                <div class="space">
+                    <ZeeButton disabled="@(_anahCategoryToInsert != null || _anahCategoryToUpdate != null)"
+                               DisplayBackground="DisplayEnumBackground.Green"
+                               Icon="add_circle_outline"
+                               @onclick="@((async () => { await InsertRow(_anahCategoriesInIleDeFranceGrid); }))"
+                               Text="@Labels.AddLine">
+                    </ZeeButton>
+                </div>
+
+                <div class="space">
+                    <ZeeDataGrid AllowAlternatingRows="false"
+                                 AllowFiltering="true"
+                                 AllowPaging="true"
+                                 AllowSorting="true"
+                                 Data="_anahCategoriesInIleDeFrance"
+                                 EditMode="DataGridEditMode.Single"
+                                 Filter="@Reset"
+                                 Page="@Reset"
+                                 PageSize="10"
+                                 @ref="_anahCategoriesInIleDeFranceGrid"
+                                 RowCreate="@OnCreateRow"
+                                 RowUpdate="@OnUpdateRow"
+                                 Sort="@Reset"
+                                 TItem="AnahCategoryDto">
+                        <Columns>
+                            <RadzenDataGridColumn Property="Id"
+                                                  TItem="AnahCategoryDto"
+                                                  Visible="false">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="PeopleNumber"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-green">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.NumberOfPeopleInHousehold
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.PeopleNumber
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedInt @bind-Intgr="@anahCategory.PeopleNumber"
+                                                 Label="@Labels.PeopleNumber"
+                                                 Type="OutlinedInt.TypeOfValue.Int">
+                                    </OutlinedInt>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="VeryLowIncomeHouseholdsAmount"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-blue">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.VeryLowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.VeryLowIncomeHouseholdsAmount.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.VeryLowIncomeHouseholdsAmount"
+                                                    Label="@Labels.VeryLowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="LowIncomeHouseholdsAmount"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-yellow">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.LowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.LowIncomeHouseholdsAmount.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.LowIncomeHouseholdsAmount"
+                                                    Label="@Labels.LowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategoryDto"
+                                                  Property="RuleStartDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesStartDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.RuleStartDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.RuleStartDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesStartDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategoryDto"
+                                                  Property="RuleEndDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesEndDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.RuleEndDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.RuleEndDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesEndDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Context="anahCategoryDto"
+                                                  Filterable="false"
+                                                  Sortable="false"
+                                                  TextAlign="TextAlign.Right"
+                                                  TItem="AnahCategoryDto"
+                                                  Width="156px">
+                                <Template Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  Click="@(async _ => await EditRow(_anahCategoriesInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="edit"
+                                                  @onclick:stopPropagation="true"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </Template>
+                                <EditTemplate Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Success"
+                                                  Click="@(async _ => await SaveRow(_anahCategoriesInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="check"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  class="ms-1 my-1"
+                                                  Click="@(_ => CancelEdit(_anahCategoriesInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="close"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </ZeeDataGrid>
+                </div>
+
+                <h4 class="space">@AnahTableLabels.NumberOfSupplementaryPeopleInHousehold</h4>
+
+                <div class="space">
+                    <ZeeButton disabled="@(_anahCategorySupplementaryIncomeToInsert != null || _anahCategorySupplementaryIncomeToUpdate != null)"
+                               DisplayBackground="DisplayEnumBackground.Green"
+                               Icon="add_circle_outline"
+                               @onclick="@((async () => { await InsertSupplementaryOccupantIncomeRow(_anahCategoriesSupplementaryIncomeInIleDeFranceGrid); }))"
+                               Text="@Labels.AddLine">
+                    </ZeeButton>
+                </div>
+
+                <div class="space">
+                    <ZeeDataGrid AllowAlternatingRows="false"
+                                 AllowFiltering="true"
+                                 AllowPaging="true"
+                                 AllowSorting="true"
+                                 Data="_anahCategoriesSupplementaryIncomeInIleDeFrance"
+                                 EditMode="DataGridEditMode.Single"
+                                 Filter="@ResetSupplementaryIncome"
+                                 Page="@ResetSupplementaryIncome"
+                                 PageSize="10"
+                                 @ref="_anahCategoriesSupplementaryIncomeInIleDeFranceGrid"
+                                 RowCreate="@OnCreateSupplementaryOccupantIncomeRow"
+                                 RowUpdate="@OnUpdateSupplementaryOccupantIncomeRow"
+                                 Sort="@ResetSupplementaryIncome"
+                                 TItem="AnahCategorySuplementaryOccupantIncome">
+                        <Columns>
+                            <RadzenDataGridColumn Property="Id"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Visible="false">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome">
+                                <Template>
+                                    @AnahTableLabels.NumberOfSupplementaryPeopleInHousehold
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="SuplementaryOccupantVerylowIncome"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  HeaderCssClass="cells-style-blue">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.VeryLowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.SuplementaryOccupantVerylowIncome.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.SuplementaryOccupantVerylowIncome"
+                                                    Label="@Labels.VeryLowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="SuplementaryOcupantLowIncome"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  HeaderCssClass="cells-style-yellow">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.LowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.SuplementaryOcupantLowIncome.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.SuplementaryOcupantLowIncome"
+                                                    Label="@Labels.LowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Property="StartRuleDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesStartDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.StartRuleDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.StartRuleDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesStartDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Property="EndRuleDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesEndDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.EndRuleDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.EndRuleDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesEndDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Context="anahCategoryDto"
+                                                  Filterable="false"
+                                                  Sortable="false"
+                                                  TextAlign="TextAlign.Right"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Width="156px">
+                                <Template Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  Click="@(async _ => await EditOccupantIncomeRow(_anahCategoriesSupplementaryIncomeInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="edit"
+                                                  @onclick:stopPropagation="true"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </Template>
+                                <EditTemplate Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Success"
+                                                  Click="@(async _ => await SaveSupplementaryOccupantIncomeRow(_anahCategoriesSupplementaryIncomeInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="check"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  class="ms-1 my-1"
+                                                  Click="@(_ => CancelOccupantIncomeEdit(_anahCategoriesSupplementaryIncomeInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="close"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </ZeeDataGrid>
+                </div>
+            </div>
+
+            <div class="my-3">
+
+                <h2>@AnahTableLabels.AnahCategoriesNotInIleDeFrance</h2>
+
+                <div class="space">
+                    <ZeeButton disabled="@(_anahCategoryToInsert != null || _anahCategoryToUpdate != null)"
+                               DisplayBackground="DisplayEnumBackground.Green"
+                               Icon="add_circle_outline"
+                               @onclick="@((async () => { await InsertRow(_anahCategoriesNotInIleDeFranceGrid); }))"
+                               Text="@Labels.AddLine">
+                    </ZeeButton>
+                </div>
+
+                <div class="space">
+                    <ZeeDataGrid AllowAlternatingRows="false"
+                                 AllowFiltering="true"
+                                 AllowPaging="true"
+                                 AllowSorting="true"
+                                 Data="_anahCategoriesNotInIleDeFrance"
+                                 EditMode="DataGridEditMode.Single"
+                                 Filter="@Reset"
+                                 Page="@Reset"
+                                 PageSize="10"
+                                 @ref="_anahCategoriesNotInIleDeFranceGrid"
+                                 RowCreate="@OnCreateRow"
+                                 RowUpdate="@OnUpdateRow"
+                                 Sort="@Reset"
+                                 TItem="AnahCategoryDto">
+                        <Columns>
+                            <RadzenDataGridColumn Property="Id"
+                                                  TItem="AnahCategoryDto"
+                                                  Visible="false">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="PeopleNumber"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-green">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.NumberOfPeopleInHousehold
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.PeopleNumber
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedInt @bind-Intgr="@anahCategory.PeopleNumber"
+                                                 Label="@Labels.PeopleNumber"
+                                                 Type="OutlinedInt.TypeOfValue.Int">
+                                    </OutlinedInt>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="VeryLowIncomeHouseholdsAmount"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-blue">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.VeryLowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.VeryLowIncomeHouseholdsAmount.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.VeryLowIncomeHouseholdsAmount"
+                                                    Label="@Labels.VeryLowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="LowIncomeHouseholdsAmount"
+                                                  TItem="AnahCategoryDto"
+                                                  HeaderCssClass="cells-style-yellow">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.LowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.LowIncomeHouseholdsAmount.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.LowIncomeHouseholdsAmount"
+                                                    Label="@Labels.LowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategoryDto"
+                                                  Property="RuleStartDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesStartDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.RuleStartDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.RuleStartDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesStartDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategoryDto"
+                                                  Property="RuleEndDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesEndDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.RuleEndDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.RuleEndDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesEndDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Context="anahCategoryDto"
+                                                  Filterable="false"
+                                                  Sortable="false"
+                                                  TextAlign="TextAlign.Right"
+                                                  TItem="AnahCategoryDto"
+                                                  Width="156px">
+                                <Template Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  Click="@(async _ => await EditRow(_anahCategoriesNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="edit"
+                                                  @onclick:stopPropagation="true"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </Template>
+                                <EditTemplate Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Success"
+                                                  Click="@(async _ => await SaveRow(_anahCategoriesNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="check"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  class="ms-1 my-1"
+                                                  Click="@(_ => CancelEdit(_anahCategoriesNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="close"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </ZeeDataGrid>
+                </div>
+
+                <h4 class="space">@AnahTableLabels.NumberOfSupplementaryPeopleInHousehold</h4>
+
+                <div class="space">
+                    <ZeeButton disabled="@(_anahCategorySupplementaryIncomeToInsert != null || _anahCategorySupplementaryIncomeToUpdate != null)"
+                               DisplayBackground="DisplayEnumBackground.Green"
+                               Icon="add_circle_outline"
+                               @onclick="@((async () => { await InsertSupplementaryOccupantIncomeRow(_anahCategoriesSupplementaryIncomeNotInIleDeFranceGrid); }))"
+                               Text="@Labels.AddLine">
+                    </ZeeButton>
+                </div>
+
+                <div class="space">
+                    <ZeeDataGrid AllowAlternatingRows="false"
+                                 AllowFiltering="true"
+                                 AllowPaging="true"
+                                 AllowSorting="true"
+                                 Data="_anahCategoriesSupplementaryIncomeNotInIleDeFrance"
+                                 EditMode="DataGridEditMode.Single"
+                                 Filter="@ResetSupplementaryIncome"
+                                 Page="@ResetSupplementaryIncome"
+                                 PageSize="10"
+                                 @ref="_anahCategoriesSupplementaryIncomeNotInIleDeFranceGrid"
+                                 RowCreate="@OnCreateSupplementaryOccupantIncomeRow"
+                                 RowUpdate="@OnUpdateSupplementaryOccupantIncomeRow"
+                                 Sort="@ResetSupplementaryIncome"
+                                 TItem="AnahCategorySuplementaryOccupantIncome">
+                        <Columns>
+                            <RadzenDataGridColumn Property="Id"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Visible="false">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome">
+                                <Template>
+                                    @AnahTableLabels.NumberOfSupplementaryPeopleInHousehold
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="SuplementaryOccupantVerylowIncome"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  HeaderCssClass="cells-style-blue">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.VeryLowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.SuplementaryOccupantVerylowIncome.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.SuplementaryOccupantVerylowIncome"
+                                                    Label="@Labels.VeryLowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="SuplementaryOcupantLowIncome"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  HeaderCssClass="cells-style-yellow">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.LowHouseholdIncome
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @anahCategory.SuplementaryOcupantLowIncome.ToString()
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <OutlinedDouble @bind-Double="@anahCategory.SuplementaryOcupantLowIncome"
+                                                    Label="@Labels.LowIncomeHouseholdsAmount"
+                                                    Type="OutlinedDouble.TypeOfValue.Double">
+                                    </OutlinedDouble>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Property="StartRuleDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesStartDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.StartRuleDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.StartRuleDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesStartDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Property="EndRuleDate"
+                                                  HeaderCssClass="cells-style">
+                                <HeaderTemplate>
+                                    @AnahTableLabels.AnahRulesEndDate
+                                </HeaderTemplate>
+                                <Template Context="anahCategory">
+                                    @ConvertDateTimeToString(anahCategory.EndRuleDate)
+                                </Template>
+                                <EditTemplate Context="anahCategory">
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="anahCategory.EndRuleDate"
+                                                   @bind-Value:format="yyyy-MM-dd" />
+                                        <span>
+                                            @AnahTableLabels.AnahRulesEndDate
+                                        </span>
+                                    </label>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Context="anahCategoryDto"
+                                                  Filterable="false"
+                                                  Sortable="false"
+                                                  TextAlign="TextAlign.Right"
+                                                  TItem="AnahCategorySuplementaryOccupantIncome"
+                                                  Width="156px">
+                                <Template Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  Click="@(async _ => await EditOccupantIncomeRow(_anahCategoriesSupplementaryIncomeNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="edit"
+                                                  @onclick:stopPropagation="true"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </Template>
+                                <EditTemplate Context="anahCategoryDto">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Success"
+                                                  Click="@(async _ => await SaveSupplementaryOccupantIncomeRow(_anahCategoriesSupplementaryIncomeNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="check"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                                  class="ms-1 my-1"
+                                                  Click="@(_ => CancelOccupantIncomeEdit(_anahCategoriesSupplementaryIncomeNotInIleDeFranceGrid, anahCategoryDto))"
+                                                  Icon="close"
+                                                  Size="ButtonSize.Medium"
+                                                  Variant="Variant.Flat">
+                                    </RadzenButton>
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </ZeeDataGrid>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

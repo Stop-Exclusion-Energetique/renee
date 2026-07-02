@@ -1,0 +1,62 @@
+﻿<label class="pure-material-textfield-outlined">
+    @if (IsInForm)
+    {
+        <InputTextArea @bind-Value="@Value"
+                    @attributes="@AdditionalAttributes">
+        </InputTextArea>
+    }
+    else
+    {
+        <textarea @bind="@Value"
+                class="@EditContext?.FieldCssClass(FieldIdentifier)"
+                @onblur="OnBlur"
+                placeholder=""
+                @attributes="@AdditionalAttributes"></textarea>
+    }
+    <span>
+        @Label
+        <span class="@(IsRequired ? "required" : "")"> </span>
+    </span>
+
+    <span class="rgpd-mention">@Labels.RgpdMentionForFreeInput</span>
+</label>
+
+
+@code {
+    private string? _value;
+
+    [Parameter] public bool IsInForm { get; set; }
+
+#pragma warning disable BL0007
+    [Parameter]
+    public string? Value
+    {
+        get => _value;
+        set
+        {
+            if (value == _value) return;
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+#pragma warning restore BL0007
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public bool IsRequired { get; set; }
+
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter] public EditContext? EditContext { get; set; }
+
+    [Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+
+    private void OnBlur()
+    {
+        if (EditContext != default!) { EditContext.NotifyFieldChanged(FieldIdentifier); }
+    }
+
+}

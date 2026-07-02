@@ -1,0 +1,8 @@
+Surface: 75 m²
+Surface (impérial): 807 sq ft
+Hauteur sous plafond: 8.5 feet
+Consommation: 180 kWh/m².an
+Conso alternative: 18 000 kWh/an total (maison de 100m², piège: pas m²)
+GES: 42 kgCO2/m².an
+GES total annuel: 4200 kgCO2/an
+Température intérieure moyenne hiver: 14°C (trop froid)

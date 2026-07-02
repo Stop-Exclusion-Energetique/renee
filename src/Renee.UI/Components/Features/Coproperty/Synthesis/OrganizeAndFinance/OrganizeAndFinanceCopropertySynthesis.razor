@@ -1,0 +1,108 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using Renee.UI.Components.Features.Coproperty.Synthesis.OrganizeAndFinance.ViewModel
+@attribute [Route(Endpoints.CopropertyOrganizeAndFinanceSynthesis + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		<div class="main-content">
+			@if (!ShouldDisplaySynthesis())
+			{
+				<p>
+					<strong>@Labels.SynthesisNotAvailable</strong>
+				</p>
+			}
+			else
+			{
+				<h1 class="ml-3 rubric-title">@Labels.OrganizeAndFinanceSynthesisTitle</h1>
+				<div class="grid-container">
+					<div class="card">
+						<h2 class="rubric-title">@Labels.AidsAndCollectifsWorks</h2>
+						<OutlinedText Label="@Labels.DateOfAgVote" readonly Value="@ViewModel.DateOfAgVote?.ToString("dd/MM/yyyy")" />
+						<OutlinedDouble Label="@Labels.MprCoproAids" readonly Double="@ViewModel.MprCoproAids" Type="OutlinedDouble.TypeOfValue.Currency" />
+						<OutlinedDouble Label="@Labels.ComplementaryAids" readonly Double="@ViewModel.ComplementaryAids" Type="OutlinedDouble.TypeOfValue.Currency" />
+					</div>
+					<div class="card">
+						<h2 class="rubric-title">@Labels.WorkQuote</h2>
+						<OutlinedDouble Label="@Labels.WorkPackageTotalCost" readonly Double="@ViewModel.WorkPackagesTotalPrice" Type="OutlinedDouble.TypeOfValue.Currency" />
+						@foreach (var workPackage in ViewModel.WorkPackageSummary)
+						{
+							var index = ViewModel.WorkPackageSummary.IndexOf(workPackage);
+							<h3 class="rubric-title">@($"{Labels.WorkQuote} {index + 1}")</h3>
+							<OutlinedText Label="@Labels.RecommendedWork" readonly Value="@workPackage.CurrentWorkPackageWorkTypes" />
+							<OutlinedDouble Double="@workPackage.WorkPackageTotalCost" Label="@Labels.TotalCostOfWorkPackage" readonly Type="OutlinedDouble.TypeOfValue.Currency" />
+						}
+					</div>
+				</div>
+
+				<div class="button-group">
+					<div class="left-part">
+
+						<div class="left-part-child">
+							<SynthesisFileLoader @bind-MemoryStreamFile="@_anahAidRequestNotificationStreamFile"
+												 @bind-ErrorMessage="@_anahAidRequestNotificationErrorMessage"
+												 @bind-FileName="@_anahAidRequestNotificationFileName"
+												 OnChangeUpload="@UploadanahAidRequestNotificationFile"
+												 ViewFiles="@ViewFile"
+												 OnClickDeleteFile="@OnClickDeleteanahAidRequestNotificationFile"
+												 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+												 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+												 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+												 FileNotLoadedMessage="@GenerateFilesLabels.Errors.AnahAidRequestNotificationDocumentError"
+												 FileLoadedMessage="@($"{Labels.SupportingDocument} {_anahAidRequestNotificationFileName} {Labels.FileLoaded}")"
+												 @bind-FileBytes="@_anahAidRequestNotificationFileData" />
+						</div>
+
+						<div class="left-part-child">
+							<SynthesisFileLoader @bind-MemoryStreamFile="@_generalMeetingStreamFile"
+												 @bind-ErrorMessage="@_generalMeetingErrorMessage"
+												 @bind-FileName="@_generalMeetingFileName"
+												 OnChangeUpload="@UploadGeneralMeetingFile"
+												 ViewFiles="@ViewFile"
+												 OnClickDeleteFile="@OnClickDeleteGeneralMeetingFile"
+												 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+												 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+												 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+												 FileNotLoadedMessage="@GenerateFilesLabels.Errors.GeneralMeetingUploadError"
+												 FileLoadedMessage="@($"{Labels.SupportingDocument} {_generalMeetingFileName} {Labels.FileLoaded}")"
+												 @bind-FileBytes="@_generalMeetingFileData" />
+						</div>
+
+					</div>
+
+					@if (ShouldDisplaySubmissionButton())
+					{
+						<div class="right-part">
+							<ZeeButton @onclick="OnClickCancelButton"
+									   Text="@Labels.Cancel">
+							</ZeeButton>
+							<ZeeButton IsSubmit="true"
+									   @onclick="OnSubmitSynthesis"
+									   Text="@Labels.Submit">
+							</ZeeButton>
+						</div>
+					}
+
+					@if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+					{
+						<div class="right-part">
+							<ZeeButton IsSubmit="true"
+									   @onclick="@(() => StageValidation(false))"
+									   Text="Rejeter">
+							</ZeeButton>
+							<ZeeButton @onclick="@(() => StageValidation(true))"
+									   Text="Valider">
+							</ZeeButton>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

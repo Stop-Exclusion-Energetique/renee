@@ -1,0 +1,13 @@
+﻿.trash-icon {
+    display: block;
+    margin-left: 15px;
+}
+.card a{
+    display: flex;
+    text-decoration: none;
+}
+    .card a span {
+        display:block;
+        width: 25px;
+        height: 25px;
+    }

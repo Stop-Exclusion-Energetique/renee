@@ -1,0 +1,118 @@
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.Identification.Details.EnergeticProfil
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.Identification.Details.HouseholdIdentity
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.Identification.Details.Housing
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.Identification.Details.ReasonOfProject
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using Renee.UI.Components.Layout.StageLayout
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.NewOccupant + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout StageLayout
+
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+
+        <HorizontalTabsMenu OnChangeTab="@ChangeTab"
+                            SelectedTab="@SelectedTab"
+                            TabsList="@( [Labels.HouseholdIdentityTitle, Labels.HousingTitle, Labels.InitialEnergyProfileTitle, Labels.ReasonOfProjectTitle])" />
+
+        <div class="tab-content">
+            @if (EditContext != null)
+            {
+                <EditForm EditContext="EditContext"
+                          OnSubmit="SubmitWithValidation">
+                    <CascadingValue Value="EditContext">
+                        <CascadingValue Value="@IsUserNotAllowedToEdit" Name="IsUserAllowedToEdit">
+                            <CascadingValue Value="@IsSoliha" Name="IsSoliha">
+                                <CascadingValue Value="@AccompanyingFileId" Name="AccompanyingFileId">
+                                    <ObjectGraphDataAnnotationsValidator />
+                                    @switch (SelectedTab)
+                                    {
+                                        case 0:
+                                            <HouseholdIdentity CsPs="@CsPs"
+                                                            FormFieldHasChanged="@OccupantsHaveChanged"
+                                                            HouseholdIdentityViewModel="@AccompanyingFileCreationFormViewModel?.HouseholdIdentityViewModel"
+                                                            HouseholdResourcesTypologies="@HouseholdResourcesTypologies"
+                                                            HouseholdTypologies="@HouseholdTypologies"
+                                                            IsDuplicateEmail="@IsDuplicateEmail"
+                                                            IsDuplicatePhoneNumber="@IsDuplicatePhoneNumber"
+                                                            OnCheckDuplicateEmail="@CheckDuplicateEmail"
+                                                            OnCheckDuplicatePhoneNumber="@CheckDuplicatePhoneNumber" />
+                                            break;
+                                        case 1:
+                                            <Housing AddressList="@AddressList"
+                                                    LoadAddresses=@LoadAddresses
+                                                    PropertyStatuses="@PropertyStatuses"
+                                                    PropertyTypes="@PropertyTypes"
+                                                    PropertyConstructionYears="@PropertyConstructionYears"
+                                                    ViewModel="AccompanyingFileCreationFormViewModel?.HousingViewModel"
+                                                    UserId="@UserId"
+                                                    UserRole="@UserRole" />
+                                            break;
+                                        case 2:
+                                            <EnergyProfile ViewModel="AccompanyingFileCreationFormViewModel?.EnergyProfileViewModel"
+                                                           IsLinkedToCoproperty="IsLinkedToCoproperty" />
+                                            break;
+                                        case 3:
+                                            <ReasonOfProject DifficultiesFacedFamily="@DifficultiesFacedFamily"
+                                                            ViewModel="AccompanyingFileCreationFormViewModel?.ReasonOfProjectViewModel"
+                                                            AccompanyingTimeDurations="@AccompanyingTimeDurations" />
+                                            <ValidationSummary />
+                                            break;
+                                    }
+                                </CascadingValue>
+                            </CascadingValue>
+                        </CascadingValue>
+                    </CascadingValue>
+                </EditForm>
+
+                <div class="zeeButtonGroup @(IsLastTab ? "justify-content-between" : "justify-content-end")">
+                    @if (IsLastTab)
+                    {
+                        <ZeeButton @onclick="() => ShowAbortAccompanyingFileModal()"
+                                   disabled="@IsUserNotAllowedToEdit"
+                                   DisplayBackground="DisplayEnumBackground.Pink"
+                                   Text="@Labels.AbortAccompanyingFileButtonText" />
+                    }
+
+                    <div class="d-flex gap-4">
+                        <ZeeButton @onclick="() => ChangeTab(SelectedTab - 1)"
+                                   Text="@Labels.Previous"
+                                   disabled="@(SelectedTab == 0)"
+                                   ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(SelectedTab - 1)" />
+
+                        <ZeeButton disabled="@(IsDuplicatePhoneNumber || IsDuplicateEmail || (IsUserNotAllowedToEdit && UserRole != Constants.StructuralReferentRole))"
+                                   IsSubmit="@(IsLastTab)"
+                                   DisplayBackground="@(IsLastTab ? DisplayEnumBackground.Green : DisplayEnumBackground.Blue)"
+                                   @onclick="@(IsLastTab ? SubmitWithValidation : (() => ChangeTab(SelectedTab + 1)))"
+                                   Text="@(IsLastTab ? Labels.Submit : Labels.Next)"
+                                   ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(IsLastTab ? null : SelectedTab + 1)" />
+
+                        @if (AccompanyingFileId.HasValue)
+                        {
+                            <AISynthesisButton OnAnalyze="AnalyzeDossierWithAIAsync" />
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (SaveButtonIsActive)
+            {
+                <div class="save-btn-container">
+                    <ZeeButton CssClass="btn-full-width"
+                               DisplayBackground="DisplayEnumBackground.DarkBlue"
+                               @onclick="@SaveWithoutValidation"
+                               Text="@Labels.Save" />
+                </div>
+            }
+        </div>
+
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

@@ -1,0 +1,17 @@
+﻿.zeeButtonGroup {
+    display: flex;
+    margin-top: 15px;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card {
+    row-gap: 10px;
+}

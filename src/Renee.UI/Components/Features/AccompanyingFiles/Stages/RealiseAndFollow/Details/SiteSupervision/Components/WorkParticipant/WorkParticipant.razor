@@ -1,0 +1,111 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<h2 class="section-title">@($"{@RealiseAndFollowMilestone.Labels.WorkParticipant} {Index}")</h2>
+
+<ZeeSelect @bind-CheckedValue="@ViewModel.ParticipantType"
+           EditContext="@EditContext"
+           ElementName="@($"participant-type-{Guid.NewGuid().ToString()}")"
+           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ParticipantType)"
+           Items="@ParticipantTypes"
+           Label="@RealiseAndFollowMilestone.Labels.ParticipantType"
+           TItem="ParticipantType?"
+           IsDisabled="@IsUserAllowedToEdit"
+           ShouldSort="true" />
+
+<OutlinedText @bind-Value="ViewModel.WorkTypesLabel"
+              EditContext="EditContext"
+              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WorkTypesLabel)"
+              Label="@RealiseAndFollowMilestone.Labels.WorkTypesLabel"
+              disabled="@IsUserAllowedToEdit" />
+
+<OutlinedText @bind-Value="ViewModel.ParticipantName"
+              EditContext="EditContext"
+              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ParticipantName)"
+              Label="@RealiseAndFollowMilestone.Labels.ParticipantName"
+              disabled="@IsUserAllowedToEdit" />
+
+<OutlinedText @bind-Value="ViewModel.ContactAdvisor"
+              EditContext="EditContext"
+              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ContactAdvisor)"
+              Label="@RealiseAndFollowMilestone.Labels.ContactAdvisor"
+              disabled="@IsUserAllowedToEdit" />
+
+<label class="pure-material-textfield-outlined">
+    <ZeeInputDate disabled="@IsUserAllowedToEdit"
+               @bind-Value="ViewModel.StartDateOfWork"
+               @bind-Value:format="yyyy-MM-dd"
+               max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+    <span>@RealiseAndFollowMilestone.Labels.StartDateOfWork</span>
+</label>
+
+<label class="pure-material-textfield-outlined">
+    <ZeeInputDate disabled="@IsUserAllowedToEdit"
+               @bind-Value="ViewModel.EstimatedCompletionDate"
+               @bind-Value:format="yyyy-MM-dd"
+               max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+    <span>@RealiseAndFollowMilestone.Labels.EstimatedCompletionDate</span>
+</label>
+
+<label class="pure-material-textfield-outlined">
+    <ZeeInputDate disabled="@IsUserAllowedToEdit"
+               @bind-Value="ViewModel.ActualEndDate"
+               @bind-Value:format="yyyy-MM-dd"
+               max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+    <span>@RealiseAndFollowMilestone.Labels.ActualEndDate</span>
+</label>
+
+<OutlinedDouble @bind-Double="ViewModel.Progress"
+                EditContext="EditContext"
+                FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Progress)"
+                Label="@RealiseAndFollowMilestone.Labels.Progress"
+                Type="OutlinedDouble.TypeOfValue.Percentage"
+                IsNullable="true"
+                disabled="@(IsUserAllowedToEdit)" />
+<ValidationMessage For="@(() => ViewModel.Progress)" />
+
+<ZeeSelect @bind-CheckedValue="@ViewModel.WorkQuality"
+           EditContext="@EditContext"
+           ElementName="@($"work-quality-{Guid.NewGuid().ToString()}")"
+           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WorkQuality)"
+           Items="@WorkQualities"
+           Label="@RealiseAndFollowMilestone.Labels.WorkQuality"
+           TItem="WorkQuality?"
+           IsDisabled="@IsUserAllowedToEdit"
+           ShouldSort="true" />
+
+<OutlinedText @bind-Value="ViewModel.CommentOnWorkQuality"
+              EditContext="EditContext"
+              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CommentOnWorkQuality)"
+              Label="@RealiseAndFollowMilestone.Labels.CommentOnWorkQuality"
+              disabled="@IsUserAllowedToEdit" />
+
+<ZeeSelect @bind-CheckedValues="@SelectedWorkParticipantsIds"
+           EditContext="@EditContext"
+           ElementName="@($"work-participant-difficulty-{Guid.NewGuid().ToString()}")"
+           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WorkParticipantDifficulties)"
+           Items="@SiteSupervisionDifficulties"
+           Label="@RealiseAndFollowMilestone.Labels.WorkParticipantDificulties"
+           OnNewValueSelected="@OnSelectedWorkParticipantChanged"
+           TItem="Guid?"
+           IsDisabled="@IsUserAllowedToEdit"
+           IsMultiSelect="true"
+           ShouldSort="true" />
+
+<OutlinedText @bind-Value="ViewModel.CommentOnWorkParticipantDifficulties"
+              EditContext="EditContext"
+              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CommentOnWorkParticipantDifficulties)"
+              Label="@RealiseAndFollowMilestone.Labels.CommentOnWorkParticipantDifficulties"
+              disabled="@IsUserAllowedToEdit" />
+
+<OutlinedTextArea @bind-Value="ViewModel.SpecificComments"
+                  EditContext="@EditContext"
+                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SpecificComments)"
+                  Label="@RealiseAndFollowMilestone.Labels.SpecificComments"
+                  disabled="@IsUserAllowedToEdit" />

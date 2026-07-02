@@ -1,0 +1,463 @@
+﻿@using Renee.Application.DTOs.Occupant
+@using Renee.UI.Components.ErrorHandling
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@attribute [Route(Endpoints.QuickAddCoproperty)]
+@attribute [Route($"{Endpoints.QuickAddCoproperty}/{{AccompanyingFileId:guid}}")]
+@attribute [Authorize]
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.StructuralReferentRole}")">
+
+	<Authorized>
+		<ZeeHeader ShouldRenderLogo="false"
+				   Title="@Labels.QuickAddCopropertyTitle">
+		</ZeeHeader>
+
+		<EditForm EditContext="_quickAddCopropertyEditContext"
+				  OnValidSubmit="OnValidSubmit">
+
+			<ObjectGraphDataAnnotationsValidator />
+
+			<div class="grid-container">
+				<div class="card-1">
+					<div class="card grid-form">
+						<div>
+							<h4 class="section-title">@Labels.Address</h4>
+						</div>
+
+						<div class="manual-address">
+							<ZeeToggle @bind-Value="IsCustomAddress"
+									   DisplayBackground="DisplayEnumBackground.Blue"
+									   IsTextPresent="false">
+							</ZeeToggle>
+							<span>@Labels.ManualAddress</span>
+						</div>
+
+						@if (IsCustomAddress == false)
+						{
+							<label class="required">@Labels.StreetNumberName</label>
+							<div>
+								<RadzenDropDown AllowFiltering="true"
+												@bind-Value="QuickAddFormViewModel.StreetNumberName"
+												Count="20"
+												Data="AddressList"
+												FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+												LoadData="@LoadAddresses"
+												Multiple="false"
+												Placeholder="@Labels.DropDownPlaceholder"
+												Style="width: 100%"
+												TextProperty="Label"
+												TValue="AddressDto">
+								</RadzenDropDown>
+								<ValidationMessage For="@(() => QuickAddFormViewModel.StreetNumberName)" />
+							</div>
+						}
+						else
+						{
+							<div>
+								<OutlinedText @bind-Value="QuickAddFormViewModel.ManualAddressName"
+											  EditContext="_quickAddCopropertyEditContext"
+											  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ManualAddressName)"
+											  IsInForm="false"
+											  IsRequired=true
+											  Label="@Labels.StreetNumberName">
+								</OutlinedText>
+								<ValidationMessage For="@(() => QuickAddFormViewModel.ManualAddressName)" />
+							</div>
+						}
+
+						<div>
+							<OutlinedText @bind-Value="QuickAddFormViewModel.AdditionalAddress"
+										  EditContext="_quickAddCopropertyEditContext"
+										  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AdditionalAddress)"
+										  IsInForm="false"
+										  IsRequired="false"
+										  Label="@Labels.AdditionalAddress">
+							</OutlinedText>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.AdditionalAddress)" />
+						</div>
+
+						<div>
+							<OutlinedText @bind-Value="QuickAddFormViewModel.PostalCode"
+										  EditContext="_quickAddCopropertyEditContext"
+										  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.PostalCode)"
+										  IsInForm="false"
+										  IsRequired="true"
+										  disabled="@(!IsCustomAddress)"
+										  Label="@Labels.PostalCode">
+							</OutlinedText>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.PostalCode)" />
+						</div>
+
+						<div>
+							<OutlinedText @bind-Value="QuickAddFormViewModel.Municipality"
+										  EditContext="_quickAddCopropertyEditContext"
+										  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.Municipality)"
+										  IsInForm="false"
+										  IsRequired="true"
+										  disabled="@(!IsCustomAddress)"
+										  Label="@Labels.Municipality">
+							</OutlinedText>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.Municipality)" />
+						</div>
+
+						<div>
+							<OutlinedText @bind-Value="QuickAddFormViewModel.Department"
+										  EditContext="_quickAddCopropertyEditContext"
+										  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.Department)"
+										  IsInForm="false"
+										  IsRequired="true"
+										  disabled="@(!IsCustomAddress)"
+										  Label="@Labels.Department">
+							</OutlinedText>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.Department)" />
+						</div>
+
+						<div>
+							<OutlinedText @bind-Value="QuickAddFormViewModel.Region"
+										  EditContext="_quickAddCopropertyEditContext"
+										  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.Region)"
+										  IsInForm="false"
+										  IsRequired="true"
+										  disabled="@(!IsCustomAddress)"
+										  Label="@Labels.Region">
+							</OutlinedText>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.Region)" />
+						</div>
+
+						<div>
+							<ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.Typology"
+									   ElementName="@($"typology-{Guid.NewGuid().ToString()}")"
+									   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.Typology)"
+									   IsRequired="true"
+									   Items="@ItemsList.GeographicalTypologies"
+									   Label="@Labels.Typology"
+									   TItem="GeographicalHousingAreaTypology?">
+							</ZeeSelect>
+							<ValidationMessage For="@(() => QuickAddFormViewModel.Typology)" />
+						</div>
+					</div>
+				</div>
+
+                <div class="card card-2 flex-form">
+                    <div>
+                        <h4 class="section-title">@Labels.Accompaniement</h4>
+                    </div>
+
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.AccompaniementViewModel.MarkerNature"
+                                   EditContext="@_quickAddCopropertyEditContext"
+                                   ElementName="@($"marker-nature-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.MarkerNature)"
+                                   IsRequired="true"
+                                   Items="@ItemsList.MarkerNature"
+                                   Label="@Labels.MarkerNature"
+                                   OnNewValueSelected="@OnMarkerNatureChanged"
+                                   TItem="MarkerNature?"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.MarkerNature)" />
+                    </div>
+
+                    @if (QuickAddFormViewModel.AccompaniementViewModel.MarkerNature is not null && QuickAddFormViewModel.AccompaniementViewModel.MarkerNature == Domain.Enums.MarkerNature.Other)
+                    {
+                        <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.CommentOnMarkerNature"
+                                      EditContext="@_quickAddCopropertyEditContext"
+                                      FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.CommentOnMarkerNature)"
+                                      IsRequired="true"
+                                      Label="@Labels.Other">
+                        </OutlinedText>
+                        <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.CommentOnMarkerNature)" />
+                    }
+
+                    <div>
+                        <h4 class="section-title">@Labels.TrustedTier</h4>
+                    </div>
+
+                    <div class="trusted-tier-fields">
+                        <div>
+                            <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierStructureName"
+                                          EditContext="_quickAddCopropertyEditContext"
+                                          FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierStructureName)"
+                                          Label="@Labels.TrustedTierStructureName">
+                            </OutlinedText>
+                            <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierStructureName)" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <div>
+                                <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierLastName"
+                                              EditContext="_quickAddCopropertyEditContext"
+                                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierLastName)"
+                                              Label="@Labels.TrustedTierLastName">
+                                </OutlinedText>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierLastName)" />
+                            </div>
+
+                            <div>
+                                <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierFirstName"
+                                              EditContext="_quickAddCopropertyEditContext"
+                                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierFirstName)"
+                                              Label="@Labels.TrustedTierFirstName">
+                                </OutlinedText>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierFirstName)" />
+                            </div>
+
+                            <label>
+                                @Labels.TrustedTierPhoneNumber
+                            </label>
+
+                            <div>
+                                <ZeePhoneNumber @bind-BindingValue="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierPhoneNumber"
+                                                Class="form-control">
+                                </ZeePhoneNumber>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierPhoneNumber)" />
+                            </div>
+
+                            <div>
+                                <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierEmail"
+                                              EditContext="_quickAddCopropertyEditContext"
+                                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierEmail)"
+                                              IsRequired="false"
+                                              Label="@Labels.TrustedTierEmail">
+                                </OutlinedText>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierEmail)" />
+                            </div>
+
+                            <div>
+                                <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRole"
+                                           EditContext="@_quickAddCopropertyEditContext"
+                                           ElementName="@($"trustedthirdpartyrole-{Guid.NewGuid().ToString()}")"
+                                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRole)"
+                                           IsRequired="false"
+                                           Items="@ItemsList.TrustedTierRoles"
+                                           Label="@Labels.TrustedTierRole"
+                                           TItem="TrustedTierRole?"
+                                           ShouldSort="true">
+                                </ZeeSelect>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRole)" />
+                            </div>
+
+                            @if (QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRole == TrustedTierRole.Other)
+                            {
+                                <div>
+                                    <OutlinedText @bind-Value="@QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRoleFreeInput"
+                                                  EditContext="_quickAddCopropertyEditContext"
+                                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRoleFreeInput)"
+                                                  IsInForm=true
+                                                  IsRequired=false
+                                                  Label="@Labels.TrustedTierAskedRole">
+                                    </OutlinedText>
+                                    <ValidationMessage For="@(() => QuickAddFormViewModel.AccompaniementViewModel.TrustedTierRoleFreeInput)" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="QuickAddFormViewModel.ZeroEnergyExclusionTerritoriesProgram"
+                                       EditContext="@_quickAddCopropertyEditContext"
+                                       ElementName="@($"ZeroEnergyExclusionTerritoriesProgram-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ZeroEnergyExclusionTerritoriesProgram)"
+                                       IsRequired="true"
+                                       Items="@ItemsList.NullableYesNoList"
+                                       Label="@Labels.ZeroEnergyExclusionTerritoriesProgram"
+                                       OnNewValueSelected="OnAccompanyingTypeChanged"
+                                       ShowLabelBefore="true"
+                                       TItem="bool?" />
+                        </div>
+                        <ValidationMessage For="@(() => QuickAddFormViewModel.ZeroEnergyExclusionTerritoriesProgram)" />
+                    </div>
+
+                    @if (QuickAddFormViewModel.ZeroEnergyExclusionTerritoriesProgram == true)
+                    {
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.AccompanyingType"
+                                       EditContext="@_quickAddCopropertyEditContext"
+                                       ElementName="@($"AccompanyingType-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.AccompanyingType)"
+                                       IsRequired="true"
+                                       Items="@ItemsList.AccompanyingTypes"
+                                       Label="@Labels.AccompanyingType"
+                                       OnNewValueSelected="OnAccompanyingTypeChanged"
+                                       TItem="AccompanyingType?">
+                            </ZeeSelect>
+                            <ValidationMessage For="@(() => QuickAddFormViewModel.AccompanyingType)" />
+                        </div>
+
+                        @if (QuickAddFormViewModel.AccompanyingType == AccompanyingType.Diffuse)
+                        {
+                            <div>
+                                <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.ReferentDiffuseCoordinator"
+                                           EditContext="@_quickAddCopropertyEditContext"
+                                           ElementName="@($"DiffuseCoordiator-{Guid.NewGuid().ToString()}")"
+                                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ReferentDiffuseCoordinator)"
+                                           IsRequired="true"
+                                           Items="@DiffuseCoordinatorUsers"
+                                           Label="@Labels.ReferentDiffuseCoordinator"
+                                           TItem="Guid?"
+                                           ShouldSort="true">
+                                </ZeeSelect>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.ReferentDiffuseCoordinator)" />
+                            </div>
+                        }
+
+                        @if (QuickAddFormViewModel.AccompanyingType == AccompanyingType.Targeted)
+                        {
+                            <div>
+                                <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.ReferentTargetCoordinator"
+                                           EditContext="@_quickAddCopropertyEditContext"
+                                           ElementName="@($"TargetCoordinator-{Guid.NewGuid().ToString()}")"
+                                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ReferentTargetCoordinator)"
+                                           IsRequired="true"
+                                           Items="@TargetCoordinator"
+                                           Label="@Labels.ReferentTargetedCoordinator"
+                                           ShowLabelBefore="true"
+                                           TItem="Guid?"
+                                           ShouldSort="true">
+                                </ZeeSelect>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.ReferentTargetCoordinator)" />
+                            </div>
+
+                            @if (TerritorialBuilderUsers != null)
+                            {
+                                <div>
+                                    <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.ReferentEtId"
+                                               EditContext="@_quickAddCopropertyEditContext"
+                                               ElementName="@($"referent-et-{Guid.NewGuid().ToString()}")"
+                                               FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ReferentEtId)"
+                                               IsRequired="true"
+                                               Items="@TerritorialBuilderUsers"
+                                               Label="@Labels.ReferentEt"
+                                               ShowLabelBefore="true"
+                                               TItem="Guid?"
+                                               ShouldSort="true">
+                                    </ZeeSelect>
+                                    <ValidationMessage For="@(() => QuickAddFormViewModel.ReferentEtId)" />
+
+                                </div>
+                                <div>
+                                    <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.SecondReferentEtId"
+                                               EditContext="@_quickAddCopropertyEditContext"
+                                               ElementName="@($"referent-et-{Guid.NewGuid().ToString()}")"
+                                               FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.SecondReferentEtId)"
+                                               Items="@TerritorialBuilderUsers"
+                                               Label="@Labels.SecondReferentEt"
+                                               ShowLabelBefore="true"
+                                               TItem="Guid?"
+                                               ShouldSort="true">
+                                    </ZeeSelect>
+                                </div>
+                            }
+
+
+                            <div>
+                                <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.Territory"
+                                           EditContext="@_quickAddCopropertyEditContext"
+                                           ElementName="@($"Territory-{Guid.NewGuid().ToString()}")"
+                                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.Territory)"
+                                           IsRequired="true"
+                                           Items="@Territory"
+                                           Label="@Labels.Territory"
+                                           ShowLabelBefore="false"
+                                           TItem="Guid?"
+                                           ShouldSort="true">
+                                </ZeeSelect>
+                                <ValidationMessage For="@(() => QuickAddFormViewModel.Territory)" />
+                            </div>
+                        }
+                    }
+
+                    <div>
+                        <h4 class="section-title">
+                            @Labels.ReferentSolidarBuilder
+                            <span class="required"></span>
+                        </h4>
+                    </div>
+                    <div>
+                        @if (SolidarBuilderUsers != null)
+                        {
+                            <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.ReferentSolidarBuilderId"
+                                       EditContext="@_quickAddCopropertyEditContext"
+                                       ElementName="@($"referent-es-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ReferentSolidarBuilderId)"
+                                       IsRequired="true"
+                                       Items="@SolidarBuilderUsers"
+                                       Label="@Labels.ReferentSolidarBuilder"
+                                       ShowLabelBefore="false"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                            <ValidationMessage For="@(() => QuickAddFormViewModel.ReferentSolidarBuilderId)" />
+                        }
+                    </div>
+
+                    <div>
+                        <h4 class="section-title">
+                            @Labels.SecondReferentSolidarBuilder
+                        </h4>
+                    </div>
+
+                    <div>
+                        @if (SolidarBuilderUsers != null)
+                        {
+                            <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.SecondReferentSolidarBuilderId"
+                                       EditContext="@_quickAddCopropertyEditContext"
+                                       ElementName="@($"second-referent-es-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.SecondReferentSolidarBuilderId)"
+                                       IsRequired="false"
+                                       Items="@SolidarBuilderUsers"
+                                       Label="@Labels.SecondReferentSolidarBuilder"
+                                       ShowLabelBefore="false"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                        }
+                    </div>
+
+                    <div>
+                        <h4 class="section-title">
+                            @Labels.ThirdReferentSolidarBuilderQuickAddLabel
+                        </h4>
+                    </div>
+
+                    <div>
+                        @if (SolidarBuilderUsers != null)
+                        {
+                            <ZeeSelect @bind-CheckedValue="@QuickAddFormViewModel.ThirdReferentSolidarBuilderId"
+                                       EditContext="@_quickAddCopropertyEditContext"
+                                       ElementName="@($"second-referent-es-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => QuickAddFormViewModel.ThirdReferentSolidarBuilderId)"
+                                       IsRequired="false"
+                                       Items="@SolidarBuilderUsers"
+                                       Label="@Labels.ThirdReferentSolidarBuilder"
+                                       ShowLabelBefore="false"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                        }
+                    </div>
+                </div>
+
+				<div class="zeeButton">
+					<ZeeButton IsSubmit="true"
+							   Text="@Labels.Submit">
+					</ZeeButton>
+
+                    <ZeeButton Text="@Labels.Cancel"
+                                style="margin-left: 10px;"
+                               @onclick="@OnClickCancelButton">
+                    </ZeeButton>
+				</div>
+			</div>
+		</EditForm>
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

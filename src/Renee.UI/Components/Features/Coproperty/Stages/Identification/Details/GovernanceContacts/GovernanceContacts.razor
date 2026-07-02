@@ -1,0 +1,105 @@
+﻿@using Renee.Application.DTOs.Occupant
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<div>
+	<div>
+		<h4 class="section-title">
+			@Labels.CopropertyGovernanceContactsTitle
+		</h4>
+	</div>
+	<div class="flex-container">
+		<div class="card grid-form top-1">
+
+			<div>
+				<OutlinedText @bind-Value="@ViewModel.NameOfSyndic"
+							  EditContext="@_editContext"
+							  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NameOfSyndic)"
+							  IsInForm="false"
+							  IsRequired="true"
+							  Label="@Labels.NameOfSyndic"
+							  disabled="@IsUserAllowedToEdit">
+				</OutlinedText>
+				<ValidationMessage For="@(() => ViewModel.NameOfSyndic)" />
+			</div>
+
+			<label class="@(HousingTypology == HousingType.ResidentialCollective ? "" : "required")">@Labels.PhoneOfSyndic</label>
+			<div>
+				<ZeePhoneNumber @bind-BindingValue="ViewModel.PhoneOfSyndic">
+				</ZeePhoneNumber>
+				@if (HousingTypology != HousingType.ResidentialCollective)
+				{
+					<ValidationMessage For="@(() => ViewModel.PhoneOfSyndic)" />
+				}
+			</div>
+
+			<div>
+				<OutlinedText @bind-Value="@ViewModel.MailOfSyndic"
+							  EditContext="@_editContext"
+							  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.MailOfSyndic)"
+							  IsEmail=true
+							  IsInForm="false"
+							  IsRequired="@(HousingTypology != HousingType.ResidentialCollective)"
+							  Label="@Labels.MailOfSyndic"
+							  disabled="@IsUserAllowedToEdit">
+				</OutlinedText>
+				@if (HousingTypology != HousingType.ResidentialCollective)
+				{
+					<ValidationMessage For="@(() => ViewModel.MailOfSyndic)" />
+				}
+			</div>
+
+			<div>
+				<ZeeSelect @bind-CheckedValue="@ViewModel.NatureOfSyndic"
+						   EditContext="@_editContext"
+						   ElementName="@($"nature-syndic-{Guid.NewGuid().ToString()}")"
+						   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NatureOfSyndic)"
+						   IsRequired="true"
+						   Items="@NatureOfSyndicTypes"
+						   Label="@Labels.NatureOfSyndic"
+						   TItem="NatureOfSyndicType?"
+						   ShouldSort="true"
+						   disabled="@IsUserAllowedToEdit">
+				</ZeeSelect>
+				<ValidationMessage For="@(() => ViewModel.NatureOfSyndic)" />
+			</div>
+
+		</div>
+
+		<div class="card grid-form top-2">
+
+			<div>
+				<OutlinedText @bind-Value="@ViewModel.NameOfAmo"
+							  EditContext="@_editContext"
+							  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NameOfAmo)"
+							  IsInForm="false"
+							  IsRequired="false"
+							  Label="@Labels.NameOfAmo"
+							  disabled="@IsUserAllowedToEdit">
+				</OutlinedText>
+			</div>
+
+			<div>
+				<OutlinedText @bind-Value="@ViewModel.ContactOfAmo"
+							  EditContext="@_editContext"
+							  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ContactOfAmo)"
+							  IsInForm="false"
+							  IsRequired="false"
+							  Label="@Labels.ContactOfAmo"
+							  disabled="@IsUserAllowedToEdit">
+				</OutlinedText>
+			</div>
+
+			<div>
+				<OutlinedInt @bind-Intgr="@ViewModel.NumberOfContacts"
+							 EditContext="@_editContext"
+							 FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NumberOfContacts)"
+							 IsRequired="false"
+							 Label="@Labels.NumberOfContacts"
+							 disabled="@IsUserAllowedToEdit">
+				</OutlinedInt>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,14 @@
+﻿.funding-container {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 1em;
+    align-items: center;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.column-gap {
+    column-gap: 1em;
+}

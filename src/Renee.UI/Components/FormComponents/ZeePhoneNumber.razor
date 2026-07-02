@@ -1,0 +1,1786 @@
+<div class="input-group mb-3">
+    <button aria-expanded="false"
+            class="btn dropdown-toggle int-phone-country-select"
+            data-bs-toggle="dropdown"
+            disabled="@Disabled"
+            type="button">
+        <div class="flag-box">
+            <div class="flag @_flagClass">
+            </div>
+        </div>
+    </button>
+
+    <ul class="country-list dropdown-menu">
+        @* <li class="country" @onclick="@(e => SetCountry(1, "us"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag us"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">United States</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(44, "gb"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gb"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">United Kingdom</span> *@
+        @* 	<span class="dial-code">+44</span> *@
+        @* </li> *@
+        @* <li class="divider"></li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(93, "af"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="af flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Afghanistan</span> *@
+        @* 	<span class="dial-code">+93</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(358, "ax"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ax flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Aland Islands</span> *@
+        @* 	<span class="dial-code">+358</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(355, "al"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="al flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Albania</span> *@
+        @* 	<span class="dial-code">+355</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(213, "dz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="dz flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Algeria</span> *@
+        @* 	<span class="dial-code">+213</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "as"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="as flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">American Samoa</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(376, "ad"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ad flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Andorra</span> *@
+        @* 	<span class="dial-code">+376</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(244, "ao"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ao flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Angola</span> *@
+        @* 	<span class="dial-code">+244</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "ai"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ai flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Anguilla</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "ag"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ag flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Antigua and Barbuda</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(54, "ar"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ar flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Argentina</span> *@
+        @* 	<span class="dial-code">+54</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(374, "am"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="am flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Armenia</span> *@
+        @* 	<span class="dial-code">+374</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(297, "aw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="aw flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Aruba</span> *@
+        @* 	<span class="dial-code">+297</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(247, "ac"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ac flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ascension Island</span> *@
+        @* 	<span class="dial-code">+247</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(61, "au"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="au flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Australia</span> *@
+        @* 	<span class="dial-code">+61</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(43, "at"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="at flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Austria</span> *@
+        @* 	<span class="dial-code">+43</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(994, "az"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="az flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Azerbaijan</span> *@
+        @* 	<span class="dial-code">+994</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "bs"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bs flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bahamas</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(973, "bn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bh flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bahrain</span> *@
+        @* 	<span class="dial-code">+973</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(880, "bd"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bd flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bangladesh</span> *@
+        @* 	<span class="dial-code">+880</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "bb"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bb flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Barbados</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(375, "by"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="by flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Belarus</span> *@
+        @* 	<span class="dial-code">+375</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(32, "be"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="be flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Belgium</span> *@
+        @* 	<span class="dial-code">+32</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(501, "bz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bz flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Belize</span> *@
+        @* 	<span class="dial-code">+501</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(229, "bj"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bj flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Benin</span> *@
+        @* 	<span class="dial-code">+229</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "bm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bm flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bermuda</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(975, "bt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bt flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bhutan</span> *@
+        @* 	<span class="dial-code">+975</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(591, "bo"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bo flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bolivia</span> *@
+        @* 	<span class="dial-code">+591</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(387, "ba"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ba flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bosnia and Herzegovina</span> *@
+        @* 	<span class="dial-code">+387</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(267, "bw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bw flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Botswana</span> *@
+        @* 	<span class="dial-code">+267</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(55, "br"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="br flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Brazil</span> *@
+        @* 	<span class="dial-code">+55</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(246, "io"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag io"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">British Indian Ocean Territory</span> *@
+        @* 	<span class="dial-code">+246</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(673, "bn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bn flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Brunei Darussalam</span> *@
+        @* 	<span class="dial-code">+673</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(359, "bg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bg flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Bulgaria</span> *@
+        @* 	<span class="dial-code">+359</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(226, "bf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bf flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Burkina Faso</span> *@
+        @* 	<span class="dial-code">+226</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(257, "bi"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bi flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Burundi</span> *@
+        @* 	<span class="dial-code">+257</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(855, "kh"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kh"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cambodia</span> *@
+        @* 	<span class="dial-code">+855</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(237, "cm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cm flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cameroon</span> *@
+        @* 	<span class="dial-code">+237</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "ca"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ca flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Canada</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(238, "cv"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cv flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cape Verde</span> *@
+        @* 	<span class="dial-code">+238</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(599, "bq"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bq flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Caribbean Netherlands</span> *@
+        @* 	<span class="dial-code">+599</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "ky"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ky"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cayman Islands</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(236, "cf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cf flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Central African Republic</span> *@
+        @* 	<span class="dial-code">+236</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(235, "td"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag td"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Chad</span> *@
+        @* 	<span class="dial-code">+235</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(56, "cl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cl flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Chile</span> *@
+        @* 	<span class="dial-code">+56</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(86, "cn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cn flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">China</span> *@
+        @* 	<span class="dial-code">+86</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(61, "cx"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cx flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Christmas Island</span> *@
+        @* 	<span class="dial-code">+61</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(61, "cc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cc flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cocos (Keeling) Islands</span> *@
+        @* 	<span class="dial-code">+61</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(57, "co"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="co flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Colombia</span> *@
+        @* 	<span class="dial-code">+57</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(269, "km"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag km"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Comoros</span> *@
+        @* 	<span class="dial-code">+269</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(243, "cd"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cd flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Congo (DRC)</span> *@
+        @* 	<span class="dial-code">+243</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(242, "cg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cg flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Congo (Republic)</span> *@
+        @* 	<span class="dial-code">+242</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(682, "ck"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ck flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cook Islands</span> *@
+        @* 	<span class="dial-code">+682</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(506, "cr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cr flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Costa Rica</span> *@
+        @* 	<span class="dial-code">+506</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(225, "ci"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ci flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Côte d'Ivoire</span> *@
+        @* 	<span class="dial-code">+225</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(385, "hr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag hr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Croatia</span> *@
+        @* 	<span class="dial-code">+385</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(53, "cu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cu flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cuba</span> *@
+        @* 	<span class="dial-code">+53</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(599, "cw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cw flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Curaçao</span> *@
+        @* 	<span class="dial-code">+599</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(357, "cy"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cy flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Cyprus</span> *@
+        @* 	<span class="dial-code">+357</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(420, "cz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="cz flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Czech Republic</span> *@
+        @* 	<span class="dial-code">+420</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(45, "dk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="dk flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Denmark</span> *@
+        @* 	<span class="dial-code">+45</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(253, "dj"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="dj flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Djibouti</span> *@
+        @* 	<span class="dial-code">+253</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "dm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="dm flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Dominica</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "do"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="do flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Dominican Republic</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(593, "ec"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ec flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ecuador</span> *@
+        @* 	<span class="dial-code">+593</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(20, "eg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="eg flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Egypt</span> *@
+        @* 	<span class="dial-code">+20</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(503, "sv"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sv"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">El Salvador</span> *@
+        @* 	<span class="dial-code">+503</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(240, "gq"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gq"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Equatorial Guinea</span> *@
+        @* 	<span class="dial-code">+240</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(291, "er"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="er flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Eritrea</span> *@
+        @* 	<span class="dial-code">+291</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(372, "ee"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ee flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Estonia</span> *@
+        @* 	<span class="dial-code">+372</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(251, "et"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="et flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ethiopia</span> *@
+        @* 	<span class="dial-code">+251</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(500, "fk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="fk flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Falkland Islands (Islas Malvinas)</span> *@
+        @* 	<span class="dial-code">+500</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(298, "fo"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag fo"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Faroe Islands</span> *@
+        @* 	<span class="dial-code">+298</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(679, "fj"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="fj flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Fiji</span> *@
+        @* 	<span class="dial-code">+679</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(358, "fi"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="fi flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Finland</span> *@
+        @* 	<span class="dial-code">+358</span> *@
+        @* </li> *@
+        <li class="country"
+            @onclick="@(_ => SetCountry(33, "fr"))">
+            <div class="flag-box">
+                <div class="flag fr">
+                </div>
+            </div>
+            <span class="country-name">
+                France
+            </span>
+            <span class="dial-code">
+                +33
+            </span>
+        </li>
+        @* <li class="country" @onclick="@(e => SetCountry(594, "gf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gf"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">French Guiana</span> *@
+        @* 	<span class="dial-code">+594</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(689, "pf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pf"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">French Polynesia</span> *@
+        @* 	<span class="dial-code">+689</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(241, "ga"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ga"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Gabon</span> *@
+        @* 	<span class="dial-code">+241</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(220, "gm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Gambia</span> *@
+        @* 	<span class="dial-code">+220</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(995, "ge"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ge"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Georgia</span> *@
+        @* 	<span class="dial-code">+995</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(49, "de"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="de flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Germany</span> *@
+        @* 	<span class="dial-code">+49</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(233, "gh"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gh"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ghana</span> *@
+        @* 	<span class="dial-code">+233</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(350, "gi"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gi"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Gibraltar</span> *@
+        @* 	<span class="dial-code">+350</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(30, "gr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Greece</span> *@
+        @* 	<span class="dial-code">+30</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(299, "gl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gl"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Greenland</span> *@
+        @* 	<span class="dial-code">+299</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "gd"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gd"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Grenada</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(590, "gp"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gp"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guadeloupe</span> *@
+        @* 	<span class="dial-code">+590</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(508, "pm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Pierre and Miquelon</span> *@
+        @* 	<span class="dial-code">+508</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "sh"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sh"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Helena, Ascension and Tristan Da Cunha</span> *@
+        @* 	<span class="dial-code">+290</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "gu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guam</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(502, "gt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guatemala</span> *@
+        @* 	<span class="dial-code">+502</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(44, "gg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guernsey</span> *@
+        @* 	<span class="dial-code">+44</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(224, "gn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guinea</span> *@
+        @* 	<span class="dial-code">+224</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(245, "gw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guinea-Bissau</span> *@
+        @* 	<span class="dial-code">+245</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(592, "gy"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gy"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Guyana</span> *@
+        @* 	<span class="dial-code">+592</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(509, "ht"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ht"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Haiti</span> *@
+        @* 	<span class="dial-code">+509</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(504, "hn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag hn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Honduras</span> *@
+        @* 	<span class="dial-code">+504</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(852, "hk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag hk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Hong Kong</span> *@
+        @* 	<span class="dial-code">+852</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(36, "hu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag hu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Hungary</span> *@
+        @* 	<span class="dial-code">+36</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(354, "is"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag is"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Iceland</span> *@
+        @* 	<span class="dial-code">+354</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(91, "in"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag in"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">India</span> *@
+        @* 	<span class="dial-code">+91</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(62, "id"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag id"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Indonesia</span> *@
+        @* 	<span class="dial-code">+62</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(98, "ir"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ir"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Iran</span> *@
+        @* 	<span class="dial-code">+98</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(964, "iq"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag iq"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Iraq</span> *@
+        @* 	<span class="dial-code">+964</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(353, "ie"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ie"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ireland</span> *@
+        @* 	<span class="dial-code">+353</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(44, "im"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag im"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Isle of Man</span> *@
+        @* 	<span class="dial-code">+44</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(972, "il"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag il"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Israel</span> *@
+        @* 	<span class="dial-code">+972</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(39, "it"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag it"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Italy</span> *@
+        @* 	<span class="dial-code">+39</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "jm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag jm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Jamaica</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(81, "jp"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag jp"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Japan</span> *@
+        @* 	<span class="dial-code">+81</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(44, "je"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag je"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Jersey</span> *@
+        @* 	<span class="dial-code">+44</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(962, "jo"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag jo"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Jordan</span> *@
+        @* 	<span class="dial-code">+962</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(7, "kz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Kazakhstan</span> *@
+        @* 	<span class="dial-code">+7</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(254, "ke"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ke"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Kenya</span> *@
+        @* 	<span class="dial-code">+254</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(686, "ki"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ki"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Kiribati</span> *@
+        @* 	<span class="dial-code">+686</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(965, "kw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Kuwait</span> *@
+        @* 	<span class="dial-code">+965</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(996, "kg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Kyrgyzstan</span> *@
+        @* 	<span class="dial-code">+996</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(856, "la"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag la"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Laos</span> *@
+        @* 	<span class="dial-code">+856</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(371, "lv"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lv"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Latvia</span> *@
+        @* 	<span class="dial-code">+371</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(961, "lb"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lb"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Lebanon</span> *@
+        @* 	<span class="dial-code">+961</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(266, "ls"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ls"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Lesotho</span> *@
+        @* 	<span class="dial-code">+266</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(231, "lr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Liberia</span> *@
+        @* 	<span class="dial-code">+231</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(218, "ly"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ly"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Libya</span> *@
+        @* 	<span class="dial-code">+218</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(423, "li"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag li"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Liechtenstein</span> *@
+        @* 	<span class="dial-code">+423</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(370, "lt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Lithuania</span> *@
+        @* 	<span class="dial-code">+370</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(352, "lu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Luxembourg</span> *@
+        @* 	<span class="dial-code">+352</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(853, "mo"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mo"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Macao</span> *@
+        @* 	<span class="dial-code">+853</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(389, "mk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Macedonia</span> *@
+        @* 	<span class="dial-code">+389</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(261, "mg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Madagascar</span> *@
+        @* 	<span class="dial-code">+261</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(265, "mw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Malawi</span> *@
+        @* 	<span class="dial-code">+265</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(60, "my"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag my"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Malaysia</span> *@
+        @* 	<span class="dial-code">+60</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(960, "mv"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mv"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Maldives</span> *@
+        @* 	<span class="dial-code">+960</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(223, "ml"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ml"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mali</span> *@
+        @* 	<span class="dial-code">+223</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(356, "mt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Malta</span> *@
+        @* 	<span class="dial-code">+356</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(692, "mh"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mh"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Marshall Islands</span> *@
+        @* 	<span class="dial-code">+692</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(596, "mq"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mq"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Martinique</span> *@
+        @* 	<span class="dial-code">+596</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(222, "mr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mauritania</span> *@
+        @* 	<span class="dial-code">+222</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(230, "mu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mauritius</span> *@
+        @* 	<span class="dial-code">+230</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(262, "yt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag yt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mayotte</span> *@
+        @* 	<span class="dial-code">+262</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(52, "mx"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mx"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mexico</span> *@
+        @* 	<span class="dial-code">+52</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(691, "fm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag fm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Micronesia</span> *@
+        @* 	<span class="dial-code">+691</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(373, "md"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag md"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Moldova</span> *@
+        @* 	<span class="dial-code">+373</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(377, "mc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Monaco</span> *@
+        @* 	<span class="dial-code">+377</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(976, "mn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mongolia</span> *@
+        @* 	<span class="dial-code">+976</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(382, "me"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag me"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Montenegro</span> *@
+        @* 	<span class="dial-code">+382</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "ms"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ms"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Montserrat</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(212, "ma"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ma"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Morocco</span> *@
+        @* 	<span class="dial-code">+212</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(258, "mz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Mozambique</span> *@
+        @* 	<span class="dial-code">+258</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(95, "mm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Myanmar (Burma)</span> *@
+        @* 	<span class="dial-code">+95</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(264, "na"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag na"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Namibia</span> *@
+        @* 	<span class="dial-code">+264</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(674, "nr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Nauru</span> *@
+        @* 	<span class="dial-code">+674</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(977, "np"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag np"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Nepal</span> *@
+        @* 	<span class="dial-code">+977</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(31, "nl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nl"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Netherlands</span> *@
+        @* 	<span class="dial-code">+31</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(687, "nc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">New Caledonia</span> *@
+        @* 	<span class="dial-code">+687</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(64, "nz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">New Zealand</span> *@
+        @* 	<span class="dial-code">+64</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(505, "ni"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ni"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Nicaragua</span> *@
+        @* 	<span class="dial-code">+505</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(227, "ne"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ne"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Niger</span> *@
+        @* 	<span class="dial-code">+227</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(234, "ng"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ng"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Nigeria</span> *@
+        @* 	<span class="dial-code">+234</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(683, "nu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Niue</span> *@
+        @* 	<span class="dial-code">+683</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(672, "nf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag nf"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Norfolk Island</span> *@
+        @* 	<span class="dial-code">+672</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(850, "kp"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kp"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">North Korea</span> *@
+        @* 	<span class="dial-code">+850</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(47, "no"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag no"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Norway</span> *@
+        @* 	<span class="dial-code">+47</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(968, "om"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag om"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Oman</span> *@
+        @* 	<span class="dial-code">+968</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(92, "pk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Pakistan</span> *@
+        @* 	<span class="dial-code">+92</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(680, "pw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Palau</span> *@
+        @* 	<span class="dial-code">+680</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(970, "ps"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ps"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Palestinian Territory</span> *@
+        @* 	<span class="dial-code">+970</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(507, "pa"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pa"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Panama</span> *@
+        @* 	<span class="dial-code">+507</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(675, "pg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Papua New Guinea</span> *@
+        @* 	<span class="dial-code">+675</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(595, "py"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag py"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Paraguay</span> *@
+        @* 	<span class="dial-code">+595</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(51, "pe"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pe"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Peru</span> *@
+        @* 	<span class="dial-code">+51</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(63, "ph"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ph"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Philippines</span> *@
+        @* 	<span class="dial-code">+63</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(48, "pl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pl"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Poland</span> *@
+        @* 	<span class="dial-code">+48</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(351, "pt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Portugal</span> *@
+        @* 	<span class="dial-code">+351</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "pr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag pr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Puerto Rico</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(974, "qa"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag qa"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Qatar</span> *@
+        @* 	<span class="dial-code">+974</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(262, "re"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag re"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Réunion</span> *@
+        @* 	<span class="dial-code">+262</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(590, "nl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="bl flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Barthelemy</span> *@
+        @* 	<span class="dial-code">+590</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(40, "ro"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ro"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Romania</span> *@
+        @* 	<span class="dial-code">+40</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(7, "ru"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ru"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Russian Federation</span> *@
+        @* 	<span class="dial-code">+7</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(250, "rw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag rw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Rwanda</span> *@
+        @* 	<span class="dial-code">+250</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "kn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Kitts and Nevis</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "lc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Lucia</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(590, "mf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag mf"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Martin (Saint-Martin</span> *@
+        @* 	<span class="dial-code">+590</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "vc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag vc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saint Vincent and the Grenadines</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(658, "ws"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ws"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Samoa</span> *@
+        @* 	<span class="dial-code">+685</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(378, "sm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">San Marino</span> *@
+        @* 	<span class="dial-code">+378</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(239, "st"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag st"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">São Tomé and Príncipe</span> *@
+        @* 	<span class="dial-code">+239</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(966, "sa"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sa"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Saudi Arabia</span> *@
+        @* 	<span class="dial-code">+966</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(221, "sn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Senegal</span> *@
+        @* 	<span class="dial-code">+221</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(381, "rs"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag rs"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Serbia</span> *@
+        @* 	<span class="dial-code">+381</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(248, "sc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Seychelles</span> *@
+        @* 	<span class="dial-code">+248</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(232, "sl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sl"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Sierra Leone</span> *@
+        @* 	<span class="dial-code">+232</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(65, "sg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Singapore</span> *@
+        @* 	<span class="dial-code">+65</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(421, "sk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Slovakia</span> *@
+        @* 	<span class="dial-code">+421</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(386, "si"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag si"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Slovenia</span> *@
+        @* 	<span class="dial-code">+386</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(677, "sb"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sb"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Solomon Islands</span> *@
+        @* 	<span class="dial-code">+677</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(252, "so"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag so"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Somalia</span> *@
+        @* 	<span class="dial-code">+252</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(27, "za"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag za"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">South Africa</span> *@
+        @* 	<span class="dial-code">+27</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(82, "kr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag kr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">South Korea</span> *@
+        @* 	<span class="dial-code">+82</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(211, "ss"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ss"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">South Sudan</span> *@
+        @* 	<span class="dial-code">+211</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(34, "es"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="es flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Spain</span> *@
+        @* 	<span class="dial-code">+34</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(94, "lk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag lk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Sri Lanka</span> *@
+        @* 	<span class="dial-code">+94</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(249, "sd"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sd"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Sudan</span> *@
+        @* 	<span class="dial-code">+249</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(597, "sr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Suriname</span> *@
+        @* 	<span class="dial-code">+597</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(268, "sz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Swaziland</span> *@
+        @* 	<span class="dial-code">+268</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(46, "se"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag se"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Sweden</span> *@
+        @* 	<span class="dial-code">+46</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(41, "ch"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ch flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Switzerland</span> *@
+        @* 	<span class="dial-code">+41</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(963, "sy"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag sy"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Syrian Arab Republic</span> *@
+        @* 	<span class="dial-code">+963</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(886, "tw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Taiwan, Province of China</span> *@
+        @* 	<span class="dial-code">+886</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(992, "tj"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tj"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tajikistan</span> *@
+        @* 	<span class="dial-code">+992</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(255, "tz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tanzania</span> *@
+        @* 	<span class="dial-code">+255</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(66, "th"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag th"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Thailand</span> *@
+        @* 	<span class="dial-code">+66</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(670, "tl"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tl"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Timor-Leste</span> *@
+        @* 	<span class="dial-code">+670</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(228, "tg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Togo</span> *@
+        @* 	<span class="dial-code">+228</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(690, "tk"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tk"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tokelau</span> *@
+        @* 	<span class="dial-code">+690</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(676, "to"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag to"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tonga</span> *@
+        @* 	<span class="dial-code">+676</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "tt"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tt"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Trinidad and Tobago</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(290, "ta"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ta"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tristan da Cunha</span> *@
+        @* 	<span class="dial-code">+290</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(216, "tn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tunisia</span> *@
+        @* 	<span class="dial-code">+216</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(90, "tr"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tr"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Turkey</span> *@
+        @* 	<span class="dial-code">+90</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(993, "tm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Turkmenistan</span> *@
+        @* 	<span class="dial-code">+993</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "tc"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tc"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Turks and Caicos Islands</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(688, "tv"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag tv"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Tuvalu</span> *@
+        @* 	<span class="dial-code">+688</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(256, "ug"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ug"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Uganda</span> *@
+        @* 	<span class="dial-code">+256</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(380, "ua"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ua"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Ukraine</span> *@
+        @* 	<span class="dial-code">+380</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(971, "ae"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="ae flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">United Arab Emirates</span> *@
+        @* 	<span class="dial-code">+971</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(44, "gb"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag gb"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">United Kingdom</span> *@
+        @* 	<span class="dial-code">+44</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "us"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag us"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">United States</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(598, "uy"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag uy"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Uruguay</span> *@
+        @* 	<span class="dial-code">+598</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(998, "uz"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag uz"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Uzbekistan</span> *@
+        @* 	<span class="dial-code">+998</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(678, "vu"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag vu"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Vanuatu</span> *@
+        @* 	<span class="dial-code">+678</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(379, "va"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag va"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Vatican City</span> *@
+        @* 	<span class="dial-code">+379</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(58, "ve"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ve"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Venezuela</span> *@
+        @* 	<span class="dial-code">+58</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(84, "vn"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag vn"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Viet Nam</span> *@
+        @* 	<span class="dial-code">+84</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "vg"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag vg"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Virgin Islands (British)</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(1, "vi"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag vi"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Virgin Islands (U.S.)</span> *@
+        @* 	<span class="dial-code">+1</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(681, "wf"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag wf"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Wallis and Futuna</span> *@
+        @* 	<span class="dial-code">+681</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(212, "eh"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="eh flag"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Western Sahara</span> *@
+        @* 	<span class="dial-code">+212</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(967, "ye"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag ye"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Yemen</span> *@
+        @* 	<span class="dial-code">+967</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(260, "zm"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag zm"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Zambia</span> *@
+        @* 	<span class="dial-code">+260</span> *@
+        @* </li> *@
+        @* <li class="country" @onclick="@(e => SetCountry(263, "zw"))"> *@
+        @* 	<div class="flag-box"> *@
+        @* 		<div class="flag zw"></div> *@
+        @* 	</div> *@
+        @* 	<span class="country-name">Zimbabwe</span> *@
+        @* 	<span class="dial-code">+263</span> *@
+        @* </li> *@
+    </ul>
+    <input class="@Class flex-grow-0 min-width-70px"
+           readonly="readonly"
+           type="text"
+           value="+ @_dialCode"
+           disabled="@Disabled" />
+    <RadzenMask @bind-Value="@TelephoneNumber"
+                Change="@SetTelephoneNumber"
+                class="@Class"
+                Mask="*.**.**.**.**"
+                Pattern="[^0-9]"
+                Placeholder="0.00.00.00.00"
+                Disabled="@Disabled">
+    </RadzenMask>
+</div>
+
+@code {
+
+
+#pragma warning disable BL0007
+    [Parameter]
+    public string? BindingValue
+    {
+        get => string.IsNullOrEmpty(_value) ? "+33 " : _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            TelephoneNumber = value is { Length: > 3 } ? value[3..] : string.Empty;
+            BindingValueChanged.InvokeAsync(value);
+            Change.InvokeAsync(value);
+        }
+    }
+#pragma warning restore BL0007
+
+    [Parameter] public EventCallback<string?> BindingValueChanged { get; set; }
+
+    [Parameter] public EventCallback<string?> Change { get; set; }
+
+    [Parameter] public string? Id { get; set; }
+
+    [Parameter] public string? Class { get; set; }
+
+    [Parameter] public bool Disabled { get; set; }
+
+    private string? _value;
+    private int _dialCode = 33;
+    private string? TelephoneNumber { get; set; }
+    private string _flagClass = "fr";
+
+    private void SetCountry(int dialCode, string flagClass)
+    {
+        _flagClass = flagClass;
+        _dialCode = dialCode;
+        TelephoneNumber = string.Empty;
+        BindingValue = $"+{_dialCode} ";
+    }
+
+    private void SetTelephoneNumber(string value)
+    {
+        TelephoneNumber = value;
+        BindingValue = (!string.IsNullOrEmpty(TelephoneNumber)) ? $"+{_dialCode} {TelephoneNumber}" : string.Empty;
+    }
+
+}

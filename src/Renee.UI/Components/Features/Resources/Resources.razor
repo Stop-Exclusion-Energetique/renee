@@ -1,0 +1,51 @@
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.Resources)]
+@attribute [Authorize]
+
+@inject IJSRuntime JS
+
+
+<AuthorizeView Context="_">
+	<Authorized>
+		<h1 class="page-title">@Labels.Resources</h1>
+		<div class="d-flex flex-row">
+			<div class="d-flex flex-row">
+				<ZeeButton CssClass="m-1"
+						   DisplayBackground="DisplayEnumBackground.Pink"
+						   @onclick="@PrevPage"
+						   IsSmallButtonType="true"
+						   Icon="arrow_back"></ZeeButton>
+				<ZeeButton CssClass="m-1"
+						   DisplayBackground="DisplayEnumBackground.Pink"
+						   @onclick="@NextPage"
+						   IsSmallButtonType="true"
+						   Icon="arrow_forward"></ZeeButton>
+			</div>
+		</div>
+
+		<p id="pageInfo">Page: 0 / 0</p>
+		<canvas id="pdfCanvas" style="width: 100%"></canvas>
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+	private async Task NextPage()
+	{
+		await JS.InvokeVoidAsync("window.pdfViewer.nextPage");
+	}
+
+	private async Task PrevPage()
+	{
+		await JS.InvokeVoidAsync("window.pdfViewer.prevPage");
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await JS.InvokeVoidAsync("window.pdfViewer.loadPdf", "guide_utilisateur.pdf", "pdfCanvas");
+	}
+}

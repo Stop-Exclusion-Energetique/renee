@@ -1,0 +1,34 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.Coproperty.List.Components
+@attribute [Route(Endpoints.Coproperty)]
+@attribute [Authorize]
+
+<AuthorizeView Context="_">
+	<Authorized>
+		<h1 class="page-title">@Labels.CopropertyProfilePageTitle</h1>
+
+		<div class="flex-container">
+
+			@if (CreatedCopropertyProfileByUserViewModels.Count == 0)
+			{
+				<span>@Labels.NoCopropertyProfile</span>
+			}
+
+			@if (CreatedCopropertyProfileByUserViewModels.Count > 0)
+			{
+				@foreach (var copropertyProfile in CreatedCopropertyProfileByUserViewModels)
+				{
+					<CopropertyProfileCard OnCopropertyProfileDeleted="@(async () => await LoadCopropertyProfileDataAsync(_userRole!, _userId))"
+										   UserId="@_userId"
+										   ViewModel="@copropertyProfile"
+										   UserRole="@_userRole"
+										   OnStateChanged="@(async () => await LoadCopropertyProfileDataAsync(_userRole!, _userId))" />
+				}
+			}
+		</div>
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

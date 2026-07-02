@@ -1,0 +1,25 @@
+﻿.flex-container {
+    display: grid;
+    gap: 25px 25px;
+    grid-template-areas:
+        "top-1 top-2"
+        "bottom-1 bottom-1";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+}
+
+.grid-form {
+    display: flex;
+    gap: 10px 10px;
+}
+
+.top-1 {
+    grid-area: top-1;
+}
+
+.top-2 {
+    grid-area: top-2;
+}

@@ -1,0 +1,8 @@
+Bâtiment R+1, surf. hab. 92m², const. 1978
+DPE: F / GES: 45 kgCO2éq/m².an
+PO: Nguyen Van Thanh, tél.: 06.98.76.54.32
+Statut: prop. occ. (pleine propriété)
+ID: 1 (dégradation moyenne)
+CI: <0,3 (insalubrité faible)
+Conso. annuelle: 310 kWh/m²
+Nb pièces: 5, nb étages: 2

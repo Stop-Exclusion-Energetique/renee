@@ -1,0 +1,17 @@
+﻿<div class="counter-grid">
+    <label style="margin-right: 30px;">@Label : @Count </label>
+    <div>
+        <button class="btn btn-bg btn-hover-yellow"
+                @onclick="DecrementCount"
+                type="button"
+                disabled="@IsDisabled">
+            -
+        </button>
+        <button class="btn btn-bg btn-hover-yellow"
+                @onclick="IncrementCount"
+                type="button"
+                disabled="@IsDisabled">
+            +
+        </button>
+    </div>
+</div>

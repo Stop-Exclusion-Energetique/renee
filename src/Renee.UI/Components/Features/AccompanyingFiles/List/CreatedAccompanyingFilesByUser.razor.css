@@ -1,0 +1,41 @@
+﻿.flex-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    gap: 0.5em;
+}
+
+.grid-container-sort-filter {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
+
+.flex-filter-area {
+    border-top: 2px solid #896aab;
+    border-bottom: 2px solid #896aab;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 0.5rem;
+    flex-direction: column;
+}
+
+.grid-filter-area {
+    display: flex;
+    align-items: center;
+    padding: 0.5em;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+@media (max-width: 1099px) {
+    .flex-filter-area {
+        align-items: stretch;
+    }
+
+    .zee-select-width {
+        width: 100%;
+    }
+}

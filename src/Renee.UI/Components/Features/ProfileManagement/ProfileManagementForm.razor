@@ -1,0 +1,47 @@
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.ProfileManagementPage)]
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Context="_">
+    <Authorized>
+        <div class="zeeButtonGroup">
+            <ZeeButton Text="@Labels.PersonalInformation"
+                    @onclick="OnShowPersonalAccount"
+                    Icon="account_circle" />
+
+            @if (_userRole != Constants.AdminRole)
+            {
+                <ZeeButton Text="@Labels.DeleteAccount"
+                        Icon="delete"
+                        @onclick="@OnShowDeleteAccountModal" />
+            }
+
+            @if (_users is not null && _userBaseRole == Constants.AdminRole)
+            {
+                @if (_impersonateUser is null)
+                {
+                    <ZeeSelect Items="_users"
+                            TItem="Guid"
+                            @bind-CheckedValue="ImpersonateUserId"
+                    ></ZeeSelect>
+                    <ZeeButton Text="Impersonate"
+                            @onclick="@ImpersonateUser"/>
+                }
+                else
+                {
+                    <span>Username : @_impersonateUser.UserName</span>
+                    <span>Role : @_impersonateUser.RoleName</span>
+                    <span>Email : @_impersonateUser.Email</span>
+                    <span>Structure : @_impersonateUser.GroupSid</span>
+                    <ZeeButton Text="Stop Impersonate"
+                            @onclick="@StopImpersonateUser"/>
+                }
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

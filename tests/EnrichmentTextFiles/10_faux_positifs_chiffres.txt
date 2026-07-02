@@ -1,0 +1,9 @@
+Référence de facture EDF: 2023-1234
+Numéro client: 456789
+Code d'accès immeuble: 75000
+Prix du loyer mensuel: 650 €/mois
+Numéro de TVA: FR 12 345678901
+Contrat n°: 2021-09-00123
+Superficie du jardin: 300 m²
+Surface du garage: 18 m²
+Année dernière rénovation partielle: 2019

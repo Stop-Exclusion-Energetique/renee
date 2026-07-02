@@ -1,0 +1,120 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<div class="tab-container">
+	<div class="card">
+		<div>
+			<h4 class="section-title">@Labels.SupportedSelfRehabilitationApproachDetails</h4>
+		</div>
+
+		<div class="warning">
+			<span>@Labels.DisregardTabIfSupportedSelfRehabilitationApproachIsNotConsidered</span>
+		</div>
+
+		<div class="grid">
+			<div class="area-1">
+				<label>@Labels.IsFamilyReadyForSupportedSelfRehabilitationApproach</label>
+				<ZeeSelect @bind-CheckedValue="ViewModel.IsFamilyReadyForSupportedSelfRehabilitationApproach"
+				           EditContext="@_editContext"
+				           ElementName="@($"IsFamilyReadyForSupportedSelfRehabilitationApproach-{Guid.NewGuid().ToString()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IsFamilyReadyForSupportedSelfRehabilitationApproach)"
+				           Items="@ItemsList.NullableYesNoList"
+				           TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit"/>
+			</div>
+
+			<div class="area-2">
+				<label>@Labels.FamilyPhysicalCapabilitiesHaveBeenTakenIntoAccount</label>
+				<ZeeSelect @bind-CheckedValue="ViewModel.FamilyPhysicalCapabilitiesHaveBeenTakenIntoAccount"
+				           EditContext="@_editContext"
+				           ElementName="@($"FamilyPhysicalCapabilitiesHaveBeenTakenIntoAccount-{Guid.NewGuid().ToString()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilyPhysicalCapabilitiesHaveBeenTakenIntoAccount)"
+				           Items="@ItemsList.NullableYesNoList"
+				           TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit"/>
+			</div>
+
+			<div class="area-3">
+				<label>@Labels.FamilyCanMobilizeSocialCircleOnConstructionSite</label>
+				<ZeeSelect @bind-CheckedValue="ViewModel.FamilyCanMobilizeSocialCircleOnConstructionSite"
+				           EditContext="@_editContext"
+				           ElementName="@($"FamilyCanMobilizeSocialCircleOnConstructionSite-{Guid.NewGuid().ToString()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilyCanMobilizeSocialCircleOnConstructionSite)"
+				           Items="@ItemsList.NullableYesNoList"
+				           TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit"/>
+			</div>
+		</div>
+
+		<div>
+			<OutlinedTextArea @bind-Value="@ViewModel.WorkDetails"
+			                  EditContext="@_editContext"
+			                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WorkDetails)"
+			                  Label="@Labels.WorkDetails"
+							  disabled="@IsUserAllowedToEdit"/>
+		</div>
+
+		<div>
+			<OutlinedTextArea @bind-Value="@ViewModel.FamilyAvailabilityToOrganizeSupportedSelfRehabilitationApproachSite"
+			                  EditContext="@_editContext"
+			                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilyAvailabilityToOrganizeSupportedSelfRehabilitationApproachSite)"
+			                  Label="@Labels.FamilyAvailabilityToOrganizeSupportedSelfRehabilitationApproachSite"
+							  disabled="@IsUserAllowedToEdit"/>
+		</div>
+	</div>
+
+	<div class="card">
+		<div>
+			<h4 class="section-title">@Labels.OrganizingAndFinancingMilestone</h4>
+		</div>
+
+		<div>
+			<OutlinedText @bind-Value="ViewModel.AnahFolderNumber"
+						  EditContext="@_editContext"
+						  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AnahFolderNumber)"
+						  Label="@Labels.AnahFolderNumber"
+						  IsRequired="true"
+						  disabled="@IsUserAllowedToEdit"
+						  InfoBullTitle="@Labels.AnahFolderNumber"
+						  InfoBullMessage="@Labels.AnahFolderNumberTooltipText"/>
+			<ValidationMessage For="@(() => ViewModel.AnahFolderNumber)" />
+		</div>
+
+		<div>
+			<label class="pure-material-textfield-outlined">
+				<ZeeInputDate disabled="@IsUserAllowedToEdit"
+						   @bind-Value="ViewModel.AnahFolderFilingDate"
+						   @bind-Value:format="yyyy-MM-dd"
+						   min="@(ViewModel.StartOfAccompanyingDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.StartOfAccompanyingDate.ToString())"
+						   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))" />
+				<span>
+					@Labels.AnahFolderFilingDate
+					<span class="required"></span>
+				</span>
+
+				<ZeeToolTip InfoBullTitle="@Labels.AnahFolderFilingDate"
+							InfoBullMessage="@Labels.AnahFolderFilingDateTooltipText"
+							class="tooltip-placement" />
+			</label>
+
+			<ValidationMessage For="@(() => ViewModel.AnahFolderFilingDate)" />
+		</div>
+
+		<div>
+			<ZeeToolTip InfoBullMessage="@Labels.AccompayingTimeDurationTooltipText"
+						style="margin-top: 1em" />
+			<ZeeSelect @bind-CheckedValue="@ViewModel.AccompanyingTimeDuration"
+					   EditContext="_editContext"
+					   ElementName="@($"accompanying-time-duration-{Guid.NewGuid().ToString()}")"
+					   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AccompanyingTimeDuration)"
+					   IsMultiSelect="false"
+					   IsRequired="true"
+					   Items="@AccompanyingTimeDurations"
+					   Label="@string.Format(Labels.AccompayingTimeDuration, "2")"
+					   TItem="AccompanyingTimeDuration?"
+					   IsDisabled="@IsUserAllowedToEdit"
+					   ShouldSort="false" />
+			<ValidationMessage For="@(() => ViewModel.AccompanyingTimeDuration)" />
+		</div>
+	</div>
+</div>

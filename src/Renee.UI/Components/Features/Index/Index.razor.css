@@ -1,0 +1,329 @@
+.background-not-signed-img {
+    background-attachment: fixed;
+    background-image: url("images/Fond-login-renee-clair-personnage.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 100%;
+    width: 100%;
+}
+
+.index-not-authorized-title {
+    font-size: 2.5714rem;
+    font-weight: bold;
+    color: var(--renee-title);
+}
+
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-end;
+    padding-left: 20%;
+    position: relative;
+    top: 53%;
+}
+
+.card-height {
+    height: fit-content;
+}
+
+.fixed-max-width-500 {
+    max-width: 500px;
+}
+
+.button-text {
+    color: #FFFFFF;
+    display: block;
+    font-size: 24px;
+    font-weight: 400;
+    margin: 10px 0;
+}
+
+.icon-70 {
+    width: 70px;
+}
+
+.icon-65 {
+    width: 65px;
+}
+
+
+.auth-button {
+    background: var(--primary);
+    border-radius: 40px;
+    border: 0;
+    height: 150px;
+    transition: transform 0.3s;
+    margin: 25px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+}
+
+.auth-button-round {
+    background: var(--primary);
+    border-radius: 50px;
+    border: 0;
+    display: inline;
+    height: 68px;
+    transition: transform 0.3s;
+    width: 68px;
+    align-self: flex-end;
+    margin: 25px;
+}
+
+.auth-button-round > span {
+    width: 50px !important;
+    fill: white !important;
+}
+
+.auth-button:hover {
+    transform: translate(0px, -10px);
+}
+
+.auth-button-round:hover {
+    transform: translate(0px, -10px);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-row: auto;
+    gap: 20px;
+    padding: 20px;
+}
+
+.indicator-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-characteristic {
+    padding-top: 50px;
+    font-size: 25px
+}
+
+.average-money-text {
+    font-weight: bold;
+    font-size: 40px;
+    color: var(--renee-primary);
+}
+
+.no-relevent-data {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+}
+
+.grid-filter-area {
+    padding: 0.5em;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    justify-content: flex-start;
+}
+
+
+
+.reset-filter {
+    align-self: center;
+    margin-right: 1fr;
+}
+
+.filter-container {
+    border-top: 2px solid #896aab;
+    border-bottom: 2px solid #896aab;
+}
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+}
+
+.text-alignement {
+    text-align: center;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.text-section-alignment {
+    padding-top: 50px;
+    font-size: 25px
+}
+
+.grid-coordinators {
+    display: grid;
+    grid-template-areas:
+        "progress-title progress-title"
+        "break-down-file-status break-down-file-status"
+        "identify-title identify-title"
+        "number-household-detected houselhold-caracteristics"
+        "household-earnings housing-type-households-number"
+        "before-work-energy average-delivery-time"
+        "organize-and-finance-title organize-and-finance-title"
+        "works-financing estimated-energy-jump"
+        "realize-and-follow-title realize-and-follow-title"
+        "support-duration support-duration";
+    gap: 20px;
+    padding: 20px;
+}
+
+.break-down-file-status {
+    grid-area: break-down-file-status;
+    grid-column: 1 / 2;
+}
+
+.number-household-detected {
+    grid-area: number-household-detected;
+}
+
+.houselhold-caracteristics {
+    grid-area: houselhold-caracteristics;
+}
+
+.household-earnings {
+    grid-area: household-earnings;
+}
+
+.housing-type-households-number {
+    grid-area: housing-type-households-number;
+}
+
+.before-work-energy {
+    grid-area: before-work-energy;
+}
+
+.average-delivery-time {
+    grid-area: average-delivery-time;
+}
+
+.works-financing {
+    grid-area: works-financing;
+}
+
+.estimated-energy-jump {
+    grid-area: estimated-energy-jump;
+}
+
+.support-duration {
+    grid-area: support-duration;
+    grid-column: 1 / 2;
+}
+
+.progress-title {
+    grid-area: progress-title;
+}
+
+.identify-title {
+    grid-area: identify-title;
+}
+
+.organize-and-finance-title {
+    grid-area: organize-and-finance-title;
+}
+
+.realize-and-follow-title {
+    grid-area: realize-and-follow-title;
+}
+
+.kpi-title {
+    font-size: 25px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.date-field {
+    align-self: center;
+}
+
+
+.top-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: fixed;
+    left: 5%;
+}
+
+.top-header > img {
+    width: 350px;
+}
+
+.half-width {
+    width: 50%;
+}
+
+@media (max-width: 925px) {
+    .grid-filter-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .filter-container {
+        justify-content: center;
+    }
+
+    .filter-by {
+        grid-area: filter-by;
+        justify-self: start;
+    }
+}
+
+@media (max-width: 1099px) {
+    .grid {
+        grid-template-columns: 1fr;
+        justify-content: center;
+    }
+
+    .grid-coordinators {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        left: 0;
+        top: 125px;
+        padding-left: 0;
+    }
+
+    .top-header {
+        flex-direction: column;
+        position: relative;
+        align-items: center;
+        left: 0;
+    }
+    .top-header > img {
+        width: 250px;
+    }
+    .top-header > div {
+        align-items: center;
+    }
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}

@@ -1,0 +1,219 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Application.Interfaces
+@using Renee.Domain.Enums
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(@Endpoints.ImportExcelFiles)]
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAccompanyingFileService AccompanyingFileService
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.AdminRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+    <Authorized>
+        <ZeeHeader ShouldRenderLogo="false"
+                   title="@ExcelDataLabel.ImportAccompanyingFile">
+        </ZeeHeader>
+
+        <p>@ExcelDataLabel.ImportExcelDataText</p>
+
+        <EditForm EditContext="_importNewAccompanyingFileDataEditContext"
+                  OnValidSubmit="@OnValidSubmitV3">
+            <ObjectGraphDataAnnotationsValidator />
+
+            <div class="container">
+                <div>
+                    <OutlinedText @bind-Value="@_importNewAccompanyingFileDataViewModel.LastName"
+                                  EditContext="_importNewAccompanyingFileDataEditContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.LastName)"
+                                  IsInForm="false"
+                                  IsRequired="true"
+                                  Label="@Labels.Name" />
+                    <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.LastName)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="@_importNewAccompanyingFileDataViewModel.FirstName"
+                                  EditContext="_importNewAccompanyingFileDataEditContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.FirstName)"
+                                  IsInForm="false"
+                                  IsRequired="true"
+                                  Label="@Labels.FirstName" />
+                    <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.FirstName)" />
+                </div>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="_importNewAccompanyingFileDataViewModel.ZeroEnergyExclusionTerritoriesProgram"
+                               EditContext="@_importNewAccompanyingFileDataEditContext"
+                               ElementName="@($"ZeroEnergyExclusionTerritoriesProgram-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.ZeroEnergyExclusionTerritoriesProgram)"
+                               IsRequired="true"
+                               Items="@ItemsList.NullableYesNoList"
+                               Label="@Labels.ZeroEnergyExclusionTerritoriesProgram"
+                               OnNewValueSelected="OnAccompanyingTypeChanged"
+                               ShowLabelBefore="true"
+                               TItem="bool?" />
+                    <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.ZeroEnergyExclusionTerritoriesProgram)" />
+                </div>
+
+                @if (_importNewAccompanyingFileDataViewModel.ZeroEnergyExclusionTerritoriesProgram == true)
+                {
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.AccompanyingType"
+                                   EditContext="@_importNewAccompanyingFileDataEditContext"
+                                   ElementName="@($"AccompanyingType-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.AccompanyingType)"
+                                   IsRequired="true"
+                                   Items="@AccompanyingTypes"
+                                   Label="@Labels.AccompanyingType"
+                                   OnNewValueSelected="OnAccompanyingTypeChanged"
+                                   TItem="AccompanyingType?">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.AccompanyingType)" />
+                    </div>
+
+                    @if (_importNewAccompanyingFileDataViewModel.AccompanyingType == AccompanyingType.Diffuse)
+                    {
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.ReferentDiffuseCoordinator"
+                                       EditContext="@_importNewAccompanyingFileDataEditContext"
+                                       ElementName="@($"DiffuseCoordinator-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.ReferentDiffuseCoordinator)"
+                                       IsRequired="true"
+                                       Items="@DiffuseCoordinatorUsers"
+                                       Label="@Labels.ReferentDiffuseCoordinator"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                            <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.ReferentDiffuseCoordinator)" />
+                        </div>
+                    }
+
+                    @if (_importNewAccompanyingFileDataViewModel.AccompanyingType == AccompanyingType.Targeted)
+                    {
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.ReferentTargetCoordinator"
+                                       EditContext="@_importNewAccompanyingFileDataEditContext"
+                                       ElementName="@($"TargetCoordinator-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.ReferentTargetCoordinator)"
+                                       IsRequired="true"
+                                       Items="@TargetCoordinator"
+                                       Label="@Labels.ReferentTargetedCoordinator"
+                                       ShowLabelBefore="true"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                            <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.ReferentTargetCoordinator)" />
+                        </div>
+
+                        <div>
+                            @if (EtUsers != null)
+                            {
+                                <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.ReferentEtId"
+                                           EditContext="@_importNewAccompanyingFileDataEditContext"
+                                           ElementName="@($"referent-et-{Guid.NewGuid().ToString()}")"
+                                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.ReferentEtId)"
+                                           IsRequired="true"
+                                           Items="@EtUsers"
+                                           Label="@Labels.ReferentEt"
+                                           ShowLabelBefore="true"
+                                           TItem="Guid?"
+                                           ShouldSort="true">
+                                </ZeeSelect>
+                                <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.ReferentEtId)" />
+                            }
+                        </div>
+
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.Territory"
+                                       EditContext="@_importNewAccompanyingFileDataEditContext"
+                                       ElementName="@($"Territory-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.Territory)"
+                                       IsRequired="true"
+                                       Items="@Territory"
+                                       Label="@Labels.Territory"
+                                       ShowLabelBefore="false"
+                                       TItem="Guid?"
+                                       ShouldSort="true">
+                            </ZeeSelect>
+                            <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.Territory)" />
+                        </div>
+                    }
+                }
+
+                @if (SolidarBuilderUsers != null)
+                {
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="@_importNewAccompanyingFileDataViewModel.ReferentSolidarBuilderId"
+                                   EditContext="@_importNewAccompanyingFileDataEditContext"
+                                   ElementName="@($"referent-es-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => _importNewAccompanyingFileDataViewModel.ReferentSolidarBuilderId)"
+                                   IsRequired="true"
+                                   Items="@SolidarBuilderUsers"
+                                   Label="@Labels.ReferentSolidarBuilder"
+                                   ShowLabelBefore="true"
+                                   TItem="Guid?"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => _importNewAccompanyingFileDataViewModel.ReferentSolidarBuilderId)" />
+                    </div>
+                }
+
+                <div>
+                    <InputFile accept=".xlsx"
+                               multiple="false"
+                               id="file-upload"
+                               class="d-none"
+                               OnChange="@HandleExcelFile" />
+                    @if (_memoryStreamFile != null && Errors.Count == 0)
+                    {
+                        <label class="spaced">
+                            <img alt="@Labels.Alt.UploadIcon"
+                                 src="@Icons.FileLoaded"
+                                 width="40" />
+                        </label>
+
+                        <span>@ExcelDataLabel.AccompanyingFileSuccessfullyLoaded</span>
+                    }
+                    else
+                    {
+                        <label for="file-upload">
+                            <img alt="@Labels.Alt.UploadIcon"
+                                 src="@Icons.UploadIcon"
+                                 width="30" />
+                            <span class="required">@ExcelDataLabel.ImportExcelFile</span>
+                        </label>
+                    }
+                </div>
+
+                <div class="zeeButton">
+                    <ZeeButton IsSubmit="true"
+                               Text="@ExcelDataLabel.ImportV3AccompanyingFileTextButton">
+                    </ZeeButton>
+                </div>
+            </div>
+        </EditForm>
+
+        @if (Errors.Count > 0)
+        {
+            <div>
+                <h4>@Labels.Errors.List</h4>
+                @foreach (var error in Errors)
+                {
+                    <p style="color:red;">@error</p>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div>
+                <p>@Message</p>
+            </div>
+        }
+
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

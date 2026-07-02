@@ -1,0 +1,56 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Layout.StageLayout
+<div class="align-items-end d-flex flex-row form-header justify-content-between">
+    <h3 class="font-weight-bold">
+        @AccompanyingFileNumber
+    </h3>
+
+    <div>
+        @if (ShowSynthesisTitle)
+        {
+            <h3 class="font-weight-bold">
+                @Labels.SynthesisTitle
+            </h3>
+        }
+        else
+        {
+            <RadzenDropDown Change="() => OnChangeStage.InvokeAsync(SelectedStage)"
+            @bind-Value="@SelectedStage"
+            Data="@ActualState"
+            Placeholder=@Labels.DropDownPlaceholder
+            Style="width: 100%"
+            TextProperty="Label"
+            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            TValue="AccompanyingFileStage"
+            ValueProperty="Value" />
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public string AccompanyingFileNumber { get; set; } = string.Empty;
+
+    [Parameter] public List<StageNavigationModel> StageNavigationModels { get; set; } = new();
+
+    [Parameter] public EventCallback<AccompanyingFileStage> OnChangeStage { get; set; }
+
+    [Parameter] public bool ShowSynthesisTitle { get; set; }
+
+    private AccompanyingFileStage SelectedStage { get; set; }
+
+    private List<ZeeSelectItem<AccompanyingFileStage>> ActualState { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (!ShowSynthesisTitle)
+        {
+            ActualState = StageNavigationModels.Select(x => new ZeeSelectItem<AccompanyingFileStage>(x.Stage.GetDescription(), x.Stage)).ToList();
+            var currentStageNavigation = StageNavigationModels.FirstOrDefault(x => x.IsCurrentPage);
+            SelectedStage = currentStageNavigation != null
+                ? currentStageNavigation.Stage
+                : AccompanyingFileStage.RealisationAndFollowing;
+        }
+    }
+}

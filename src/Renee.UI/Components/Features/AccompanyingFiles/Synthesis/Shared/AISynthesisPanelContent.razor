@@ -1,0 +1,255 @@
+@using Renee.Application.DTOs.AI
+@using Renee.Domain.ReneeError
+
+<h3 class="section-title ai-content-title">
+    <RadzenIcon Icon="auto_awesome" />
+    Analyse IA — cohérence du dossier
+</h3>
+
+@if (_isLoading)
+{
+    <div class="ai-content-loading">
+        <div class="ai-content-spinner"></div>
+        <span>Analyse en cours…</span>
+    </div>
+}
+else if (_errorMessage is not null)
+{
+    <div class="ai-content-error">
+        <RadzenIcon Icon="error" />
+        <span>@_errorMessage</span>
+    </div>
+}
+else if (_result is not null)
+{
+    @if (!_result.HasAnomalies)
+    {
+        <div class="ai-content-ok">
+            <RadzenIcon Icon="check_circle" />
+            <span>Aucune anomalie détectée.</span>
+        </div>
+    }
+
+    @if (_result.HasAnomalies)
+    {
+        <div class="ai-content-section">
+            <p class="ai-content-section-label ai-content-section-label--anomaly">
+                <RadzenIcon Icon="warning" />
+                @(_result.Anomalies.Count == 1 ? "1 anomalie détectée" : $"{_result.Anomalies.Count} anomalies détectées")
+            </p>
+            <ul class="ai-content-list">
+                @foreach (var anomaly in _result.Anomalies)
+                {
+                    <li class="ai-content-item ai-content-item--anomaly">
+                        <div class="ai-content-item-top">
+                            <strong>@anomaly.Field</strong>
+                            @if (!string.IsNullOrEmpty(anomaly.Jalon))
+                            {
+                                <span class="ai-badge ai-badge--jalon">@anomaly.Jalon</span>
+                            }
+                            @if (anomaly.Source == "IA")
+                            {
+                                <span class="ai-badge ai-badge--ia">IA</span>
+                            }
+                        </div>
+                        <span class="ai-content-item-desc">@anomaly.Description</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+<div class="zeeButtonGroup ai-content-footer">
+    @if (!_isLoading)
+    {
+        <ZeeButton @onclick="RunAnalysis"
+                   Text="Relancer l'analyse"
+                   Icon="refresh"
+                   IsSubmit="false" />
+    }
+    <ZeeButton @onclick="() => ModalInstance.CloseAsync(ModalResult.Cancel())"
+               Text="Fermer"
+               DisplayBackground="DisplayEnumBackground.Blue"
+               IsSubmit="false" />
+</div>
+
+<style>
+.ai-content-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.ai-content-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark-grey);
+    padding: 16px 0;
+}
+
+.ai-content-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--sidebar);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: ai-spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+.ai-content-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--red);
+    padding: 8px 0;
+}
+
+.ai-content-ok {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--green);
+    font-weight: 600;
+    padding: 8px 0;
+}
+
+.ai-content-section {
+    margin-top: 14px;
+}
+
+.ai-content-section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9286rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+.ai-content-section-label--anomaly { color: var(--orange); }
+.ai-content-section-label--missing { color: var(--secondary); }
+
+.ai-content-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ai-content-item {
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+
+.ai-content-item--anomaly {
+    background: #fff8f0;
+    border-left: 3px solid var(--orange);
+}
+
+.ai-content-item--missing {
+    background: #f0f2fa;
+    border-left: 3px solid var(--secondary);
+}
+
+.ai-content-item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+}
+
+.ai-content-item-desc {
+    display: block;
+    color: #333;
+    line-height: 1.5;
+}
+
+.ai-badge {
+    font-size: 0.7857rem;
+    font-weight: 500;
+    padding: 1px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.ai-badge--jalon {
+    background: var(--grey);
+    color: var(--dark-grey);
+    border: 1px solid #ddd;
+}
+
+.ai-badge--ia {
+    background: var(--sidebar);
+    color: var(--renee-title);
+    border: 1px solid var(--renee-secondary-purple);
+}
+
+.ai-content-footer {
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+</style>
+
+@code {
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = default!;
+    [Parameter, EditorRequired] public Func<Task<ReneeOperationResult<AISynthesisResult>>> OnAnalyze { get; set; } = null!;
+    [Parameter] public ReneeOperationResult<AISynthesisResult>? InitialResult { get; set; }
+    [Parameter] public EventCallback<ReneeOperationResult<AISynthesisResult>> OnResultCached { get; set; }
+
+    private bool _isLoading;
+    private AISynthesisResult? _result;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (InitialResult is not null)
+        {
+            if (InitialResult.IsSuccess)
+                _result = InitialResult.Value;
+            else
+                _errorMessage = InitialResult.Message ?? "Erreur lors de l'analyse.";
+            return;
+        }
+
+        await RunAnalysis();
+    }
+
+    private async Task RunAnalysis()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        _result = null;
+        StateHasChanged();
+
+        try
+        {
+            var operationResult = await OnAnalyze();
+            if (operationResult.IsSuccess)
+                _result = operationResult.Value;
+            else
+                _errorMessage = operationResult.Message ?? "Erreur lors de l'analyse.";
+
+            await OnResultCached.InvokeAsync(operationResult);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Erreur lors de l'analyse : {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

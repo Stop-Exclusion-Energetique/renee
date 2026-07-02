@@ -1,0 +1,7 @@
+﻿.nav-container {
+    margin-top: 1em;
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    gap: 1em;
+}

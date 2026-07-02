@@ -1,0 +1,30 @@
+@using System.Globalization  
+
+<div class="card mb-2 p-3">  
+   <div class="d-flex justify-content-between align-items-center">  
+       <div class="flex-fill">  
+           <a class="trash-icon" href="javascript:void(0)" @onclick="ViewFile">  
+               <span>  
+                   @((MarkupString)Icons.Svg.PictoVoir)  
+               </span>  
+               @Label  
+           </a>  
+       </div>  
+       <div class="flex-fill text-center">@Labels.Version @Version</div>  
+       <div class="flex-fill text-end">@DateCreation.ToString("dd/MM/yyyy")</div>  
+   </div>  
+</div>  
+
+@code {  
+   [Parameter]  
+   public string Label { get; set; } = string.Empty;  
+
+   [Parameter]  
+   public string Version { get; set; } = string.Empty;  
+
+   [Parameter]  
+   public DateTime DateCreation { get; set; }  
+
+   [Parameter]  
+   public EventCallback ViewFile { get; set; }  
+}

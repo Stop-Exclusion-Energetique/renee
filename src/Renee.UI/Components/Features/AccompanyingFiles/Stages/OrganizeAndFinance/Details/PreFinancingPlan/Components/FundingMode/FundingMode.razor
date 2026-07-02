@@ -1,0 +1,48 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreFinancingPlan.Components.FundingMode.ViewModel
+<div class="funding-container">
+	<RadzenButton ButtonStyle="ButtonStyle.Danger"
+	              Click="@(() => OnDeleteEvent.InvokeAsync(ViewModel))"
+	              Icon="@Icons.DeleteButton"
+	              Size="ButtonSize.Large"
+	              Style="margin-top:5px;"
+				  Disabled="@IsUserAllowedToEdit"/>
+
+	<div class="column-gap d-flex full-width">
+		<div class="full-width">
+			<OutlinedText @bind-Value="@ViewModel.Name"
+			              @bind-Value:after="@(() => CheckDuplicateFundingModeName(ViewModel.Name))"
+			              Label="@Labels.FinancingMode"
+						  disabled="@IsUserAllowedToEdit" />
+		</div>
+
+		<div class="full-width">
+			<OutlinedDouble @bind-Double="@ViewModel.Amount"
+			                @bind-Double:after="@NotifyAmountChanged"
+			                IsNullable="true"
+			                Label="@Labels.FinancingModeAmount"
+			                Type="OutlinedDouble.TypeOfValue.Currency"
+							disabled="@IsUserAllowedToEdit" />
+		</div>
+	</div>
+
+</div>
+
+@code {
+	[Parameter] public FundingModeViewModel ViewModel { get; set; } = null!;
+	[Parameter] public EventCallback<FundingModeViewModel> OnDeleteEvent { get; set; }
+	[Parameter] public EventCallback<string> OnCheckDuplicateFundingModeName { get; set; }
+	[Parameter] public EditContext? EditContext { get; set; }
+	[Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+    [Parameter] public bool IsUserAllowedToEdit { get; set; }
+
+	private void CheckDuplicateFundingModeName(string? fundingModeName)
+	{
+		OnCheckDuplicateFundingModeName.InvokeAsync(fundingModeName);
+	}
+
+	private void NotifyAmountChanged()
+	{
+		EditContext?.NotifyFieldChanged(FieldIdentifier);
+	}
+
+}

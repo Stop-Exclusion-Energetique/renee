@@ -1,0 +1,8 @@
+DPE actuel: E
+GES: C
+Note énergie globale: F (classe basse)
+Étiquette DPE visée après travaux: B
+Performance cible GES: A
+
+Note: dans Renee, DPE et GES sont stockés en entier (A=0, B=1, C=2, D=3, E=4, F=5, G=6)
+L'IA doit convertir les lettres en entiers avant d'appeler l'outil d'application.

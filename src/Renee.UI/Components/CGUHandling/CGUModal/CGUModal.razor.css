@@ -1,0 +1,48 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+.title-modal{
+    color: var(--primary);
+}
+
+.modal-content a {
+    display: flex;
+    text-decoration: none;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+    .modal-content a span {
+        display: block;
+        width: 25px;
+        height: 25px;
+    }
+
+.card-btn {
+    border: none;
+    background: none;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+.btn-full {
+    width: 50%;
+    margin-inline: 25%;
+    margin-bottom: 5px;
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+}
+    .btn-full:hover {
+        color: var(--primary);
+        background: white;
+    }

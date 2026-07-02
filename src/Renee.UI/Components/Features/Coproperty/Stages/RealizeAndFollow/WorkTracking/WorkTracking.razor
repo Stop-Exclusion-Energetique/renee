@@ -1,0 +1,87 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+
+<div class="flex tab-container">
+	<div class="bloc-container card">
+		<h2 class="section-title">
+			@Labels.CopropertyWorkTracking
+		</h2>
+
+		<div class="card grid-form">
+
+			<div class="d-flex"
+				 style="flex-direction: column;">
+				<label class="pure-material-textfield-outlined">
+					<ZeeInputDate disabled="@IsUserAllowedToEdit"
+							   @bind-Value="ViewModel.CollectiveWorksStartDate"
+							   @bind-Value:format="yyyy-MM-dd"
+							   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+							   min="@(ViewModel.CollectiveWorksStartDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.CollectiveWorksStartDate.ToString())" />
+					<span>
+						@Labels.CollectiveWorksStartDate
+					</span>
+				</label>
+
+				<label class="pure-material-textfield-outlined">
+					<ZeeInputDate disabled="@IsUserAllowedToEdit"
+							   @bind-Value="ViewModel.PlannedEndDate"
+							   @bind-Value:format="yyyy-MM-dd"
+							   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+							   min="@(ViewModel.PlannedEndDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.PlannedEndDate.ToString())" />
+					<span>
+						@Labels.PlannedEndDate
+					</span>
+				</label>
+
+				<div>
+					<OutlinedDouble @bind-Double="ViewModel.ProgressPercentage"
+									EditContext="@_editContext"
+									FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ProgressPercentage)"
+									Type="OutlinedDouble.TypeOfValue.Double"
+									IsNullable="true"
+									Label="@Labels.ProgressPercentage"
+									disabled="@IsUserAllowedToEdit">
+					</OutlinedDouble>
+				</div>
+			</div>
+
+
+			<div class="d-flex"
+				 style="flex-direction: column;">
+				<label class="pure-material-textfield-outlined">
+					<ZeeInputDate disabled="@IsUserAllowedToEdit"
+							   @bind-Value="ViewModel.ActualCompletionDate"
+							   @bind-Value:format="yyyy-MM-dd"
+							   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+							   min="@(ViewModel.ActualCompletionDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.ActualCompletionDate.ToString())" />
+					<span>
+						@Labels.ActualCompletionDate
+					</span>
+				</label>
+
+				<div>
+					<OutlinedDouble @bind-Double="ViewModel.InvoiceTotalAmount"
+									EditContext="@_editContext"
+									FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.InvoiceTotalAmount)"
+									Type="OutlinedDouble.TypeOfValue.Double"
+									IsNullable="true"
+									Label="@Labels.InvoiceTotalAmount"
+									disabled="@IsUserAllowedToEdit">
+					</OutlinedDouble>
+				</div>
+
+				<div>
+					<OutlinedText @bind-Value="@ViewModel.FollowUpComment"
+								  EditContext="@_editContext"
+								  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FollowUpComment)"
+								  IsInForm="false"
+								  Label="@Labels.FollowUpComment"
+								  disabled="@IsUserAllowedToEdit">
+					</OutlinedText>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>

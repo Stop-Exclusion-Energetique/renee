@@ -1,0 +1,27 @@
+.spaced {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+}
+
+.spaced.pointer {
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    transition: box-shadow 0.3s ease, text-decoration 0.3s ease;
+}
+
+.btn-full {
+    width: 100%;
+    margin-inline: 7px;
+    margin-top: 10px;
+    padding:5px;
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    color: var(--primary);
+    background: white;
+    cursor:pointer;
+}
+
+.spaced.pointer:hover, .btn-full:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}

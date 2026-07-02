@@ -1,0 +1,117 @@
+Analyse les données du dossier ci-dessous et détecte les incohérences en te basant sur les règles suivantes.
+Applique exactement les règles listées ci-dessous, sans en créer d'autres.
+Les exemples de mots/expressions donnés dans chaque règle sont indicatifs (non exhaustifs) : prends aussi en compte les formulations proches de même sens dans les mêmes champs.
+Reste centré sur les données du dossier : ne t'appuie pas sur des connaissances externes.
+
+### Contexte d'interprétation important
+Privilégie la situation actuelle du ménage. Si un récit historique mentionne un ancien conjoint ou des enfants mais qu'un énoncé actuel indique que la personne vit seule, considère la situation actuelle comme référence pour l'analyse des incohérences.
+
+## Règles de cohérence à vérifier
+
+**Règle 1 – Composition familiale vs texte libre**
+Si ContexteSocial ou ProjetFamille indiquent une vie en couple/famille (exemples : « son mari », « sa femme », « son compagnon », « sa compagne », « ses enfants », « le couple » ou formulations proches) ET TypeMénage = « Personne seule » → anomalie (jalon : Identifier).
+Attention : « Personne seule avec adulte hébergé », « Famille monoparentale », « Couple sans enfant », etc. ne sont PAS « Personne seule » — ne pas déclencher la règle pour ces valeurs.
+Important : cette règle vise la situation actuelle du ménage, pas l'historique de vie. Si le texte contient des éléments passés (ex : « a eu », « décédé », récit biographique) et indique clairement qu'aujourd'hui la personne vit seule (ex : « aujourd'hui », « actuellement », « vit seule »), ne pas signaler d'anomalie.
+
+**Règle 2 – Allocations familiales vs composition du ménage**
+Si les Ressources contiennent une ligne dont le libellé mentionne une allocation familiale (exemples : « allocation familiale », « allocations familiales », « CAF » ou formulation proche) avec une valeur strictement > 0 ET (TypeMénage = « Personne seule » OU NombreOccupants = 1) → anomalie (jalon : Identifier).
+
+**Règle 3 – AEEH ou AAH vs situation de handicap**
+Si les Ressources contiennent une ligne dont le libellé mentionne « AEEH » ou « AAH » (ou formulation proche non ambiguë) avec une valeur strictement > 0 ET SituationHandicap = « Non » → anomalie (jalon : Identifier).
+Si SituationHandicap = « Oui » : la règle ne s'applique pas, ne rien signaler.
+
+**Règle 4 – APA ou pension d'invalidité vs perte d'autonomie**
+Si les Ressources contiennent une ligne dont le libellé mentionne « APA », « pension d'invalidité » ou « invalidité » (ou formulation proche) avec une valeur strictement > 0 ET PerteAutonomie = « Non » ET MaladiesLongueDurée = « Non » → anomalie (jalon : Identifier).
+
+**Règle 5 – CSP vs nature des ressources**
+Si CategorieSocioProfessionnelle = « Retraité » ET les Ressources montrent au moins un salaire (ex : libellé contenant « salaire » ou équivalent) ET aucune pension de retraite (ex : « retraite », « pension » ou équivalent) → anomalie (jalon : Identifier).
+Si CategorieSocioProfessionnelle = « Employé(e) » ou « Ouvrier » ET les Ressources montrent au moins une pension de retraite (ex : « retraite », « pension » ou équivalent) ET aucun salaire (ex : « salaire » ou équivalent) → anomalie (jalon : Identifier).
+Si les Ressources sont mixtes, ambiguës ou non catégorisables clairement entre salaire/retraite : ne rien signaler.
+
+**Règle 6 – Statut d'occupation vs texte libre**
+Si ContexteSocial ou ProjetFamille mentionnent explicitement une situation de location ACTUELLE (exemples : « locataire », « le bailleur », « son loyer », « propriétaire du bien » en contexte de location, ou formulations proches indiquant la non-propriété) ET StatutOccupation = « Pleine propriété » → anomalie (jalon : Identifier).
+Attention : une mention d'achat passé (« a acheté », « a acquis ») cohère avec « Pleine propriété » — ne pas signaler d'anomalie.
+
+**Règle 7 – Suivi par un travailleur social**
+Si ContexteSocial mentionne un suivi social (exemples : « travailleur social », « assistante sociale », « assistant social » ou formulations proches) ET SuiviTravailleurSocial = « Non » → anomalie (jalon : Identifier).
+Cette règle déclenche une anomalie uniquement dans ce cas précis (mention de suivi social + valeur « Non »).
+Si SuiviTravailleurSocial = « Oui », ne jamais signaler d'anomalie au titre de cette règle.
+
+**Règle 8 – Énergie de chauffage vs projet de travaux**
+Si ÉnergiesDechauffage contient « Fioul » ou « Bois » ET (TypeProjet ou TypesTravaux mentionnent un remplacement/changement du système de chauffage, y compris formulation proche) → ne pas signaler d'anomalie (situation cohérente).
+Ne signaler une anomalie pour cette règle que si une contradiction explicite est présente (ex : ÉnergiesDechauffage contient « Fioul » ou « Bois » ET TypeProjet/TypesTravaux indiquent explicitement qu'aucun changement de chauffage n'est prévu).
+
+**Règle 9 – Catégorie ANAH (Modeste/Très modeste)**
+Si CategorieDossier (déduite du RFR × Nombre d'occupants × zone géographique : Île-de-France ou hors IDF) indique un niveau d'éligibilité (ex : « Très modeste », « Modeste ») ET les taux ou aides appliqués (MPR PA, MPLD, etc.) semblent décalés par rapport aux plafonds ANAH attendus pour cette catégorie → anomalie (jalon : Organiser et Financer).
+Exemples : très modeste en IDF mais aide appliquée au barème modeste ; modeste hors IDF mais plafonds de travaux non respectés.
+
+**Règle 10 – RFR au-dessus du plafond vs aide ANAH**
+Si RFR (Revenu Fiscal de Référence) dépasse le plafond d'éligibilité pour la catégorie détectée (Très modeste ou Modeste, selon zone) ET l'une des aides (MPR PA, MPLD, MaPrimeAdapt') indique une valeur strictement > 0 → anomalie probable de non-éligibilité (jalon : Organiser et Financer).
+
+**Règle 11 – MPR PA et MPLD renseignées simultanément**
+Si à la fois MPR PA > 0 ET MPLD > 0 (ou équivalents) → alerte de double saisie potentielle, car l'aide passe par l'une OU l'autre selon l'état du logement (indice d'insalubrité, etc.), pas les deux (jalon : Organiser et Financer).
+
+**Règle 12 – MPLD : assiette de travaux ou étiquette de sortie**
+Si MPLD > 0 ET (l'assiette totale des travaux dépasse 70 000 € HT OU le ratio dépasse 1 000 €/m² pour très modeste ≤ 80 m² / 750 €/m² pour modeste) → anomalie (jalon : Organiser et Financer).
+Si MPLD > 0 ET étiquette de sortie (DPE attendu post-travaux) est inférieure à E → anomalie (sortie minimale non atteinte) (jalon : Organiser et Financer).
+
+**Règle 13 – MPR Parcours Accompagné : gain énergétique insuffisant**
+Si MPR Parcours Accompagné > 0 ET gain énergétiqueW < 2 classes → anomalie (jalon : Organiser et Financer).
+
+**Règle 14 – Écrêtement : total des aides vs coût TTC**
+Si (total des aides publiques / coût TTC des travaux) > 90 % (pour modeste) ou > 100 % (pour très modeste) → anomalie d'écrêtement : reste à charge sous le seuil réglementaire (jalon : Organiser et Financer).
+
+**Règle 15 – MaPrimeAdapt' / MDPH sans justification**
+Si MaPrimeAdapt' > 0 ou MDPH > 0 ET (SituationHandicap = « Non » OU PerteAutonomie = « Non ») ET les TypesTravaux ne mentionnent pas explicitement d'adaptation (ex : « accessibilité », « douche », « rampe », « monte-escalier ») → anomalie (jalon : Organiser et Financer).
+Si bénéficiaire MDPH mais date de naissance indique âge < 6 ans ou > 60 ans (condition spécifique à vérifier) → anomalie (jalon : Identifier).
+
+**Règle 16 – Plan de financement global vs coût TTC**
+Si les champs CoûtTotalTTC, TotalAides, Autofinancement, ÉconomiesDuFoyer et SoutienFamille (ou équivalents) sont tous renseignés ET que la somme (TotalAides + Autofinancement + ÉconomiesDuFoyer + SoutienFamille) est très éloignée du CoûtTotalTTC (écart absolu significatif) → anomalie de cohérence du plan de financement (jalon : Organiser et Financer).
+
+**Règle 17 – Reste à charge négatif / sur-financement**
+Si ResteACharge < 0 OU si TotalAides > CoûtTotalTTC → anomalie de sur-financement probable ou erreur de saisie (jalon : Organiser et Financer).
+
+**Règle 18 – Ménage très modeste : autofinancement ou emprunt atypique**
+Si CategorieDossier = « Très modeste » ET (Autofinancement ou CapaciteEmprunt) couvre une part majoritaire du CoûtTotalTTC ET qu'aucune justification explicite n'est présente dans ContexteSocial/ProjetFamille (ex : épargne constituée, aide familiale, vente d'un bien, héritage) → anomalie à vérifier (jalon : Organiser et Financer).
+
+**Règle 19 – Typologie familiale vs nombre d'occupants**
+Si TypeMénage indique « Couple ... » ET NombreOccupants = 1 → anomalie (jalon : Identifier).
+Si TypeMénage = « Famille monoparentale » ET NombreOccupants = 1 → anomalie (jalon : Identifier).
+Attention (prioritaire) : si TypeMénage = « Famille monoparentale » ET NombreOccupants >= 2, c'est TOUJOURS cohérent (cas typique : 1 parent + 1 enfant, donc NombreOccupants = 2) — ne jamais signaler d'anomalie dans ce cas.
+Cette consigne est prioritaire sur toute autre interprétation de la règle 19.
+Si TypeMénage indique explicitement « ... avec enfant(s) » (hors « Famille monoparentale ») ET NombreOccupants < 3 → anomalie (jalon : Identifier).
+
+**Règle 20 – Sur-occupation potentielle du logement**
+Si NombreOccupants est élevé ET que SurfaceHabitable et/ou NombrePieces sont manifestement insuffisants pour ce nombre d'occupants (situation explicite de suroccupation dans les champs du dossier) → anomalie potentielle d'indécence à vérifier (jalon : Identifier).
+
+**Règle 21 – Âge incohérent vs statut ou CSP**
+Si la DateDeNaissance indique un âge < 18 ans ET que StatutOccupation mentionne une propriété du logement (ex : « Pleine propriété », « Propriétaire occupant » ou équivalent) → anomalie (jalon : Identifier).
+Si la DateDeNaissance indique un âge invraisemblable au regard des autres champs (ex : âge extrême incompatible avec CategorieSocioProfessionnelle active) → anomalie (jalon : Identifier).
+
+**Règle 22 – Coût total des travaux vs nature du projet**
+Si CoûtTotalTTC est manifestement disproportionné (très élevé ou très faible) au regard de TypeProjet et/ou TypesTravaux (ex : montant d'une rénovation lourde appliqué à des travaux d'entretien léger, ou inversement) → anomalie (jalon : Organiser et Financer).
+
+**Règle 23 – Coût au m² hors cohérence globale**
+Si CoûtTotalTTC et SurfaceHabitable sont renseignés ET que le coût au m² calculé est manifestement incohérent avec la nature des travaux déclarés (travaux légers vs lourds) → anomalie (jalon : Organiser et Financer).
+
+**Règle 24 – Type de projet incohérent avec le diagnostic**
+Si TypeProjet indique une logique spécifique (ex : « Sortie d'insalubrité », « Efficacité énergétique » ou formulation proche) ET que les indicateurs associés dans le dossier ne sont pas présents (dégradation/insalubrité, inconfort énergétique, performance initiale défavorable, etc.) → anomalie (jalon : Identifier).
+
+**Règle 25 – Travaux énergétiques sans amélioration mesurable**
+Si des travaux de rénovation énergétique sont déclarés ET que la performance après travaux n'est pas meilleure que l'avant (étiquette identique ou dégradée, ou consommation après travaux >= consommation avant travaux) → anomalie (jalon : Organiser et Financer).
+
+**Règle 26 – Aides énergie sans travaux énergétiques**
+Si des aides énergie (ex : MPR, CEE ou équivalents) sont strictement > 0 ET qu'aucun poste de travaux énergétiques n'est renseigné (ou montant des travaux énergétiques = 0) → anomalie (jalon : Organiser et Financer).
+
+**Règle 27 – Bonus sortie de passoire incohérent**
+Si BonusSortiePassoire (ou équivalent) est strictement > 0 ET que l'étiquette énergétique de départ n'est ni F ni G → anomalie (jalon : Organiser et Financer).
+
+## Instructions d'application
+- Ignore toute règle dont les champs nécessaires sont null ou absents dans les données.
+- Pour les champs texte, accepte les formulations proches (insensible à la casse, accents et variantes courantes) tant que le sens est clairement le même.
+- En cas de mélange entre récit historique et situation présente, priorise explicitement la situation actuelle du dossier.
+- Ne signale une anomalie que si la contradiction est EXPLICITE et appuyée directement par les champs concernés.
+- Le champ "field" doit nommer le champ ou la paire de champs en contradiction (ex : "TypeMénage / ContexteSocial").
+- Le champ "description" doit être court, factuel et en français.
+- Limite à une anomalie maximum par règle.
+

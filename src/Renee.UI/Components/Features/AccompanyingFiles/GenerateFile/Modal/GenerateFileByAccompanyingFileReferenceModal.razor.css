@@ -1,0 +1,14 @@
+﻿.title {
+    color: #429AD5;
+    font-size: 1.4286rem;
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.button-div {
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}

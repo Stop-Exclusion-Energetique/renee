@@ -1,0 +1,39 @@
+@using Blazored.Modal
+@using Blazored.Modal.Services
+
+<div class="deadline-modal-content">
+	<div class="modal-header">
+		<h3 class="section-title">@Labels.DeadlineReachedModalTitle</h3>
+	</div>
+
+	<div class="modal-body">
+		<div class="alert alert-warning" role="alert">
+			<div class="alert-message">
+				<span class="warning-icon">⚠️</span>
+				<span>@Labels.DeadlineReachedModalMessage</span>
+			</div>
+		</div>
+
+		<div class="deadline-info">
+			<p>@Labels.DeadlineReachedModalRedirection</p>
+			<a href="@Labels.MariusURL" target="_blank" class="btn btn-primary">
+				@Labels.DeadlineReachedModalLinkText
+			</a>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn btn-secondary" @onclick="HandleClose">
+			@Labels.Close
+		</button>
+	</div>
+</div>
+
+@code {
+	[CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = default!;
+
+	private async Task HandleClose()
+	{
+		await ModalInstance.CloseAsync();
+	}
+}

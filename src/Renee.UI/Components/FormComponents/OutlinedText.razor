@@ -1,0 +1,79 @@
+<div class="d-flex flex-column position-relative">
+	<label class="pure-material-textfield-outlined">
+		@if (IsInForm)
+		{
+			<InputText 
+				@attributes="AdditionalAttributes"
+				@bind-Value="@Value" />
+		}
+		else
+		{
+			<input 
+				@attributes="AdditionalAttributes"
+				@bind-value="@Value"
+				class="@(EditContext is not null ? EditContext.FieldCssClass(FieldIdentifier) : "")"
+				@onblur="OnBlur"
+				placeholder=" "
+				type="text"/>
+		}
+		<span>
+			@Label
+			<span class="@(IsRequired ? "required" : "")"> </span>
+		</span>
+	</label>
+	@if (!string.IsNullOrEmpty(InfoBullMessage) || !string.IsNullOrEmpty(InfoBullTitle))
+	{
+		<ZeeToolTip 
+			InfoBullMessage="@InfoBullMessage"
+			InfoBullTitle="@InfoBullTitle"
+			class="tooltip-placement">
+		</ZeeToolTip>
+	}
+</div>
+
+@code {
+	private string? _value;
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+	[Parameter] public bool IsInForm { get; set; }
+
+#pragma warning disable BL0007
+	[Parameter]
+	public string? Value
+	{
+		get => _value;
+		set
+		{
+			if (value == _value) return;
+			_value = value;
+			ValueChanged.InvokeAsync(value);
+		}
+	}
+#pragma warning restore BL0007
+
+
+	[Parameter] public string? Label { get; set; }
+
+	[Parameter] public bool IsRequired { get; set; }
+
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+	[Parameter] public EditContext? EditContext { get; set; }
+
+	[Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+
+	[Parameter] public string? InfoBullMessage { get; set; }
+
+	[Parameter] public string? InfoBullTitle { get; set; }
+
+	[Parameter] public EventCallback ActionCallAfterChange { get; set; }
+
+	private void OnBlur()
+	{
+		if (EditContext != default!) { EditContext.NotifyFieldChanged(FieldIdentifier); }
+		if (ActionCallAfterChange.HasDelegate) ActionCallAfterChange.InvokeAsync();
+	}
+
+}

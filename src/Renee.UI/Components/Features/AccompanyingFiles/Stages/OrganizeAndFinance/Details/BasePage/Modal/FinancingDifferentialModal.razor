@@ -1,0 +1,12 @@
+﻿<p>
+    @((MarkupString)string.Format(ModalText, Differential))
+</p>
+
+<div class="button-flex">
+    <ZeeButton Text="@Labels.Cancel"
+               DisplayBackground="@DisplayEnumBackground.Blue"
+               @onclick="@(async () => await BlazoredModal.CancelAsync())" />
+    <ZeeButton Text="@Labels.Submit"
+               DisplayBackground="@DisplayEnumBackground.Blue"
+               @onclick="@(async () => await BlazoredModal.CloseAsync(ModalResult.Ok(true)))" />
+</div>

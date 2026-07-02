@@ -1,0 +1,155 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<div>
+    @if (DifficultiesFacedFamily is not null)
+    {
+        <div class="card grid-form"
+             style="margin-bottom:50px;">
+            <div>
+                <h4 class="section-title">
+                    @Labels.ReasonOfProject
+                </h4>
+            </div>
+            <div>
+            </div>
+            <OutlinedTextArea @bind-Value=@ViewModel.ReasonOfProjectSocialContext
+                              EditContext="_editContext"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ReasonOfProjectSocialContext)"
+                              IsInForm=false
+                              IsRequired=true
+                              Label="@Labels.ReasonOfProjectSocialContext"
+                              disabled="@(IsUserAllowedToEdit || IsSoliha)">
+            </OutlinedTextArea>
+            <ValidationMessage For="@(() => ViewModel.ReasonOfProjectSocialContext)" />
+
+            <div>
+                <ZeeSelect @bind-CheckedValues="@ViewModel.AskedDifficulties"
+                           EditContext="_editContext"
+                           ElementName="@($"askeddifficulty-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AskedDifficulties)"
+                           IsMultiSelect="true"
+                           IsRequired="false"
+                           Items="@DifficultiesFacedFamily"
+                           Label="@Labels.DifficultyEncountered"
+                           TItem="Guid?"
+                           IsDisabled="@IsUserAllowedToEdit"
+                           ShouldSort="true">
+                </ZeeSelect>
+                <ValidationMessage For="@(() => ViewModel.AskedDifficulties)" />
+            </div>
+            @try
+            {
+                @if (ViewModel.AskedDifficulties?.Count > 0)
+                {
+                    <div class="alldifficulties">
+                        <OutlinedTextArea @bind-Value=@ViewModel.DifficultiesDetails
+                                          EditContext="_editContext"
+                                          FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DifficultiesDetails)"
+                                          IsInForm=false
+                                          Label="@(Labels.CommentaryPlaceholder)"
+                                          disabled="@IsUserAllowedToEdit">
+                        </OutlinedTextArea>
+                        <ValidationMessage For="@(() => ViewModel.DifficultiesDetails)" />
+                    </div>
+                }
+            }
+            catch (Exception) { return; }
+
+            <div>
+                <OutlinedTextArea @bind-Value=@ViewModel.FamilyProject
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FamilyProject)"
+                                  IsInForm=false
+                                  IsRequired=true
+                                  Label="@Labels.FamilyProject"
+                                  disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                </OutlinedTextArea>
+                <ValidationMessage For="@(() => ViewModel.FamilyProject)" />
+            </div>
+            <div>
+                <OutlinedTextArea @bind-Value=@ViewModel.VisitAvailability
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.VisitAvailability)"
+                                  IsInForm=false
+                                  Label="@Labels.VisitAvailability"
+                                  disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                </OutlinedTextArea>
+                <ValidationMessage For="@(() => ViewModel.VisitAvailability)" />
+            </div>
+        </div>
+        <div class="card">
+            <div>
+                <h4 class="section-title">@Labels.IdentifyMilestone</h4>
+            </div>
+
+            <div>
+                <label class="pure-material-textfield-outlined">
+                    <ZeeInputDate @bind-Value="ViewModel.FirstEncounterDate"
+                               @bind-Value:format="yyyy-MM-dd"
+                               max="@(DateTime.Now.ToString("yyyy-MM-dd"))"
+                               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                               disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                    <span>
+                        @Labels.FirstContactDate
+                        <span class="required"></span>
+                    </span>
+                </label>
+                <ValidationMessage For="@(() => ViewModel.FirstEncounterDate)" />
+            </div>
+
+            <div>
+                <label class="pure-material-textfield-outlined">
+                    <ZeeInputDate @bind-Value="ViewModel.SigningHouseholdSupportDate"
+                               @bind-Value:format="yyyy-MM-dd"
+                               max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                               min="@(ViewModel.FirstEncounterDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.FirstEncounterDate.ToString())"
+                               disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                    <span>
+                        @Labels.DateSigningHouseholdSupport
+                        <span class="required"></span>
+                    </span>
+                </label>
+                <ValidationMessage For="@(() => ViewModel.SigningHouseholdSupportDate)" />
+            </div>
+            <div>
+                <label>
+                    @Labels.DeliveryTime
+                    <span class="bold-text">@ViewModel.DeliveryTime</span>
+                </label>
+            </div>
+
+            <div>
+                <ZeeSelect @bind-CheckedValue="ViewModel.ShouldAccompanyingFileBeSubmittedToAnah"
+                           EditContext="_editContext"
+                           ElementName="@($"isDependent-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ShouldAccompanyingFileBeSubmittedToAnah)"
+                           IsRequired="false"
+                           Items="@ItemsList.NullableYesNoList"
+                           Label="@Labels.ShouldAccompanyingFileBeSubmittedToAnah"
+                           ShowLabelBefore="true"
+                           TItem="bool?"
+                           IsDisabled="@IsUserAllowedToEdit" />
+            </div>
+
+            <div>
+                <ZeeToolTip InfoBullMessage="@Labels.AccompayingTimeDurationTooltipText"
+                            style="margin-top: 1em" />
+                <ZeeSelect @bind-CheckedValue="@ViewModel.AccompanyingTimeDuration"
+                           EditContext="_editContext"
+                           ElementName="@($"accompanying-time-duration-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AccompanyingTimeDuration)"
+                           IsMultiSelect="false"
+                           IsRequired="true"
+                           Items="@AccompanyingTimeDurations"
+                           Label="@string.Format(Labels.AccompayingTimeDuration, "1")"
+                           TItem="AccompanyingTimeDuration?"
+                           IsDisabled="@IsUserAllowedToEdit"
+                           ShouldSort="false" />
+                <ValidationMessage For="@(() => ViewModel.AccompanyingTimeDuration)" />
+            </div>
+        </div>
+    }
+</div>

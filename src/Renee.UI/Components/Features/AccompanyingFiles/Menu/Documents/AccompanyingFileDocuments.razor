@@ -1,0 +1,67 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using Renee.UI.Components.FormComponents
+
+<div class="card">
+    <h4 class="section-title">@Labels.AccompanyingFileDocuments</h4>
+
+    @foreach (var stage in Enum.GetValues<AccompanyingFileStage>().Where(s => s != AccompanyingFileStage.Finished))
+    {
+        <h4 class="section-title mt-4">@stage.GetDescription()</h4>
+
+        @foreach (var document in Documents.Where(d => d.AccompanyingFileStage == stage))
+        {
+            if (document.Stream == null)
+            {
+                <p>
+                    @((MarkupString)string.Format(Labels.NoDocumentFound, document.Name))
+                </p>
+            }
+            else
+            {
+                <div class="d-flex align-items-center">
+                    <SynthesisFileLoader @bind-MemoryStreamFile="@document.Stream"
+                                         ViewFile="@(() => OnViewFile.InvokeAsync((document.Name, document.Data)))"
+                                         FileLoadedMessage="@BuildFileLoadedMessage(document)" />
+                </div>
+            }
+        }
+    }
+
+    <h4 class="section-title mt-4">@Labels.OptionnalDocuments</h4>
+
+    @foreach (var document in Documents.Where(d => d.IsOptionnal))
+    {
+        <div class="d-flex align-items-center">
+            <SynthesisFileLoader @bind-MemoryStreamFile="@document.Stream"
+                                 ViewFile="@(() => OnViewFile.InvokeAsync((document.Name, document.Data)))"
+                                 ShouldDisplaySubmissionButton="() => true"
+                                 OnClickDeleteFile="@(() => OnClickDeleteFile.InvokeAsync(document.Name))"
+                                 FileLoadedMessage="@BuildFileLoadedMessage(document)" />
+        </div>
+    }
+
+    @{ var inputId = $"file-upload-{Guid.NewGuid()}"; }
+
+    <InputFile accept=".pdf, .png, .jpeg, .jpg, .webp"
+               class="d-none"
+               id="@inputId"
+               multiple="true"
+               OnChange="OnUpload" />
+
+    <label style="cursor: pointer" for="@inputId">
+        <span>
+            @((MarkupString)Icons.Svg.Upload)
+            @Labels.AddOptionnalDocumentButtonText
+        </span>
+    </label>
+
+    @if (ErrorMessages is not null)
+    {
+        @foreach (var message in ErrorMessages)
+        {
+            <p class="validation-message">@message</p>
+        }
+    }
+</div>

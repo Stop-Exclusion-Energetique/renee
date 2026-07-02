@@ -1,0 +1,37 @@
+﻿@if (Show)
+{
+    <div class="overlay"></div>
+
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-4">
+                <h5 class="modal-title mb-3 title-modal">@Labels.CGU</h5>
+                <p>@Labels.InfoCGU</p>
+                <a class="trash-icon mb-3" href="javascript:void(0)" @onclick="ViewFileAsync">
+                    <span>
+                        @((MarkupString)Icons.Svg.PictoVoir)
+                    </span>
+                    @LabelCGU
+                </a>
+                <div class="form-check mb-3">
+                    <InputCheckbox @bind-Value="IsChecked" class="form-check-input" id="acceptCguCheck" />
+                    <label class="form-check-label" for="acceptCguCheck">
+                        @Labels.ViewAndAcceptCGU
+                    </label>
+                </div>
+
+                @if(IsChecked)
+                {
+                    <button class="card-btn btn-full" @onclick="Accept">
+                        @Labels.Accept
+                    </button>
+                }
+               
+            </div>
+        </div>
+    </div>
+
+}
+
+

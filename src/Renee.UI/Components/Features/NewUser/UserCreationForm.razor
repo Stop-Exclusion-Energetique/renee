@@ -1,0 +1,161 @@
+@using Renee.Application.Helpers
+@attribute [Route(Endpoints.UserCreation)]
+
+<ZeeHeader DisplayReturn="true"
+           ShouldRenderLogo="true"
+           Title="@Labels.InscriptionForm">
+</ZeeHeader>
+
+@if (Roles is not null)
+{
+    <EditForm EditContext="@_editContext"
+              OnSubmit="OnSubmit">
+        <DataAnnotationsValidator />
+        <div class="flex-container">
+            <div class="card grid-form item-a">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.PersonalInfos
+                    </h4>
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="UserViewModel.LastName"
+                                  EditContext="@_editContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.LastName)"
+                                  IsRequired="true"
+                                  Label="@Labels.Name" />
+                    <ValidationMessage For="@(() => UserViewModel.LastName)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="UserViewModel.FirstName"
+                                  EditContext="@_editContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.FirstName)"
+                                  IsRequired="true"
+                                  Label="@Labels.FirstName" />
+                    <ValidationMessage For="@(() => UserViewModel.FirstName)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="UserViewModel.Email"
+                                  @bind-Value:after="OnEmailInputChange"
+                                  EditContext="@_editContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.Email)"
+                                  IsRequired="true"
+                                  Label="@Labels.Mail" />
+                    <ValidationMessage For="@(() => UserViewModel.Email)" />
+                </div>
+
+                <label class="required">
+                    @Labels.PhoneNumber
+                </label>
+
+                <div>
+                    <ZeePhoneNumber @bind-BindingValue="UserViewModel.PhoneNumber"
+                                    Class="form-control"
+                                    Id="InternationalPhone1">
+                    </ZeePhoneNumber>
+                    <ValidationMessage For="@(() => UserViewModel.PhoneNumber)" />
+                </div>
+                <div>
+                    <OutlinedText @bind-Value="UserViewModel.SiretNumber"
+                                  EditContext="@_editContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.SiretNumber)"
+                                  IsRequired="true"
+                                  Label="@Labels.SiretNumber" />
+                    <ValidationMessage For="@(() => UserViewModel.SiretNumber)" />
+                </div>
+            </div>
+
+            <div class="card grid-form item-b">
+                <h4 class="section-title">@Labels.ProfessionalInfos</h4>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@UserViewModel.SelectedReportingStructureId"
+                               EditContext="_editContext"
+                               OnNewValueSelected="@OnNewReportingStructureSelected"
+                               ElementName="@($"ReportingStructure-{Guid.NewGuid()}")"
+                               FieldIdentifier="GetFieldIdentifierForProperty(() => UserViewModel.SelectedReportingStructureId)"
+                               IsRequired="true"
+                               Items="ReportingStructures"
+                               Label="@Labels.StructureAssociated"
+                               TItem="Guid?">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => UserViewModel.SelectedReportingStructureId)" />
+                </div>
+
+                @if (UserViewModel.SelectedReportingStructureName == Labels.Other)
+                {
+                    <div>
+                        <OutlinedText @bind-Value="UserViewModel.OtherReportingStructure"
+                                      EditContext="@_editContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.OtherReportingStructure)"
+                                      IsRequired="true"
+                                      Label="@Labels.OtherReportingStructure" />
+                        <ValidationMessage For="@(() => UserViewModel.OtherReportingStructure)" />
+                    </div>
+                }
+
+                <div>
+                    <OutlinedText @bind-Value="UserViewModel.Function"
+                                  EditContext="@_editContext"
+                                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.Function)"
+                                  Label="@Labels.Job" />
+                </div>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@UserViewModel.TerritoryId"
+                               EditContext="_editContext"
+                               ElementName="@($"Territory-{Guid.NewGuid()}")"
+                               FieldIdentifier="GetFieldIdentifierForProperty(() => UserViewModel.TerritoryId)"
+                               Items="Territories"
+                               Label="@Labels.Territory"
+                               TItem="Guid?">
+                    </ZeeSelect>
+                </div>
+
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@UserViewModel.AskedRole"
+                               EditContext="_editContext"
+                               ElementName="@($"AskedRole-{Guid.NewGuid()}")"
+                               FieldIdentifier="GetFieldIdentifierForProperty(() => UserViewModel.AskedRole)"
+                               IsRequired="true"
+                               Items="Roles"
+                               Label="@Labels.AskedRole"
+                               TItem="Guid?">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => UserViewModel.AskedRole)" />
+                </div>
+            </div>
+
+            <p class="item-c">@((MarkupString)Labels.RgpdMentionSubscriptionPage)</p>
+
+            <div class="item-d">
+                @if (IsMailSendWithSuccess)
+                {
+                    <label>@Labels.ValidationCodeSentAndEnterIt</label>
+                    <OutlinedText @bind-Value="UserViewModel.Password"
+                                    EditContext="@_editContext"
+                                    class=""
+                                    FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => UserViewModel.Password)" />
+
+                    <div class="validation-message @(IsCorrectPassword ? "d-none" : "")">
+                        @Labels.InvalidConfirmationCode
+                    </div>
+
+                    <div class="mt-3">
+                        <ZeeButton DisplayBackground="DisplayEnumBackground.Green"
+                                   IsSubmit="true"
+                                   Text="@Labels.Submit" />
+                    </div>
+                }
+                else
+                {
+                    <ZeeButton @onclick="SendValidationEmail"
+                               Text="@Labels.AskedVerificationCode" />
+                }
+            </div>
+        </div>
+    </EditForm>
+}

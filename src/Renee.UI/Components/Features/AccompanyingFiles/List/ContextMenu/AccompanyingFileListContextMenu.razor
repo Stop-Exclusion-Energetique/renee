@@ -1,0 +1,18 @@
+@inject IJSRuntime IjsRuntime
+
+<ContextMenu Id="myMenu">
+	<Item OnClick="@(() => OnClick(context.Data))">
+		@Labels.OpenInNewTab
+	</Item>
+</ContextMenu>
+
+@code{
+
+	void OnClick(object data)
+	{
+		var url = data as string;
+		//open in new tab
+		if (!string.IsNullOrEmpty(url)) IjsRuntime.InvokeVoidAsync("open", url, "_blank");
+	}
+
+}

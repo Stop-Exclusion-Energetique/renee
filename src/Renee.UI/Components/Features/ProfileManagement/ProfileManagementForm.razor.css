@@ -1,0 +1,8 @@
+.zeeButtonGroup {
+    display: flex;
+    Gap: 3rem;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 10%;
+    width: 400px;
+}

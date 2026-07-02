@@ -1,0 +1,8 @@
+État initial du logement
+DPE avant travaux: F
+GES avant travaux: E
+Consommation énergétique annuelle: 280 kWh/m².an
+Émission GES: 38 kgCO2/m².an
+Privation énergie: forte
+Énergie de chauffage: gaz naturel
+Commentaire: Isolation toiture insuffisante, simple vitrage sur toutes les fenêtres, chaudière fioul vétuste

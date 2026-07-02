@@ -1,0 +1,12 @@
+Dossier A - Famille Moreau:
+Surface: 78m², 4 pièces, construction 1967
+Tel: 06 00 11 22 33
+DPE: F
+
+Dossier B - Famille Petit:
+Surface: 110m², maison, construction 1955
+Tel: 06 99 88 77 66
+DPE: G
+
+Dossier C - M. Durand (en attente):
+Surface: non communiquée

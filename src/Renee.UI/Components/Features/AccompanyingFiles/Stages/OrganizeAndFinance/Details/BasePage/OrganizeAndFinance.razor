@@ -1,0 +1,95 @@
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.HousingInitialState
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreFinancingPlan
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreWorkPlanTab
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.SupportedSelfRehabilitation
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using Renee.UI.Components.Layout.StageLayout
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.OrganizeAndFinanceStage + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout StageLayout
+
+
+<AuthorizeView Context="_"
+			Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		<HorizontalTabsMenu OnChangeTab="@ChangeTab"
+							SelectedTab="@SelectedTab"
+							TabsList="@( [Labels.InitialHousingStateTitle, Labels.PreWorkPlanTitle, Labels.PreFinancingPlanTitle, Labels.SupportedSelfRehabilitationTitle])" />
+
+		<div class="form-container">
+			@if (EditContext != null)
+			{
+				<EditForm EditContext="@EditContext">
+					<CascadingValue Value="EditContext">
+						<CascadingValue Value="@IsUserNotAllowedToEdit" Name="IsUserAllowedToEdit">
+							<CascadingValue Value="@IsSoliha" Name="IsSoliha">
+								<ObjectGraphDataAnnotationsValidator />
+								@switch (SelectedTab)
+								{
+									case 0:
+										<InitialHousingState ViewModel="@ViewModel!.InitialHousingStateViewModel" />
+										break;
+									case 1:
+										<PreWorkPlanTab ViewModel="ViewModel!.PreWorkPlanTabViewModel"
+														FormFieldHasChanged="@WorkPackagesHaveChanged" />
+										break;
+									case 2:
+										<PreFinancingPlan ViewModel="@ViewModel!.PreFinancingPlanViewModel" AccompanyingFileId="@AccompanyingFileId" TotalWorkCost="ViewModel!.PreWorkPlanTabViewModel.RecommendedWorkTotalPrice"/>
+										break;
+									case 3:
+										<SupportedSelfRehabilitation ViewModel="@ViewModel!.SupportedSelfRehabilitationViewModel"
+																	AccompanyingTimeDurations="@AccompanyingTimeDurations" />
+										<ValidationSummary />
+										break;
+								}
+							</CascadingValue>
+						</CascadingValue>
+					</CascadingValue>
+				</EditForm>
+
+				<div class="zeeButtonGroup @(IsLastTab ? "justify-content-between" : "justify-content-end")">
+					@if (IsLastTab)
+					{
+						<ZeeButton @onclick="() => ShowAbortAccompanyingFileModal()"
+								disabled="@IsUserNotAllowedToEdit"
+								DisplayBackground="DisplayEnumBackground.Pink"
+								Text="@Labels.AbortAccompanyingFileButtonText" />
+					}
+
+					<div class="d-flex gap-4">
+						<ZeeButton @onclick="() => ChangeTab(SelectedTab - 1)"
+								Text="@Labels.Previous"
+								disabled="@(SelectedTab == 0)"
+								ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(SelectedTab - 1)" />
+
+						<ZeeButton disabled="@(IsUserNotAllowedToEdit && UserRole != Constants.StructuralReferentRole)"
+								IsSubmit="@(IsLastTab)"
+								DisplayBackground="@(IsLastTab ? DisplayEnumBackground.Green : DisplayEnumBackground.Blue)"
+								@onclick="@(IsLastTab ? SubmitWithValidation : (() => ChangeTab(SelectedTab + 1)))"
+								Text="@(IsLastTab ? Labels.Submit : Labels.Next)"
+								ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(IsLastTab ? null : SelectedTab + 1)" />
+
+						<AISynthesisButton OnAnalyze="AnalyzeDossierWithAIAsync" />
+					</div>
+				</div>
+
+				@if (SaveButtonIsActive)
+				{
+					<div class="save-btn-container">
+						<ZeeButton CssClass="btn-full-width"
+								DisplayBackground="DisplayEnumBackground.DarkBlue"
+								@onclick="SaveWithoutValidation"
+								Text="@Labels.Save" />
+					</div>
+				}
+			}
+		</div>
+
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

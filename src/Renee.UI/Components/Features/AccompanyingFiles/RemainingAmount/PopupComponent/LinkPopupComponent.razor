@@ -1,0 +1,12 @@
+﻿
+<span>@((MarkupString)string.Format(Labels.RemainingAmountPopuptText, Link))</span>
+
+@code {
+    [Parameter] public string Link { get; set; } = string.Empty;
+    string message = Labels.RemainingAmountPopuptText;
+
+    protected override void OnParametersSet()
+    {
+        message = string.Format(message, Link);
+    }
+}

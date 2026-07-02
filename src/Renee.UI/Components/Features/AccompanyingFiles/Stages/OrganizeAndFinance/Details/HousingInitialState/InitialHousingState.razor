@@ -1,0 +1,162 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+<div class="tab-grid">
+	<div class="card card-1">
+		<div>
+			<h4 class="section-title">
+				@Labels.BuildingConfiguration
+			</h4>
+		</div>
+
+		<ZeeCounter @bind-Count="ViewModel.RoomCounter"
+					EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.RoomCounter)"
+		            Label="@Labels.RoomCounter"
+					IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"/>
+
+		<ZeeSelect @bind-CheckedValue="ViewModel.SunExposure"
+		           EditContext="@_editContext"
+		           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SunExposure)"
+		           IsRequired="false"
+		           Items="SunExposureList"
+		           Label="@Labels.SunExposure"
+		           TItem="SunExposure?"
+				   IsDisabled="@IsUserAllowedToEdit"
+				   ShouldSort="true"/>
+
+		<ZeeCounter @bind-Count="ViewModel.DoorCounter"
+		            EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DoorCounter)"
+		            Label="@Labels.DoorCounter"
+					IsDisabled="@IsUserAllowedToEdit" />
+
+		<ZeeCounter @bind-Count="ViewModel.WindowCounter"
+		            EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WindowCounter)"
+		            Label="@Labels.WindowCounter"
+					IsDisabled="@IsUserAllowedToEdit" />
+
+		<ZeeCounter @bind-Count="ViewModel.PatioDoorCounter"
+		            EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PatioDoorCounter)"
+		            Label="@Labels.PatioDoorCounter"
+					IsDisabled="@IsUserAllowedToEdit" />
+
+		<ZeeCounter @bind-Count="ViewModel.RoofWindowCounter"
+		            EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.RoofWindowCounter)"
+		            Label="@Labels.RoofWindowCounter"
+					IsDisabled="@IsUserAllowedToEdit" />
+
+		<ZeeCounter @bind-Count="ViewModel.BayWindowCounter"
+		            EditContext="@_editContext"
+		            FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.BayWindowCounter)"
+		            Label="@Labels.BayWindowCounter"
+					IsDisabled="@IsUserAllowedToEdit" />
+
+		<OutlinedDouble @bind-Double="ViewModel.CeilingHeight"
+		             EditContext="@_editContext"
+		             FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CeilingHeight)"
+		             Label="@Labels.CeilingHeight"
+		             Type="OutlinedDouble.TypeOfValue.Meter"
+					 disabled="@IsUserAllowedToEdit"/>
+
+	</div>
+
+	<div class="card card-2">
+		<div>
+			<h4 class="section-title">
+				@Labels.DisordersObserved
+			</h4>
+		</div>
+
+		<div>
+			<label>@Labels.PestOrMold</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasPestOrMold"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasPestOrMold-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasPestOrMold)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+
+		<div>
+			<label>@Labels.FaultyElectricalSystem</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasFaultyElectricalSystem"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasFaultyElectricalSystem-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasFaultyElectricalSystem)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+		<div>
+			<label>@Labels.VentilationSystem</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasVentilationSystem"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasVentilationSystem-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasVentilationSystem)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+
+		<div>
+			<label>@Labels.HeatingSystem</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasHeatingSystem"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasHeatingSystem-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasHeatingSystem)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+
+		<div>
+			<label>@Labels.HotWaterProduction</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasHotWaterProduction"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasHotWaterProduction-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasHotWaterProduction)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+		<div>
+			<label>@Labels.Openings</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasOpenings"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasOpening-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasOpenings)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+		<div>
+			<label>@Labels.Roofing</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasInsulation"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasInsulation-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasInsulation)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+		<div>
+			<label>@Labels.HousingCover</label>
+			<ZeeSelect @bind-CheckedValue="ViewModel.HasHousingCover"
+			           EditContext="@_editContext"
+			           ElementName="@($"HasHousingCover-{Guid.NewGuid().ToString()}")"
+			           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasHousingCover)"
+			           Items="@ItemsList.NullableYesNoList"
+			           TItem="bool?"
+					   IsDisabled="@IsUserAllowedToEdit" />
+		</div>
+		<OutlinedText @bind-Value="ViewModel.DisordersObservedCommentary"
+		              EditContext="@_editContext"
+		              FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DisordersObservedCommentary)"
+		              Label="@Labels.Details"
+					  disabled="@IsUserAllowedToEdit"/>
+	</div>
+</div>

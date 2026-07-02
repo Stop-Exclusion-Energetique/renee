@@ -1,0 +1,54 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Renee - UI",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Renee - build: UI",
+			"program": "${workspaceFolder}/src/Renee.UI/bin/Debug/net10.0/Renee.UI.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}/src/Renee.UI",
+			"stopAtEntry": false,
+			"serverReadyAction": {
+				"action": "openExternally",
+				"pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+			},
+			"env": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"ASPNETCORE_URLS": "https://localhost:7032;http://localhost:5129"
+			},
+			"sourceFileMap": {
+				"/Views": "${workspaceFolder}/Views"
+			}
+		},
+		{
+			"name": "Renee - MCP Server",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Renee - build: MCP Server",
+			"program": "${workspaceFolder}/mcpserver/Renee.McpServer/bin/Debug/net10.0/Renee.McpServer.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}/mcpserver/Renee.McpServer",
+			"stopAtEntry": false,
+			"env": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"ASPNETCORE_URLS": "https://localhost:7133;http://localhost:3001",
+				"OTEL_SERVICE_NAME": "aspnetcore-mcp-server"
+			},
+			"sourceFileMap": {
+				"/Views": "${workspaceFolder}/Views"
+			}
+		}
+	],
+	"compounds": [
+		{
+			"name": "Renee - UI + MCP Server",
+			"configurations": [
+				"Renee - UI",
+				"Renee - MCP Server"
+			],
+			"stopAll": true
+		}
+	]
+}

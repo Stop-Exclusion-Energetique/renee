@@ -1,0 +1,50 @@
+﻿.tab-container {
+    display: flex;
+    padding: 1em;
+    flex-direction: column;
+    row-gap: 1em;
+}
+
+.container-field {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+}
+
+.bloc-container {
+    display: flex;
+    row-gap: 1em;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.button-container {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-tooltips {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 3px;
+}
+
+@media only screen and (max-width: 1024px) {
+    .wrapper {
+        grid-template-columns: 1fr;
+        grid-row-gap: 0.5em;
+    }
+}

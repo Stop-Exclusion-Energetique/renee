@@ -1,0 +1,76 @@
+﻿@using Renee.UI.Components.Features.Admin.DeletedAccountManagement.ViewModel
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route($"{Endpoints.DeletedAccountManagement}")]
+@attribute [Authorize]
+
+<AuthorizeView Context="_"
+               Roles="@Constants.AdminRole">
+    <Authorized>
+        <ZeeHeader ShouldRenderLogo="false"
+                   Title="@Labels.AccountSupressionDemand">
+        </ZeeHeader>
+
+        @if (AccountDeletionRequests.Any())
+        {
+            <ZeeDataGrid Data="@AccountDeletionRequests">
+                <Columns>
+                    <RadzenDataGridColumn Property="LastName"
+                                          TItem="@DeletedAccountManagementViewModel"
+                                          Title="@Labels.Name">
+                        <Template Context="deletedAccountManagementViewModel">
+                            @deletedAccountManagementViewModel.LastName
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn Property="FirstName"
+                                          TItem="@DeletedAccountManagementViewModel"
+                                          Title="@Labels.FirstName">
+                        <Template Context="deletedAccountManagementViewModel">
+                            @deletedAccountManagementViewModel.FirstName
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn Property="Role"
+                                          TItem="@DeletedAccountManagementViewModel"
+                                          Title="@Labels.Role">
+                        <Template Context="deletedAccountManagementViewModel">
+                            @deletedAccountManagementViewModel.Role
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn Property="ReportingStructureName"
+                                          TItem="@DeletedAccountManagementViewModel"
+                                          Title="@Labels.StructureAssociated">
+                        <Template Context="deletedAccountManagementViewModel">
+                            @deletedAccountManagementViewModel.ReportingStructureName
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Context="deletedAccountManagementViewModel"
+                                          Filterable="false"
+                                          Sortable="false"
+                                          TextAlign="TextAlign.Right"
+                                          TItem="@DeletedAccountManagementViewModel"
+                                          Width="156px">
+                        <Template Context="deletedAccountManagementViewModel">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                          Click="() => ValidateAccountDeletionRequest(deletedAccountManagementViewModel.UserId)"
+                                          Icon="edit"
+                                          @onclick:stopPropagation="true"
+                                          Size="ButtonSize.Medium"
+                                          Variant="Variant.Flat">
+                            </RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </ZeeDataGrid>
+        }
+        else
+        {
+            <span> @Labels.NoAccountDeletionRequests</span>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

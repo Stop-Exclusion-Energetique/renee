@@ -1,0 +1,119 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreFinancingPlan
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.Evaluations
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.ProjectCost
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.ProjectEnd
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.SiteSupervision
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.WorkSummary
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using Renee.UI.Components.Layout.StageLayout
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.RealiseAndFollowStage + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout StageLayout
+
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+
+        <HorizontalTabsMenu OnChangeTab="@ChangeTab"
+                            SelectedTab="@SelectedTab"
+                            TabsList="@( [
+                                            RealiseAndFollowMilestone.Labels.SiteSupervisionTitle,
+                                            RealiseAndFollowMilestone.Labels.ProjectCostTitle,
+                                            RealiseAndFollowMilestone.Labels.FinalFinancingPlanTitle,
+                                            RealiseAndFollowMilestone.Labels.WorkSummaryTitle,
+                                            RealiseAndFollowMilestone.Labels.EvaluationsTitle,
+                                            RealiseAndFollowMilestone.Labels.ProjectEndTitle])" />
+
+        @if (EditContext != null)
+        {
+            <EditForm EditContext="@EditContext">
+                <CascadingValue Value="EditContext">
+                    <CascadingValue Value="@IsUserNotAllowedToEdit" Name="IsUserAllowedToEdit">
+                        <CascadingValue Value="@IsSoliha" Name="IsSoliha">
+                            @if (SelectedTab == 0)
+                            {
+                                <SiteSupervision ViewModel="@ViewModel.SiteSupervisionViewModel"
+                                                 FormFieldHasChanged="@WorkParticipantsHaveChanged" />
+                            }
+
+                            @if (SelectedTab == 1)
+                            {
+                                <ProjectCost ViewModel="@ViewModel.ProjectCostViewModel"
+                                             ShowSaveButton="@(() => SaveButtonIsActive = true)" />
+                            }
+
+                            @if (SelectedTab == 2)
+                            {
+                                <PreFinancingPlan ViewModel="@ViewModel.FinalFinancingPlanViewModel"
+                                                  AccompanyingFileId="@AccompanyingFileId"
+                                                  IsThirdStage="true"
+                                                  TotalWorkCost="@ViewModel.ProjectCostViewModel.WorkTotalCost" />
+                            }
+
+                            @if (SelectedTab == 3)
+                            {
+                                <WorkSummary ViewModel="@ViewModel.WorkSummaryViewModel" />
+                            }
+
+                            @if (SelectedTab == 4)
+                            {
+                                <Evaluations ViewModel="@ViewModel.EvaluationsViewModel" />
+                            }
+
+                            @if (SelectedTab == 5)
+                            {
+                                <ProjectEnd ViewModel="@ViewModel.ProjectEndViewModel"
+                                            AccompanyingTimeDurations="@AccompanyingTimeDurations" />
+                                <ValidationSummary />
+                            }
+                        </CascadingValue>
+                    </CascadingValue>
+                    <ObjectGraphDataAnnotationsValidator />
+                </CascadingValue>
+            </EditForm>
+
+            <div class="zeeButtonGroup @(IsLastTab ? "justify-content-between" : "justify-content-end")">
+                @if (IsLastTab)
+                {
+                    <ZeeButton @onclick="() => ShowAbortAccompanyingFileModal()"
+                               disabled="@IsUserNotAllowedToEdit"
+                               DisplayBackground="DisplayEnumBackground.Pink"
+                               Text="@Labels.AbortAccompanyingFileButtonText" />
+                }
+
+                <div class="d-flex gap-4">
+                    <ZeeButton @onclick="() => ChangeTab(SelectedTab - 1)"
+                               Text="@Labels.Previous"
+                               disabled="@(SelectedTab == 0)"
+                               ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(SelectedTab - 1)" />
+
+                    <ZeeButton disabled="@(IsUserNotAllowedToEdit && UserRole != Constants.StructuralReferentRole)"
+                               IsSubmit="@(IsLastTab)"
+                               DisplayBackground="@(IsLastTab ? DisplayEnumBackground.Green : DisplayEnumBackground.Blue)"
+                               @onclick="@(IsLastTab? SaveWithValidation : (() => ChangeTab(SelectedTab + 1)))"
+                               Text="@(IsLastTab ? Labels.Submit : Labels.Next)"
+                               ContextMenuRedirectUrl="@GetContextMenuRedirectUrl(IsLastTab ? null : SelectedTab + 1)" />
+
+                    <AISynthesisButton OnAnalyze="AnalyzeDossierWithAIAsync" />
+                </div>
+            </div>
+
+            @if (SaveButtonIsActive)
+            {
+                <div class="save-btn-container">
+                    <ZeeButton CssClass="btn-full-width"
+                               DisplayBackground="DisplayEnumBackground.DarkBlue"
+                               @onclick="@SaveWithoutValidation"
+                               Text="@Labels.Save" />
+                </div>
+            }
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

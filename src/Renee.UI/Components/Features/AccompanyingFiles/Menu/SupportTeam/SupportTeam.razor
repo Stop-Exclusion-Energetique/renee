@@ -1,0 +1,18 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Menu.SupportTeam.Components
+ <div class="container-items">
+    <div class="items-title">
+        <h3>@Domain.AccompanyingFileMenu.AccompanyingFileSupportTeam</h3>
+    </div>
+
+    <div class="support-team-members-display">
+        @foreach (var user in SupportTeamMembers)
+        {
+            <SupportTeamCard UserEmail="@user.Email"
+                             UserFullName="@user.FullName"
+                             UserPhone="@user.PhoneNumber"
+                             UserRole="@user.Role"
+                             IsEditable="@user.IsEditable"
+                             OnShowUpdateSupportTeamMemberModal="@OnShowUpdateSupportTeamMemberModal" />
+        }
+    </div>
+</div>

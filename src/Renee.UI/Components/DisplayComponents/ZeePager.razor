@@ -1,0 +1,104 @@
+﻿@using System.Globalization
+@using System.Linq
+@using Radzen.Blazor
+
+<div class="pager">
+    <div class="pager-left">
+        <span class="pager-summary">
+            Page @PageIndex sur @PageCount (@TotalCount.ToString("N0", CultureInfo.CurrentCulture) résultats)
+        </span>
+    </div>
+
+    <div class="pager-center">
+        <div class="pager-controls">
+            <button class="pager-btn pager-icon @(IsFirstPage ? "pager-disabled" : null)"
+                    @onclick="@(() => SetPage(1))" 
+                    disabled="@IsFirstPage"
+                    id="first-page-btn">
+                <svg viewBox="0 0 24 24"><path d="M18 6l-1.41-1.41L10.17 11l6.42 6.41L18 16l-4.99-5zM11 6L9.59 4.59 3.17 11l6.42 6.41L11 16l-4.99-5z"></path></svg>
+            </button>
+
+            <button class="pager-btn pager-icon @(IsFirstPage ? "pager-disabled" : null)"
+                    @onclick="@(() => SetPage(PageIndex - 1))" 
+                    disabled="@IsFirstPage"
+                    id="previous-page-btn">
+                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+            </button>
+
+            @foreach (var p in VisiblePages)
+            {
+                var isCurrent = p == PageIndex;
+                <button class="pager-btn pager-page @(isCurrent ? "pager-active" : null)"
+                        @onclick="@(() => SetPage(p))">
+                    @p
+                </button>
+            }
+
+            <button class="pager-btn pager-icon @(IsLastPage ? "pager-disabled" : null)"
+                    @onclick="@(() => SetPage(PageIndex + 1))"
+                    id="next-page-btn"
+                    disabled="@IsLastPage">
+                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"></path></svg>
+            </button>
+
+            <button class="pager-btn pager-icon @(IsLastPage ? "pager-disabled" : null)"
+                    id="last-page-btn"
+                    @onclick="@(() => SetPage(TotalCount))" 
+                    disabled="@IsLastPage">
+                <svg viewBox="0 0 24 24"><path d="M13 18l1.41 1.41L20.83 12l-6.42-6.41L13 6l4.99 5zM6 18l1.41 1.41L13.83 12 7.41 5.59 6 7l4.99 5z"></path></svg>
+            </button>
+        </div>
+
+        <div class="pager-compact">
+            <button class="pager-btn pager-icon pager-compact-btn @(IsFirstPage ? "pager-disabled" : null)"
+                    @onclick="@(() =>  SetPage(1))" 
+                    disabled="@IsFirstPage"
+                    id="compact-first-page-btn">
+                <svg viewBox="0 0 24 24"><path d="M11 6L9.59 4.59 3.17 11l6.42 6.41L11 16l-4.99-5zM18 6l-1.41-1.41L10.17 11l6.42 6.41L18 16l-4.99-5z"></path></svg>
+            </button>
+
+            <button class="pager-btn pager-icon pager-compact-btn @(IsFirstPage ? "pager-disabled" : null)"
+                    @onclick="@(() =>  SetPage(PageIndex - 1))"
+                    id="compact-previous-page-btn"
+                    disabled="@IsFirstPage">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+            </button>
+
+            <RadzenDropDown TValue="int"
+                            Data="@(Enumerable.Range(1, PageCount))"
+                            Value="@PageIndex"
+                            ValueChanged="@SetPage"
+                            Class="pager-compact-dropdown"
+                            Style="width:100px; height:40px; overflow: visible" />
+
+            <button class="pager-btn pager-icon pager-compact-btn @(IsLastPage ? "pager-disabled" : null)"
+                    @onclick="@(() => SetPage(PageIndex + 1))" 
+                    disabled="@IsLastPage"
+                    id="compact-next-page-btn">
+                <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"></path></svg>
+            </button>
+
+            <button class="pager-btn pager-icon pager-compact-btn @(IsLastPage ? "pager-disabled" : null)"
+                    @onclick="@(() => SetPage(TotalCount))" 
+                    disabled="@IsLastPage"
+                    id="compact-last-page-btn">
+                <svg viewBox="0 0 24 24"><path d="M6 18l1.41 1.41L13.83 12 7.41 5.59 6 7l4.99 5zM13 18l1.41 1.41L20.83 12l-6.42-6.41L13 6l4.99 5z"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="pager-right">
+        @if (ShowPageSizeSelector)
+        {
+            <label class="pager-rows">
+                <RadzenDropDown TValue="int"
+                                Data="@PageSizeOptions"
+                                Value="@PageSize"
+                                ValueChanged="@SetPageSize"
+                                Style="width:100px; height:40px; overflow: visible"
+                                Class="pager-radzen-dropdown" />
+                <span>@PageSizeLabel</span>
+            </label>
+        }
+    </div>
+</div>

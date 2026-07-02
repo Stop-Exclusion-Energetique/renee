@@ -1,0 +1,69 @@
+@using Renee.UI.Components.ErrorHandling  
+@attribute [Route($"{Endpoints.CguVersion}")]  
+@attribute [Authorize]  
+
+<AuthorizeView Context="_"  
+             Roles="@Constants.AdminRole">  
+  <Authorized>  
+      <ZeeHeader ShouldRenderLogo="false"  
+                 Title="@Labels.CguVersions">  
+      </ZeeHeader>  
+
+      <div class="cgu-management p-4">
+            <h4>@Labels.AddingNewCguVersion</h4>
+
+            <EditForm Model="@_cgu" OnValidSubmit="AddCguAsync">  
+              <div class="w-100 card-upload">  
+                  <div class="d-flex align-items-center gap-2 flex-wrap w-75">  
+                      <InputText @bind-Value="_cgu.Version" class="form-control w-50" placeholder="Version (ex: v2.3)" />  
+                      <InputFile accept=".pdf"  
+                                 class="d-none"  
+                                 id="file-upload"  
+                                 OnChange="@OnChangeUpload" />  
+                      <label class="spaced pointer required w-50" for="file-upload">  
+                          <span>  
+                              @((MarkupString)Icons.Svg.Upload)
+                          </span>
+                            @if (_isUploading)
+                                @_fileName
+                            else
+                                @Labels.AddFileCGU
+                      </label>  
+                  </div>  
+                  <button class="btn-full w-25" type="submit">@Labels.Add</button>  
+              </div>  
+          </EditForm>  
+          @if (!string.IsNullOrEmpty(_uploadMessage))  
+          {  
+              <p class="text-success">@_uploadMessage</p>  
+          }  
+
+          <hr />
+
+          <h3>@Labels.CguVersionsList</h3>
+
+          @if (_cguVersions is null || !_cguVersions.Any())
+          {
+            <p>@Labels.NoCguVersionsRegistered</p>
+          }  
+          else  
+          {  
+              <ul class="list-group">  
+                  @foreach (var version in _cguVersions)  
+                  {  
+                      <li class="list-group-item">  
+                          <CguCard Label="@version.Label" Version="@version.Version" DateCreation="@version.CreatedDate" ViewFile="@(() => ViewFile(version.Label))" />  
+                      </li>  
+                  }  
+              </ul>  
+          }  
+
+          <hr />  
+      </div>  
+
+  </Authorized>  
+
+  <NotAuthorized>  
+      <ErrorPage />  
+  </NotAuthorized>  
+</AuthorizeView>

@@ -1,0 +1,22 @@
+﻿.tab-container {
+    padding: 1em;
+}
+
+.card {
+    display: flex;
+    row-gap: 10px;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+
+    display: inline-block;
+}
+
+.container-field {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}

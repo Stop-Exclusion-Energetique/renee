@@ -1,0 +1,90 @@
+::deep .deadline-modal-content {
+    padding: 2rem;
+    font-family: inherit;
+}
+
+::deep .modal-header {
+    margin-bottom: 1.5rem;
+}
+
+::deep .section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+    margin: 0;
+}
+
+::deep .modal-body {
+    margin-bottom: 2rem;
+}
+
+::deep .alert {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+::deep .alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+}
+
+::deep .alert-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+::deep .warning-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+::deep .deadline-info {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+::deep .deadline-info p {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+::deep .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+::deep .btn-primary:hover {
+    background-color: var(--primary-dark);
+    text-decoration: none;
+}
+
+::deep .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+::deep .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+::deep .btn-secondary:hover {
+    background-color: #5a6268;
+}

@@ -1,0 +1,21 @@
+﻿<div @onclick="ChangeDisplayState">
+	<img alt="arrow"
+	     src="@(IsDisplaying ? "/images/fleche-droite.svg" : "/images/fleche-bas.svg")"
+	     width="50"/>
+</div>
+
+@code {
+
+	[Parameter] public bool IsDisplaying { get; set; }
+
+	[Parameter] public EventCallback<bool> IsDisplayingChanged { get; set; }
+
+
+	private async Task ChangeDisplayState()
+	{
+		IsDisplaying = !IsDisplaying;
+
+		await IsDisplayingChanged.InvokeAsync(IsDisplaying);
+	}
+
+}

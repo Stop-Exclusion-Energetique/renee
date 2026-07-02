@@ -1,0 +1,10 @@
+﻿.padding-top {
+    display: block;
+    padding-top: 7px;
+}
+
+@media (min-width: 1120px) {
+    .card {
+        width: 800px;
+    }
+}

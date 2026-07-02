@@ -1,0 +1,57 @@
+﻿@using Renee.UI.Components.Features.Coproperty.Stages.RealizeAndFollow.WorkTracking
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Layout.StageLayout
+@attribute [Route(Endpoints.CopropertyRealizeAndFollow + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+@layout StageLayout
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		<HorizontalTabsMenu TabsList="@( [Labels.CopropertyWorkTracking])" />
+
+		<div class="form-container">
+			@if (EditContext != null)
+			{
+				<EditForm EditContext="@EditContext">
+					<CascadingValue Value="EditContext">
+						<CascadingValue Value="@IsUserNotAllowedToEdit" Name="IsUserAllowedToEdit">
+							<ObjectGraphDataAnnotationsValidator />
+
+							<WorkTracking ViewModel="CopropertyRealizeAndFollowViewModel">
+							</WorkTracking>
+
+							<ValidationSummary />
+
+						</CascadingValue>
+					</CascadingValue>
+				</EditForm>
+
+				<div class="zeeButtonGroup">
+
+						<ZeeButton disabled=@(IsUserNotAllowedToEdit && UserRole != Constants.StructuralReferentRole)
+								   IsSubmit=true
+								   @onclick="SubmitWithValidation"
+								   Text="@Labels.Submit"/>
+					
+				</div>
+
+				@if (SaveButtonIsActive)
+				{
+					<div class="save-btn-container">
+						<ZeeButton CssClass="btn-full-width"
+								   DisplayBackground="DisplayEnumBackground.DarkBlue"
+								   @onclick="SaveWithoutValidation"
+								   Text="@Labels.Save" />
+					</div>
+				}
+			}
+		</div>
+
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

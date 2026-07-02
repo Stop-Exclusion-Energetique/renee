@@ -1,0 +1,1067 @@
+@using System.Globalization
+@using Renee.UI.Components.Features.Index.Components
+@attribute [Route(Endpoints.Base)]
+
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        @if (ViewModel is not null)
+        {
+            <p class="h3">@ViewModel!.UserFullName</p>
+
+            <p class="h1">@HeaderTitle</p>
+
+            <div class="@(_userRole != Constants.AdminRole ? "filter-container" : "")">
+                <div class="grid-filter-area">
+                    <AuthorizeView Context="solidarbuildercontext"
+                                   Roles=@($"{Constants.SolidarBuilderRole}")>
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="FilterViewModel.FilterValue"
+                                       @bind-CheckedValue:after="OnFilterChange"
+                                       ElementName="@($"filterValue-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="false"
+                                       Items="@(SelectedFilter.ToList())" />
+                        </div>
+                    </AuthorizeView>
+
+                    <AuthorizeView Context="assomembercontext" Roles="@Constants.AssociationMemberRole">
+                        <div>
+                            <ZeeSelect @bind-CheckedValues="@FilterViewModel.SelectedReportingStructures"
+                                       ElementName="@($"reportingStructure-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="true"
+                                       Items="@ReportingStructures"
+                                       Label="@IndexLabels.FilterByReportingStructures"
+                                       OnNewValueSelected="@OnReportingStructuresChanged"
+                                       ShowLabelBefore="false"
+                                       TItem="Guid?"
+                                       ShouldSort="true" />
+                        </div>
+                    </AuthorizeView>
+                    <AuthorizeView Context="targetedCoordinatorContext" Roles="@Constants.TargetedCoordinatorRole">
+                        <div class="zee-button">
+                            <ZeeSelect @bind-CheckedValues="@FilterViewModel.SelectedTerritories"
+                                       @bind-CheckedValues:after="@OnTerritoriesChanged"
+                                       ElementName="@($"territory-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="true"
+                                       Items="@Territories"
+                                       Label="@Labels.FilterByTerritory"
+                                       TItem="Guid?"
+                                       ShouldSort="true" />
+                        </div>
+                    </AuthorizeView>
+
+
+                    <AuthorizeView Context="coordinatorcontext"
+                                   Roles="@($"{Constants.TargetedCoordinatorRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+                        <div>
+                            <ZeeSelect @bind-CheckedValue="FilterViewModel.FilterValue"
+                                       @bind-CheckedValue:after="OnFilterChange"
+                                       ElementName="@($"filterValue-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="false"
+                                       Items="@(SelectedFilterCoordinatorAndTerritorialBuilder.ToList())" />
+                        </div>
+                        <div class="zee-button">
+                            <ZeeSelect @bind-CheckedValues="@FilterViewModel.SelectedReportingStructures"
+                                       @bind-CheckedValues:after="@OnReportingStructuresCoordinatorOrTerritorialBuilderChanged"
+                                       ElementName="@($"reportingStructure-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="true"
+                                       Items="@ReportingStructures"
+                                       Label="@Labels.FilterByReportingStructure"
+                                       TItem="Guid?"
+                                       ShouldSort="true" />
+                        </div>
+                        <div class="zee-button">
+                            <ZeeSelect @bind-CheckedValues="@FilterViewModel.SelectedSolidarBuilder"
+                                       ElementName="@($"solidarBuilder-{Guid.NewGuid().ToString()}")"
+                                       IsMultiSelect="true"
+                                       Items="@SolidarBuilders"
+                                       Label="@Labels.FilterBySolidarBuilder"
+                                       OnNewValueSelected="@OnSolidarBuilderChanged"
+                                       TItem="Guid?"
+                                       ShouldSort="true" />
+                        </div>
+                    </AuthorizeView>
+
+                    <AuthorizeView Roles="@($"{Constants.TargetedCoordinatorRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.SolidarBuilderRole}, {Constants.StructuralReferentRole}")"
+                                   Context="filterDateContext">
+                        <div class="date-filter">
+                            <div class="reset-filter"
+                                 @onclick="ResetFilter">
+                                <img src="@Icons.CancelFilter"
+                                     alt="Annuler"
+                                     width="30" />
+                            </div>
+
+                            <div class="d-flex flex-column date-field">
+                                <label class="pure-material-textfield-outlined ">
+                                    <ZeeInputDate @bind-Value="FilterViewModel.FromDate"
+                                               @bind-Value:after="OnFilterChange"
+                                               @bind-Value:format="yyyy-MM-dd"
+                                               max="@(DateTime.Now.ToString("yyyy-MM-dd"))"
+                                               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))" />
+
+                                    <span>
+                                        @IndexLabels.StartDate
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="d-flex flex-column date-field">
+                                <label class="pure-material-textfield-outlined ">
+                                    <ZeeInputDate @bind-Value="FilterViewModel.ToDate"
+                                               @bind-Value:after="OnFilterChange"
+                                               @bind-Value:format="yyyy-MM-dd"
+                                               max="@(DateTime.Now.ToString("yyyy-MM-dd"))"
+                                               min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))" />
+
+                                    <span>
+                                        @IndexLabels.EndDate
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </AuthorizeView>
+                </div>
+
+            </div>
+
+            <AuthorizeView Context="solidarBuilder"
+                           Roles=@($"{Constants.SolidarBuilderRole}, {Constants.StructuralReferentRole}")>
+                <div class="grid">
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.MilestoneDistribution</h2>
+
+                        @if (Array.TrueForAll(ViewModel.AccompanyingFileStage, x => x.VerticalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.AccompanyingFileStage"
+                                                    Fills="@(new List<string> { "#429AD5", "orange", "grey" })"
+                                                    ValueProperty="VerticalAxisValue">
+
+                                    <TooltipTemplate Context="data">
+
+                                        <div>
+                                            <span>@data.Name</span> :
+                                            <strong>@data.VerticalAxisValue</strong>
+                                        </div>
+
+                                    </TooltipTemplate>
+
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenColumnSeries>
+
+                                <RadzenColumnOptions Radius="5" Width="50" />
+
+                                <RadzenValueAxis Min="0"
+                                                 Step="1"
+                                                 Visible="false">
+                                </RadzenValueAxis>
+
+                                <RadzenCategoryAxis Visible="false">
+                                </RadzenCategoryAxis>
+
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+
+                            <div>
+                                <ZeeLegendElement Color="#429AD5"
+                                                  Label="@IndexLabels.Identification" />
+                                <ZeeLegendElement Color="orange"
+                                                  Label="@IndexLabels.OrganizeAndFinance" />
+                                <ZeeLegendElement Color="grey"
+                                                  Label="@IndexLabels.RealizeAndFollow" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.AnahCategoriesRepartition</h2>
+
+                        @if (ViewModel.AnahCategoryRepartition[0].PieAxisValue <= 0 && ViewModel.AnahCategoryRepartition[1].PieAxisValue <= 0)
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+
+                                <RadzenPieSeries CategoryProperty="Name"
+                                                 Data="@ViewModel.AnahCategoryRepartition"
+                                                 Fills="@(new List<string> { "#429AD5", "grey" })"
+                                                 Title="@IndexLabels.PieChartTitle"
+                                                 ValueProperty="PieAxisValue">
+
+                                    <RadzenSeriesDataLabels Visible=true></RadzenSeriesDataLabels>
+
+                                </RadzenPieSeries>
+
+                                <RadzenValueAxis Formatter="@ToPercentageAnnahCategory"></RadzenValueAxis>
+
+                                <RadzenLegend Visible="false" />
+
+                            </RadzenChart>
+
+                            <div>
+                                <ZeeLegendElement Color="#429AD5"
+                                                  Label="@Labels.LowIncomeHouseholdsAmount" />
+                                <ZeeLegendElement Color="grey"
+                                                  Label="@Labels.VeryLowIncomeHouseholdsAmount" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.WorksFinancing</h2>
+
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.EstimatedRemainingAmountAverage.ToString("C", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                            <p>@IndexLabels.RemainingAmount</p>
+                        </div>
+
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.EstimatedWorkPackageCostAverage.ToString("C", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                            <p>@IndexLabels.AverageWorksCost</p>
+                        </div>
+                    </div>
+
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.NumberOfSupport</h2>
+
+                        @if (Array.TrueForAll(ViewModel.AccompanyingFileStatus, x => x.HorizontalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.AccompanyingFileStatus"
+                                                    Fills="@(new List<string> { "#429AD5", "#071952" })"
+                                                    Title="@IndexLabels.OnHold"
+                                                    ValueProperty="HorizontalAxisValue">
+                                    <TooltipTemplate Context="data">
+
+                                        <div>
+                                            <span>@data.Name</span> :
+                                            <strong>@data.HorizontalAxisValue</strong>
+                                        </div>
+
+                                    </TooltipTemplate>
+
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenColumnSeries>
+
+                                <RadzenValueAxis Min="0"
+                                                 Step="1"
+                                                 Visible="false">
+                                </RadzenValueAxis>
+
+                                <RadzenCategoryAxis Visible="false">
+                                </RadzenCategoryAxis>
+
+                                <RadzenColumnOptions Radius="5" Width="50" />
+
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+
+                            <div>
+                                <ZeeLegendElement Color="#429AD5"
+                                                  Label="@IndexLabels.OnHold" />
+                                <ZeeLegendElement Color="#071952"
+                                                  Label="@IndexLabels.Completed" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </AuthorizeView>
+            <AuthorizeView Context="associationMember" Roles="@Constants.AssociationMemberRole">
+                <div class="grid">
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.WorksFinancing</h2>
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.EstimatedRemainingAmountAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                            <p>@IndexLabels.RemainingAmount</p>
+                        </div>
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.EstimatedWorkPackageCostAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                            <p>@IndexLabels.AverageWorksCost</p>
+                        </div>
+                    </div>
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.NumberOfSupport</h2>
+                        @if (Array.TrueForAll(ViewModel.AccompanyingFileStatus, x => x.HorizontalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.AccompanyingFileStatus"
+                                                    Fills="@(new List<string> { "#429AD5", "#071952" })"
+                                                    Title="@IndexLabels.OnHold"
+                                                    ValueProperty="HorizontalAxisValue">
+                                    <TooltipTemplate Context="data">
+                                        <div><span>@data.Name</span> : <strong>@data.HorizontalAxisValue</strong></div>
+                                    </TooltipTemplate>
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenColumnSeries>
+                                <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                                <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                                <RadzenColumnOptions Radius="5" Width="50" />
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@IndexLabels.OnHold" />
+                                <ZeeLegendElement Color="#071952" Label="@IndexLabels.Completed" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </AuthorizeView>
+            <AuthorizeView Context="coordinators"
+                           Roles="@($"{Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}")">
+                <div class="grid-coordinators">
+                    <p class="progress-title kpi-title">@IndexLabels.Progress</p>
+                    <div class="card card-height break-down-file-status">
+                        <h2 class="text-alignement">@IndexLabels.BreakdownFilesStatus</h2>
+                        @if (Array.TrueForAll(ViewModel.AccompanyingFileStage, x => x.VerticalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.AccompanyingFileStage"
+                                                    Fills="@(new List<string> { "#429AD5", "orange", "grey", "cyan" })"
+                                                    ValueProperty="VerticalAxisValue">
+                                    <TooltipTemplate Context="data">
+                                        <div><span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong></div>
+                                    </TooltipTemplate>
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenColumnSeries>
+                                <RadzenColumnOptions Radius="5" Width="50" />
+                                <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                                <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@IndexLabels.MilestoneIdentification" />
+                                <ZeeLegendElement Color="orange" Label="@IndexLabels.MilestoneOrganizeAndFinance" />
+                                <ZeeLegendElement Color="grey" Label="@IndexLabels.MilestoneRealizeAndFollow" />
+                                <ZeeLegendElement Color="cyan" Label="@IndexLabels.FinishedAccompanyingFiles" />
+                            </div>
+                        }
+                    </div>
+                    <p class="identify-title kpi-title">@IndexLabels.MilestoneIdentification</p>
+                    <div class="card card-height number-household-detected">
+                        <h2 class="text-alignement">@IndexLabels.NumberOfHouseholdDetected</h2>
+                        @if (Array.TrueForAll(ViewModel.HouseHoldsByMarkerNatureCount, x => x.VerticalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.HouseHoldsByMarkerNatureCount"
+                                                    Fills="@(new List<string>
+                                                                                                    {
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[0].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[1].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[2].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[3].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[4].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[5].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[6].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[7].Color!.Value.Name,
+                                                                                                        ViewModel.HouseHoldsByMarkerNatureCount[8].Color!.Value.Name
+                                                                                                    })"
+                                            ValueProperty="VerticalAxisValue">
+                            <TooltipTemplate Context="data">
+                                <div><span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong></div>
+                            </TooltipTemplate>
+                            <ChildContent>
+                                <RadzenSeriesDataLabels Visible="true" />
+                            </ChildContent>
+                        </RadzenColumnSeries>
+                        <RadzenColumnOptions Radius="5" />
+                        <RadzenLegend Visible="false" />
+                        <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                        <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                    </RadzenChart>
+                    <div>
+                        @foreach (var houseHoldsByMarkerNature in ViewModel.HouseHoldsByMarkerNatureCount)
+                                {
+                                    <div class="flex-row">
+                                        <ZeeLegendElement Color="@houseHoldsByMarkerNature.Color!.Value.Name"
+                                                          Label="@houseHoldsByMarkerNature.Name"></ZeeLegendElement>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="card text-alignement card-height houselhold-caracteristics">
+                        <h2>@IndexLabels.HouseholdCaracteristics</h2>
+                        <div>
+                            @if (Array.TrueForAll(ViewModel.HouseholdTypology, x => x.HorizontalAxisValue <= 0))
+                            {
+                                <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                            }
+                            else
+                            {
+                                <RadzenChart>
+                                    <RadzenColumnSeries Data="@ViewModel.HouseholdTypology"
+                                                        CategoryProperty="Name"
+                                                        ValueProperty="HorizontalAxisvalue"
+                                                        Fills="@(new List<string>
+                                                                                                            {
+                                                                                                                "#429AD5",
+                                                                                                                "#071952",
+                                                                                                                "#FFA500",
+                                                                                                                "#FF0000",
+                                                                                                                "#00FF00",
+                                                                                                                "#0000FF"
+                                                                                                            })">
+                                <TooltipTemplate Context="data">
+                                    <div>
+                                        <span>@data.Name</span> : <strong>@data.HorizontalAxisValue</strong>
+                                    </div>
+                                </TooltipTemplate>
+                                <ChildContent>
+                                    <RadzenSeriesDataLabels Visible="true" />
+                                </ChildContent>
+                            </RadzenColumnSeries>
+                            <RadzenColumnOptions Radius="5" />
+                            <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                            <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                            <RadzenLegend Visible="false"></RadzenLegend>
+                        </RadzenChart>
+                        <div>
+                            <ZeeLegendElement Color="#429AD5"
+                                              Label="@HouseholdTypologyLabel.CoupleWithAdultStaying" />
+                            <ZeeLegendElement Color="#071952"
+                                              Label="@HouseholdTypologyLabel.CoupleWithChildren" />
+                            <ZeeLegendElement Color="#FFA500"
+                                              Label="@HouseholdTypologyLabel.CoupleWithoutChildren" />
+                            <ZeeLegendElement Color="#FF0000"
+                                              Label="@HouseholdTypologyLabel.SingleParentFamily" />
+                            <ZeeLegendElement Color="#00FF00" Label="@HouseholdTypologyLabel.SinglePerson" />
+                            <ZeeLegendElement Color="#0000FF"
+                                              Label="@HouseholdTypologyLabel.SinglePersonWithAdultStaying" />
+                        </div>
+                                                }
+                            <h3>@IndexLabels.NumberHouseholdIdentifiedByTypology</h3>
+                        </div>
+                        <div class="indicator-card">
+                            <div class="card-characteristic">
+                                <h3 class="average-money-text">@($"{ViewModel.AverageAgeMainOccupant.ToString("N1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.AverageAgeMainOccupant</p>
+                            </div>
+                        </div>
+                        <div class="m-3">
+                            @if (Array.TrueForAll(ViewModel.SocioProfessionalCategoryRepartition, x => x.PieAxisValue <= 0))
+                            {
+                                <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                            }
+                            else
+                            {
+                                <RadzenChart>
+                                    <RadzenPieSeries CategoryProperty="Name"
+                                                     Data="@ViewModel.SocioProfessionalCategoryRepartition"
+                                                     Title="@IndexLabels.PieChartTitle"
+                                                     Fills="@(new List<string>
+                                                                                                         {
+                                                                                                             "#429AD5",
+                                                                                                             "#071952",
+                                                                                                             "#FFA500",
+                                                                                                             "#FF0000",
+                                                                                                             "#00FF00",
+                                                                                                             "#0000FF",
+                                                                                                             "#0FA0FF",
+                                                                                                             "#FF00FF",
+                                                                                                             "#00FFFF"
+                                                                                                         })"
+                                             ValueProperty="PieAxisValue">
+                                <RadzenSeriesDataLabels Visible=true></RadzenSeriesDataLabels>
+                            </RadzenPieSeries>
+                            <RadzenValueAxis Formatter="@ToPercentageSocioProfessionalCategory"></RadzenValueAxis>
+                            <RadzenLegend Visible="false"></RadzenLegend>
+                        </RadzenChart>
+                        <div>
+                            <ZeeLegendElement Color="#429AD5" Label="@SocioProfessionalCategoryLabel.Farmer" />
+                            <ZeeLegendElement Color="#071952" Label="@SocioProfessionalCategoryLabel.Artisan" />
+                            <ZeeLegendElement Color="#FFA500" Label="@SocioProfessionalCategoryLabel.Cadre" />
+                            <ZeeLegendElement Color="#FF0000" Label="@SocioProfessionalCategoryLabel.Employee" />
+                            <ZeeLegendElement Color="#00FF00"
+                                              Label="@SocioProfessionalCategoryLabel.SearchingJob" />
+                            <ZeeLegendElement Color="#0000FF" Label="@SocioProfessionalCategoryLabel.Worker" />
+                            <ZeeLegendElement Color="#0FA0FF"
+                                              Label="@SocioProfessionalCategoryLabel.IntermediateProfession" />
+                            <ZeeLegendElement Color="#FF00FF" Label="@SocioProfessionalCategoryLabel.Retired" />
+                            <ZeeLegendElement Color="#00FFFF"
+                                              Label="@SocioProfessionalCategoryLabel.Unemployed" />
+                        </div>
+                                                }
+                            <h3>@IndexLabels.NumberHouseholdIdentifiedBySocioProfessionalCategory</h3>
+                        </div>
+                    </div>
+                    <div class="card card-height household-earnings text-alignement">
+                        <h2>@IndexLabels.HouseholdEarnings</h2>
+                        <div>
+                            @if (Array.TrueForAll(ViewModel.AnahCategoryRepartition, x => x.PieAxisValue <= 0))
+                            {
+                                <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                            }
+                            else
+                            {
+                                <RadzenChart>
+                                    <RadzenPieSeries CategoryProperty="Name"
+                                                     Data="@ViewModel.AnahCategoryRepartition"
+                                                     Fills="@(new List<string> { "#429AD5", "grey" })"
+                                                     Title="@IndexLabels.PieChartTitle"
+                                                     ValueProperty="PieAxisValue">
+                                        <RadzenSeriesDataLabels Visible=true></RadzenSeriesDataLabels>
+                                    </RadzenPieSeries>
+                                    <RadzenValueAxis Formatter="@ToPercentageAnnahCategory"></RadzenValueAxis>
+                                    <RadzenLegend Visible="false" />
+                                </RadzenChart>
+                                <div>
+                                    <ZeeLegendElement Color="#429AD5" Label="@Labels.LowIncomeHouseholdsAmount" />
+                                    <ZeeLegendElement Color="grey" Label="@Labels.VeryLowIncomeHouseholdsAmount" />
+                                </div>
+                            }
+                            <h4>@IndexLabels.AnahCategoriesRepartition</h4>
+                        </div>
+                        <div class="indicator-card text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.AverageTaxRevenue.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                            <p>@IndexLabels.TaxRevenueAverageByYear</p>
+                        </div>
+                    </div>
+                    <div class="card card-height housing-type-households-number">
+                        <h2 class="text-alignement">@IndexLabels.HousingTypeByHouseholdsNumber</h2>
+                        @if (Array.TrueForAll(ViewModel.OwnershipStatusRepartition, x => x.PieAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenPieSeries CategoryProperty="Name"
+                                                 Data="@ViewModel.OwnershipStatusRepartition"
+                                                 Fills="@(new List<string> { "#429AD5", "grey", "yellow" })"
+                                                 ValueProperty="PieAxisValue">
+                                    <TooltipTemplate Context="data">
+                                        <div><span>@data.Name</span> : <strong>@data.PieAxisValue</strong></div>
+                                    </TooltipTemplate>
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenPieSeries>
+                                <RadzenValueAxis Formatter="@ToPercentageOwnershipStatus"></RadzenValueAxis>
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@OwnershipStatusLabel.FullOwnership" />
+                                <ZeeLegendElement Color="grey" Label="@OwnershipStatusLabel.CoOwner" />
+                                <ZeeLegendElement Color="yellow" Label="@OwnershipStatusLabel.JointOwnership" />
+                            </div>
+                        }
+                    </div>
+                    <div class="card card-height before-work-energy text-alignement">
+                        <h2>@IndexLabels.BeforeWorksEnergy</h2>
+                        <div class="indicator-card">
+                            <div class="card-characteristic">
+                                <h3 class="average-money-text">@($"{ViewModel.AverageEnergyEffortBeforeWork.ToString("P1")}")</h3>
+                                <p>@IndexLabels.AverageEnergyEffortBeforeWork</p>
+                            </div>
+                        </div>
+                        <div class="card-characteristic indicator-card">
+                            <h3 class="average-money-text">@ViewModel.AverageDeprivationRate.ToString("P1")</h3>
+                            <p>@IndexLabels.HouseholdInTotalEnergyDeprivation</p>
+                        </div>
+                        <div>
+                            <h3>@IndexLabels.NumberHouseholdIdentifiedByEnergeticsLabels</h3>
+                            <DpeChart Data="@ViewModel.HouseHoldsByInitialDpe" />
+                        </div>
+                    </div>
+                    <div class="card card-height average-delivery-time text-alignement">
+                        <h2>@IndexLabels.AverageDeliveryTimeTitle</h2>
+                        <div class="indicator-card">
+                            <div class="card-characteristic">
+                                <h3 class="average-money-text">@($"{ViewModel.AverageDeliveryTime.ToString("N1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.AverageDeliveryTime</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="organize-and-finance-title kpi-title">@IndexLabels.MilestoneOrganizeAndFinance</p>
+                    <div class="card card-height works-financing text-alignement">
+                        <h2>@IndexLabels.WorksFinancing</h2>
+                        <div class="indicator-card">
+                            @if (Array.TrueForAll(ViewModel.HouseholdsByTypesOfANAHCount, x => x.VerticalAxisValue <= 0))
+                            {
+                                <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                            }
+                            else
+                            {
+                                <RadzenChart>
+                                    <RadzenColumnSeries CategoryProperty="Name"
+                                                        Data="@ViewModel.HouseholdsByTypesOfANAHCount"
+                                                        Fills="@(new List<string> { ViewModel.HouseholdsByTypesOfANAHCount[0].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[1].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[2].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[3].Color!.Value.Name })"
+                                                        ValueProperty="VerticalAxisValue">
+                                        <TooltipTemplate Context="data">
+                                            <div>
+                                                <span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong>
+                                            </div>
+                                        </TooltipTemplate>
+                                        <ChildContent>
+                                            <RadzenSeriesDataLabels Visible="true" />
+                                        </ChildContent>
+                                    </RadzenColumnSeries>
+                                    <RadzenColumnOptions Radius="5" />
+                                    <RadzenLegend Visible="false" />
+                                    <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                                    <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                                </RadzenChart>
+                                <div>
+                                    @foreach (var householdsByTypesOfANAHCount in ViewModel.HouseholdsByTypesOfANAHCount)
+                                    {
+                                        <div class="flex-row">
+                                            <ZeeLegendElement Color="@householdsByTypesOfANAHCount.Color!.Value.Name"
+                                                              Label="@householdsByTypesOfANAHCount.Name"></ZeeLegendElement>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <h4>@IndexLabels.NumberHouseholdsOfANAH</h4>
+                        </div>
+                        <div>
+                            @if (Array.TrueForAll(ViewModel.AverageFundingByType, x => x.HorizontalAxisValue <= 0))
+                            {
+                                <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                            }
+                            else
+                            {
+                                <RadzenChart>
+                                    <RadzenColumnSeries Data="@ViewModel.AverageFundingByType"
+                                                        CategoryProperty="Name"
+                                                        ValueProperty="HorizontalAxisValue"
+                                                        Fills="@(new List<string>
+                                                                                                            {
+                                                                                                                ViewModel.AverageFundingByType[0].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[1].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[2].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[3].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[4].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[5].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[6].Color!.Value.Name,
+                                                                                                                ViewModel.AverageFundingByType[7].Color!.Value.Name
+                                                                                                            })">
+                                <TooltipTemplate Context="data">
+                                    <div>
+                                        <span>@data.Name</span> :
+                                        <strong>@data.HorizontalAxisValue.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))</strong>
+                                    </div>
+                                </TooltipTemplate>
+                                <ChildContent>
+                                    <RadzenSeriesDataLabels Visible="true" />
+                                </ChildContent>
+                            </RadzenColumnSeries>
+                            <RadzenColumnOptions Radius="5" />
+                            <RadzenLegend Visible="false" />
+                            <RadzenValueAxis Min="0"
+                                             Step="1"
+                                             Visible="false"
+                                             Formatter="@ToFormatAsFR"></RadzenValueAxis>
+                            <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                        </RadzenChart>
+                        <div>
+                            @foreach (var averageFundingByType in ViewModel.AverageFundingByType)
+                                    {
+                                        <div class="flex-row">
+                                            <ZeeLegendElement Color="@averageFundingByType.Color!.Value.Name"
+                                                              Label="@averageFundingByType.Name"></ZeeLegendElement>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <h4>@IndexLabels.AverageFundingByType</h4>
+                        </div>
+                        <div class="indicator-card">
+                            <div class="text-section-alignment">
+                                <h3 class="average-money-text">@($"{ViewModel.EstimatedRemainingAmountAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.RemainingAmount</p>
+                            </div>
+                            <div class="text-section-alignment">
+                                <h3 class="average-money-text">@($"{ViewModel.EstimatedWorkPackageCostAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.AverageWorksCost</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-height estimated-energy-jump text-alignement">
+                        <h2>@IndexLabels.EstimatedEnergyJumpByNumberOfHousehold</h2>
+                        @if (Array.TrueForAll(ViewModel.EstimatedEnergyJumpCount, x => x.VerticalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.EstimatedEnergyJumpCount"
+                                                    Fills="@(new List<string>
+                                                                                                    {
+                                                                                                        ViewModel.EstimatedEnergyJumpCount[0].Color!.Value.Name,
+                                                                                                        ViewModel.EstimatedEnergyJumpCount[1].Color!.Value.Name,
+                                                                                                        ViewModel.EstimatedEnergyJumpCount[2].Color!.Value.Name,
+                                                                                                        ViewModel.EstimatedEnergyJumpCount[3].Color!.Value.Name,
+                                                                                                        ViewModel.EstimatedEnergyJumpCount[4].Color!.Value.Name
+                                                                                                    })"
+                                            ValueProperty="VerticalAxisValue">
+                            <TooltipTemplate Context="data">
+                                <div><span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong></div>
+                            </TooltipTemplate>
+                            <ChildContent>
+                                <RadzenSeriesDataLabels Visible="true" />
+                            </ChildContent>
+                        </RadzenColumnSeries>
+                        <RadzenColumnOptions Radius="5" />
+                        <RadzenLegend Visible="false" />
+                        <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                        <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                    </RadzenChart>
+                    <div>
+                        @foreach (var estimatedEnergyJumpCount in ViewModel.EstimatedEnergyJumpCount)
+                                {
+                                    <div class="flex-row">
+                                        <ZeeLegendElement Color="@estimatedEnergyJumpCount.Color!.Value.Name"
+                                                          Label="@estimatedEnergyJumpCount.Name"></ZeeLegendElement>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <p class="realize-and-follow-title kpi-title">@IndexLabels.MilestoneRealizeAndFollow</p>
+                    <div class="card card-height support-duration text-alignement">
+                        <h2>@IndexLabels.SupportDuration</h2>
+                        <div class="card-characteristic">
+                            <h3 class="average-money-text">@($"{ViewModel.AccompanyingDurationAverage.ToString("N1")}")</h3>
+                        </div>
+                    </div>
+                </div>
+            </AuthorizeView>
+            <AuthorizeView Context="territorialBuilder" Roles="@Constants.TerritorialBuilderRole">
+                <div class="grid">
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.BreakdownFilesStatus</h2>
+                        @if (Array.TrueForAll(ViewModel.AccompanyingFileStage, x => x.VerticalAxisValue <= 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenColumnSeries CategoryProperty="Name"
+                                                    Data="@ViewModel.AccompanyingFileStage"
+                                                    Fills="@(new List<string> { "#429AD5", "orange", "grey", "cyan" })"
+                                                    ValueProperty="VerticalAxisValue">
+                                    <TooltipTemplate Context="data">
+                                        <div><span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong></div>
+                                    </TooltipTemplate>
+                                    <ChildContent>
+                                        <RadzenSeriesDataLabels Visible="true" />
+                                    </ChildContent>
+                                </RadzenColumnSeries>
+                                <RadzenColumnOptions Radius="5" Width="50" />
+                                <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                                <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@IndexLabels.MilestoneIdentification" />
+                                <ZeeLegendElement Color="orange" Label="@IndexLabels.MilestoneOrganizeAndFinance" />
+                                <ZeeLegendElement Color="grey" Label="@IndexLabels.MilestoneRealizeAndFollow" />
+                                <ZeeLegendElement Color="cyan" Label="@IndexLabels.FinishedAccompanyingFiles" />
+                            </div>
+                        }
+                    </div>
+                    <div class="card card-height text-alignement">
+                        <h2>@IndexLabels.AnahCategoriesRepartition</h2>
+                        @if (ViewModel.AnahCategoryRepartition[0].PieAxisValue <= 0 && ViewModel.AnahCategoryRepartition[1].PieAxisValue <= 0)
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenPieSeries CategoryProperty="Name"
+                                                 Data="@ViewModel.AnahCategoryRepartition"
+                                                 Fills="@(new List<string> { "#429AD5", "grey" })"
+                                                 Title="@IndexLabels.PieChartTitle"
+                                                 ValueProperty="PieAxisValue">
+                                    <RadzenSeriesDataLabels Visible=true></RadzenSeriesDataLabels>
+                                </RadzenPieSeries>
+                                <RadzenValueAxis Formatter="@ToPercentageAnnahCategory"></RadzenValueAxis>
+                                <RadzenLegend Visible="false" />
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@Labels.LowIncomeHouseholdsAmount" />
+                                <ZeeLegendElement Color="grey" Label="@Labels.VeryLowIncomeHouseholdsAmount" />
+                            </div>
+                        }
+                    </div>
+                    <div class="card text-alignement card-height">
+                        <h2>@IndexLabels.WorksFinancing</h2>
+                        <div class="indicator-card">
+                            <div>
+                                @if (Array.TrueForAll(ViewModel.HouseholdsByTypesOfANAHCount, x => x.VerticalAxisValue <= 0))
+                                {
+                                    <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                                }
+                                else
+                                {
+                                    <RadzenChart>
+                                        <RadzenColumnSeries CategoryProperty="Name"
+                                                            Data="@ViewModel.HouseholdsByTypesOfANAHCount"
+                                                            Fills="@(new List<string> { ViewModel.HouseholdsByTypesOfANAHCount[0].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[1].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[2].Color!.Value.Name, ViewModel.HouseholdsByTypesOfANAHCount[3].Color!.Value.Name })"
+                                                            ValueProperty="VerticalAxisValue">
+                                            <TooltipTemplate Context="data">
+                                                <div>
+                                                    <span>@data.Name</span> : <strong>@data.VerticalAxisValue</strong>
+                                                </div>
+                                            </TooltipTemplate>
+                                            <ChildContent>
+                                                <RadzenSeriesDataLabels Visible="true" />
+                                            </ChildContent>
+                                        </RadzenColumnSeries>
+                                        <RadzenColumnOptions Radius="5" />
+                                        <RadzenLegend Visible="false" />
+                                        <RadzenValueAxis Min="0" Step="1" Visible="false"></RadzenValueAxis>
+                                        <RadzenCategoryAxis Visible="false"></RadzenCategoryAxis>
+                                    </RadzenChart>
+                                    <div>
+                                        @foreach (var householdsByTypesOfANAHCount in ViewModel.HouseholdsByTypesOfANAHCount)
+                                        {
+                                            <div class="flex-row">
+                                                <ZeeLegendElement Color="@householdsByTypesOfANAHCount.Color!.Value.Name"
+                                                                  Label="@householdsByTypesOfANAHCount.Name"></ZeeLegendElement>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                <h4>@IndexLabels.NumberHouseholdsOfANAH</h4>
+                            </div>
+                            <div class="text-section-alignment">
+                                <h3 class="average-money-text">@($"{ViewModel.EstimatedRemainingAmountAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.RemainingAmount</p>
+                            </div>
+                            <div class="text-section-alignment">
+                                <h3 class="average-money-text">@($"{ViewModel.EstimatedWorkPackageCostAverage.ToString("C1", CultureInfo.CreateSpecificCulture("fr-FR"))}")</h3>
+                                <p>@IndexLabels.AverageWorksCost</p>
+                            </div>
+                            <div class="text-section-alignment">
+                                @if (Array.TrueForAll(ViewModel.AverageWorkCostByEstimatedJump, x => x.VerticalAxisValue <= 0))
+                                {
+                                    <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                                }
+                                else
+                                {
+                                    <WorkCostByEstimatedClassJumpKpi @bind-DpeLabel="@DpeLabel"
+                                                                     @bind-AverageWorkCostByEstimatedJump="@ViewModel.AverageWorkCostByEstimatedJump"
+                                                                     Filter="@FilterViewModel"
+                                                                     UserId="@_userId"
+                                                                     DisplayFormat="@ToFormatAsFR" />
+                                }
+                                <p>@IndexLabels.AverageWorkCostByEnergyJumpClass</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card text-alignement card-height">
+                        <h2>@IndexLabels.ConversionRate</h2>
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.PassageRateFromFirstMilestoneToSecondMilestone.ToString("P1")}")</h3>
+                            <p>@IndexLabels.PassageRateFromFirstStageToSecondStage</p>
+                        </div>
+                        <div class="text-section-alignment">
+                            <h3 class="average-money-text">@($"{ViewModel.PassageRateFromFirstMilestoneToThirdMilestone.ToString("P1")}")</h3>
+                            <p>@IndexLabels.PassageRateFromFirstStageToThirdStage</p>
+                        </div>
+                    </div>
+                    <div class="card text-alignement card-height">
+                        <h2>@IndexLabels.AccompanyingFilesCompletionSpeed</h2>
+                        @if (ViewModel.CompletionSpeedDataIdentify.All(x => x.AccompanyingFileCount == 0) && ViewModel.CompletionSpeedDataOrganizeAndFinance.All(x => x.AccompanyingFileCount == 0) && ViewModel.CompletionSpeedDataRealizeAndFollow.All(x => x.AccompanyingFileCount == 0))
+                        {
+                            <p class="no-relevent-data">@IndexLabels.NoRelevantDataFound</p>
+                        }
+                        else
+                        {
+                            <RadzenChart>
+                                <RadzenLineSeries Smooth="true"
+                                                  Data="@ViewModel.CompletionSpeedDataIdentify"
+                                                  Stroke="#429AD5"
+                                                  CategoryProperty="AbbreviatedMonth"
+                                                  Title="@IndexLabels.MilestoneIdentification"
+                                                  ValueProperty="AccompanyingFileCount">
+                                    <RadzenMarkers Visible="true" MarkerType="MarkerType.Circle" />
+                                </RadzenLineSeries>
+                                <RadzenLineSeries Smooth="true"
+                                                  Data="@ViewModel.CompletionSpeedDataOrganizeAndFinance"
+                                                  Stroke="#FFA500"
+                                                  CategoryProperty="AbbreviatedMonth"
+                                                  Title="@IndexLabels.MilestoneOrganizeAndFinance"
+                                                  ValueProperty="AccompanyingFileCount">
+                                    <RadzenMarkers Visible="true" MarkerType="MarkerType.Circle" />
+                                </RadzenLineSeries>
+                                <RadzenLineSeries Smooth="true"
+                                                  Data="@ViewModel.CompletionSpeedDataRealizeAndFollow"
+                                                  Stroke="#808080"
+                                                  CategoryProperty="AbbreviatedMonth"
+                                                  Title="@IndexLabels.MilestoneRealizeAndFollow"
+                                                  ValueProperty="AccompanyingFileCount">
+                                    <RadzenMarkers Visible="true" MarkerType="MarkerType.Circle" />
+                                </RadzenLineSeries>
+                                <RadzenCategoryAxis Padding="20" />
+                                <RadzenLegend Visible="false" />
+                                <RadzenValueAxis>
+                                    <RadzenGridLines Visible="true" />
+                                    <RadzenAxisTitle Text="Nombre de dossiers" />
+                                </RadzenValueAxis>
+                            </RadzenChart>
+                            <div>
+                                <ZeeLegendElement Color="#429AD5" Label="@IndexLabels.MilestoneIdentification" />
+                                <ZeeLegendElement Color="orange" Label="@IndexLabels.MilestoneOrganizeAndFinance" />
+                                <ZeeLegendElement Color="grey" Label="@IndexLabels.MilestoneRealizeAndFollow" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </AuthorizeView>
+            <AuthorizeView Context="_"
+                           Roles="@Constants.AdminRole">
+                <ZeeHeader ShouldRenderLogo="false"
+                           Title="@Labels.HomeAdmin">
+                </ZeeHeader>
+
+                <div class="card card-height text-alignement half-width">
+                    <h2>@IndexLabels.NumberOfUser</h2>
+                    <h4>@ViewModel.NumberOfUser</h4>
+                </div>
+                <div class="card card-height text-alignement half-width" style="margin-top: 2rem;">
+                    <OutlinedInt Label="@IndexLabels.MaximalNumberOfAccompanyingFileCreated" 
+                        @bind-Intgr="ViewModel.MaximalNumberOfAccompanyingFileCreated" 
+                        Type="OutlinedInt.TypeOfValue.Int"/>
+                    <OutlinedInt Label="@IndexLabels.MaximalNumberOfAccompanyingFileToValidateFirstStage" 
+                        @bind-Intgr="ViewModel.MaximalNumberOfAccompanyingFileToValidateFirstStage" 
+                        Type="OutlinedInt.TypeOfValue.Int"/>
+                    <div class="d-flex flex-column">
+                        <label class="pure-material-textfield-outlined">
+                            <ZeeInputDate @bind-Value="ViewModel.AccompanyingFileModificationDeadline"
+                                    @bind-Value:format="yyyy-MM-dd" />
+                            <span>
+                                @IndexLabels.TzeeAccompanyingFileModificationDeadline
+                            </span>
+                        </label>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label class="pure-material-textfield-outlined">
+                            <ZeeInputDate @bind-Value="ViewModel.AccompanyingFileAlertBannerStartDate"
+                                    @bind-Value:format="yyyy-MM-dd" />
+                            <span>
+                                @IndexLabels.TzeeAccompanyingFileAlertBannerStartDate
+                            </span>
+                        </label>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label class="pure-material-textfield-outlined">
+                            <ZeeInputDate @bind-Value="ViewModel.AccompanyingFileAlertBannerEndDate"
+                                    @bind-Value:format="yyyy-MM-dd" />
+                            <span>
+                                @IndexLabels.TzeeAccompanyingFileAlertBannerEndDate
+                            </span>
+                        </label>
+                    </div>
+                    <OutlinedTextArea @bind-Value="ViewModel.AccompanyingFileAlertBannerMessage" 
+                        Label="@IndexLabels.TzeeAccompanyingFileAlertBannerMessage"/>
+                    <ZeeButton Text="@IndexLabels.Update"
+                        @onclick="UpdateAdminConstant" 
+                        style="margin-top: 2rem;"/>
+                </div>
+            </AuthorizeView>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="background-not-signed-img">
+            <div class="top-header">
+                <img src="images/Logo-Renee-Couleur.png"
+                     alt="logo"
+                     style="width:150px; margin-right: 50px;" />
+                <div class="d-flex flex-column">
+                    <h1 class="index-not-authorized-title">@Labels.ReneeTitle</h1>
+                    <h2 style="font-style: italic;color: var(--renee-title)">@Labels.ReneeSubTitle</h2>
+                </div>
+            </div>
+            <div class="container">
+                <button class="auth-button"
+                        @onclick="@(() => { NavigationManager.NavigateTo("MicrosoftIdentity/Account/SignIn?", true); })">
+                    <img alt="@Labels.Alt.UserConnect"
+                         class="icon-65"
+                         src="/images/renee_user.svg" />
+                    <span class="button-text">
+                        @Labels.Login
+                    </span>
+                </button>
+                <button class="auth-button"
+                        @onclick="Subscribe">
+                    <img alt="@Labels.Alt.UserSignUp"
+                         class="icon-70"
+                         src="/images/renee-inscription_icons.svg" />
+                    <span class="button-text">
+                        @Labels.Signin
+                    </span>
+                </button>
+
+                <button class="auth-button-round"
+                        @onclick="OnClickTooltip">
+                    <span>
+                        @((MarkupString)Icons.Svg.Tips)
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="d-flex flex-row flex-grow-1 align-items-center justify-content-center">
+                <a class="a-no-style"
+                   style="cursor:pointer"
+                   href="legal/Conditions Générales Utilisation.pdf"
+                   target="_blank">@Labels.CGU</a>
+                <span>&nbsp;•&nbsp;</span>
+                <a class="a-no-style"
+                   href="legal/Politique de confidentialité.pdf"
+                   target="_blank">@Labels.PrivacyPolicy</a>
+                <span>&nbsp;•&nbsp;</span>
+                <a class="a-no-style" href="legal/Mentions légales.pdf" target="_blank">@Labels.LegalNotice</a>
+                <span>&nbsp;•&nbsp;</span>
+                <a class="a-no-style" href="mailto:reneeadmin@stopexclusionenergetique.org">@Labels.MailContact</a>
+            </div>
+            <img alt="footer"
+                 height="80"
+                 src="images/footer.png" />
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

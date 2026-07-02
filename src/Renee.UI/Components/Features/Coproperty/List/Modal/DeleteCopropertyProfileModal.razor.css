@@ -1,0 +1,23 @@
+﻿.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.zeeButtonGroup {
+    display: flex;
+    align-items: center;
+    Gap: 1rem;
+    justify-content: right;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 7fr 1fr;
+    grid-gap: 0.5rem;
+    margin-top: 1rem;
+}

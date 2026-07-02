@@ -1,0 +1,147 @@
+﻿.pager {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.pager-left, .pager-center, .pager-right {
+    flex: 1 1 0%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
+.pager-center {
+    justify-content: center;
+    overflow: visible;
+}
+
+.pager-right {
+    justify-content: flex-end;
+}
+
+.pager-compact {
+    display: none;
+    z-index: 20;
+}
+
+.pager-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.pager-btn {
+    border: 0;
+    background: transparent;
+    color: #6b7280;
+    border-radius: 50%;
+    padding: .25rem .5rem;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.pager-btn:hover {
+    background: #f3f4f6;
+}
+
+.pager-icon {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    flex: 0 0 auto;
+}
+
+.pager-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.pager-page {
+    width: 33px;
+    height: 33px;
+    display: grid;
+    place-items: center;
+    font-size: .95rem;
+    flex: 0 0 auto;
+}
+
+.pager-active {
+    background: #e9ecef;
+    color: #111827;
+}
+
+.pager-disabled, .pager-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.pager-summary {
+    color: #6b7280;
+    margin-left: .25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pager-rows {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: .5rem;
+    color: #6b7280;
+    position: relative;
+}
+
+.pager-radzen-dropdown .rz-dropdown-label,
+.pager-radzen-dropdown .rz-dropdown-items {
+    border-radius: 50% !important;
+}
+
+.pager-radzen-dropdown .rz-dropdown-label {
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+}
+
+.pager-compact .pager-btn {
+    pointer-events: auto;
+}
+.pager-compact-dropdown {
+    z-index: 30;
+}
+
+/* Mobile/copageract styles */
+@media (max-width: 640px) {
+    .pager {
+        flex-direction: column;
+        gap: .4rem;
+        align-items: stretch;
+    }
+
+    .pager-left, .pager-center, .pager-right {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pager-summary { display: none; }
+    .pager-rows span { display: none; }
+
+    .pager-controls { display: none; }
+    .pager-compact { display: flex; justify-content: center; gap: .5rem; }
+
+    .pager-compact-btn, .pager-compact-dropdown {
+        height: 44px;
+    }
+    .pager-page, .pager-icon { width: 44px; height: 44px; }
+}

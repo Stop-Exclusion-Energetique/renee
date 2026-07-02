@@ -1,0 +1,12 @@
+﻿<p>
+    @Labels.FileDeletionModalText
+</p>
+
+<div class="button-flex">
+    <ZeeButton Text="@Labels.Cancel"
+               DisplayBackground="@DisplayEnumBackground.Blue" 
+               @onclick="@(async () => await BlazoredModal.CancelAsync())"/>
+    <ZeeButton Text="@Labels.FileDeletionButtonText"
+               DisplayBackground="@DisplayEnumBackground.Red" 
+               @onclick="@DeleteFile" />
+</div>

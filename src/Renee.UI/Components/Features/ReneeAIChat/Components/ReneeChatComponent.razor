@@ -1,0 +1,233 @@
+@using Markdig
+
+<div class="@(IsAiChat ? "ai-chat-message" : "user-chat-message")">
+    @if (IsAiChat)
+    {
+        @((MarkupString)RenderMarkdown(Message))
+    }
+    else
+    {
+        @Message
+    }
+
+    @if (ToolsUsed != null && ToolsUsed.Count > 0)
+    {
+        <div class="chat-tools-used">
+            <button class="chat-tools-toggle" @onclick="() => _toolsOpen = !_toolsOpen">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                @ToolsUsed.Count outil@(ToolsUsed.Count > 1 ? "s" : "") utilisé@(ToolsUsed.Count > 1 ? "s" : "")
+                <svg class="chat-tools-chevron @(_toolsOpen ? "chat-tools-chevron--open" : "")" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            @if (_toolsOpen)
+            {
+                <div class="chat-tools-dropdown">
+                    @foreach (var tool in ToolsUsed)
+                    {
+                        <span class="chat-tool-chip">@tool</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+.ai-chat-message {
+    display: inline-block;
+    background-color: #e6f0fa;
+    color: #222;
+    border-radius: 16px 16px 16px 4px;
+    padding: 8px 14px;
+    margin: 4px 0;
+    max-width: 92%;
+    word-break: break-word;
+    align-self: flex-start;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.ai-chat-message p {
+    margin: 0 0 0.4em 0;
+}
+
+.ai-chat-message p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-chat-message ul, .ai-chat-message ol {
+    margin: 0.2em 0 0.4em 1.2em;
+    padding: 0;
+}
+
+.ai-chat-message code {
+    background-color: #d0e4f7;
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.ai-chat-message pre {
+    background-color: #d0e4f7;
+    border-radius: 6px;
+    padding: 8px 10px;
+    overflow-x: auto;
+    margin: 0.4em 0;
+}
+
+.ai-chat-message pre code {
+    background: none;
+    padding: 0;
+}
+
+.ai-chat-message h1, .ai-chat-message h2, .ai-chat-message h3 {
+    margin: 0.4em 0 0.2em 0;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.ai-chat-message blockquote {
+    border-left: 3px solid #a0bcd8;
+    margin: 0.4em 0 0.4em 0.4em;
+    padding-left: 8px;
+    color: #555;
+}
+
+.ai-chat-message table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5em 0;
+    font-size: 0.85em;
+}
+
+.ai-chat-message th {
+    background-color: #b8d4ed;
+    color: #1a3a5c;
+    font-weight: 600;
+    text-align: left;
+    padding: 6px 10px;
+    border: 1px solid #a0bcd8;
+    white-space: nowrap;
+}
+
+.ai-chat-message td {
+    padding: 5px 10px;
+    border: 1px solid #c8ddf0;
+    vertical-align: top;
+}
+
+.ai-chat-message tr:nth-child(even) td {
+    background-color: #f0f6fc;
+}
+
+.ai-chat-message tr:hover td {
+    background-color: #daeaf7;
+}
+
+.ai-chat-message td:nth-child(3) {
+    color: #888;
+    font-style: italic;
+}
+
+.ai-chat-message td:nth-child(4) {
+    color: #1a6e2e;
+    font-weight: 500;
+}
+
+.user-chat-message {
+    display: inline-block;
+    background-color: #d1ffd6;
+    color: #222;
+    border-radius: 16px 16px 4px 16px;
+    padding: 8px 14px;
+    margin: 4px 0 4px auto;
+    max-width: 70%;
+    word-break: break-word;
+    align-self: flex-end;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    float: right;
+    clear: both;
+    text-align: start;
+    white-space: pre-wrap;
+}
+
+.chat-tools-used {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.chat-tools-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    transition: color 0.15s;
+    line-height: 1;
+}
+
+    .chat-tools-toggle svg {
+        width: 9px;
+        height: 9px;
+        flex-shrink: 0;
+    }
+
+    .chat-tools-toggle:hover {
+        color: #6366f1;
+    }
+
+.chat-tools-chevron {
+    transition: transform 0.2s ease;
+}
+
+    .chat-tools-chevron--open {
+        transform: rotate(180deg);
+    }
+
+.chat-tools-dropdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.chat-tool-chip {
+    font-size: 10px;
+    font-weight: 500;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    color: #4f46e5;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 1px 8px;
+    white-space: nowrap;
+}
+</style>
+
+@code {
+    [Parameter]
+    public string Message { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsAiChat { get; set; } = false;
+
+    [Parameter]
+    public List<string> ToolsUsed { get; set; } = new List<string>();
+
+    private bool _toolsOpen = false;
+
+
+    private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
+        .UseAdvancedExtensions()
+        .Build();
+
+    private static string RenderMarkdown(string markdown) =>
+        Markdown.ToHtml(markdown ?? string.Empty, Pipeline);
+}

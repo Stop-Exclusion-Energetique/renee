@@ -1,0 +1,23 @@
+﻿@using Renee.Domain.Enums
+
+<div>
+	<span>@SortingOn</span>
+	<span @onclick="@(async () => await OnSortingStateUpdate.InvokeAsync(SortingState.Ascending))">
+		<img alt="arrow"
+			 src="/images/flèche-haut.svg"
+			 width="50" />
+	</span>
+	<span @onclick="@(async () => await OnSortingStateUpdate.InvokeAsync(SortingState.Descending))">
+		<img alt="arrow"
+			 src="/images/fleche-bas.svg"
+			 width="50" />
+	</span>
+</div>
+
+@code {
+	[Parameter] public string SortingOn { get; set; } = string.Empty;
+
+	[Parameter] public SortingState SortingState { get; set; } = SortingState.None;
+
+	[Parameter] public EventCallback<SortingState> OnSortingStateUpdate { get; set; }
+}

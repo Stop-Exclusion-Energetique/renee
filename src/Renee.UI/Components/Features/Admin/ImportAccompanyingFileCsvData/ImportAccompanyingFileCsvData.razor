@@ -1,0 +1,134 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Application.Interfaces
+@using Renee.Application.Services.Administration.ImportCsvData
+@using Renee.Application.Services.Administration.ImportCsvData.OsloData
+@using Renee.Domain.Enums
+@using Renee.UI.Components.ErrorHandling
+@using System.Security.Claims
+@using System.Threading.Tasks
+@attribute [Route(@Endpoints.ImportCsvFiles)]
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAccompanyingFileService AccompanyingFileService
+
+<AuthorizeView Context="_"
+               Policy="CsvFileAccessPolicy">
+    <Authorized>
+        <ZeeHeader ShouldRenderLogo="false"
+                   title="@CsvDataLabel.ImportAccompanyingFile">
+        </ZeeHeader>
+
+        <p>@ExcelDataLabel.ImportExcelDataText</p>
+
+        <EditForm EditContext="_importNewAccompanyingFileDataEditContext"
+                  OnValidSubmit="@OnValidSubmitCsv">
+
+            <div>
+                <InputFile accept=".csv"
+                           multiple="false"
+                           id="file-upload"
+                           class="d-none"
+                           OnChange="@((e) => HandleCsvFile(e))" />
+                @if (_memoryStreamFile != null && LineErrorReports.Count == 0)
+                {
+                    <label class="spaced">
+                        <img alt="@Labels.Alt.UploadIcon"
+                        src="@Icons.FileLoaded"
+                        width="40" />
+                    </label>
+
+                    <span>@CsvDataLabel.AccompanyingFileSuccessfullyLoaded</span>
+                }
+                else
+                {
+                    <label for="file-upload">
+                        <img alt="@Labels.Alt.UploadIcon"
+                        src="@Icons.UploadIcon"
+                        width="30" />
+                        <span class="required">@ExcelDataLabel.ImportExcelFile</span>
+                    </label>
+                }
+            </div>
+
+            <div style="margin: 1rem 0;" class="zeeButton">
+                <ZeeButton IsSubmit="true"
+                Text="@ExcelDataLabel.ImportV3AccompanyingFileTextButton"
+                disabled="@(_memoryStreamFile == null)">
+                </ZeeButton>
+            </div>
+        </EditForm>
+
+
+        <EditForm EditContext="_transformOsloData"
+            OnValidSubmit="@OnValidSubmitOsloCsv">
+            <div style="margin-top: 1rem;">
+                <InputFile accept=".csv"
+                multiple="false"
+                id="file-oslo"
+                class="d-none"
+                OnChange="@((e) => HandleCsvFile(e, isOsloFile: true))" />
+
+                @if (_memoryStreamOsloFile != null)
+                {
+                    <label class="spaced">
+                        <img alt="@Labels.Alt.UploadIcon"
+                        src="@Icons.FileLoaded"
+                        width="40" />
+                    </label>
+                    <span>@CsvDataLabel.AccompanyingFileSuccessfullyLoaded</span>
+                }
+                else
+                {
+                    <label for="file-oslo">
+                        <img alt="@Labels.Alt.UploadIcon"
+                        src="@Icons.UploadIcon"
+                        width="30" />
+                        <span class="required">@ExcelDataLabel.ImportOsloCsvFile</span>
+                    </label>
+                }
+            </div>
+
+            <div style="margin: 1rem 0;" class="zeeButton">
+                <ZeeButton IsSubmit="true"
+                Text="@CsvDataLabel.TransformedOsloCsvButton"
+                disabled="@(_memoryStreamOsloFile == null)">
+                </ZeeButton>
+            </div>
+        </EditForm>
+
+        @if (ErrorMessages?.Count > 0)
+        {
+            <ZeeButton @onclick="DownloadErrorsFile"
+                    Text="@CsvDataLabel.DownloadErrorMessages">
+            </ZeeButton>
+        }
+
+
+        @if (SuccessMessages.Count > 0)
+        {
+            foreach (var message in SuccessMessages)
+            {
+                <div>
+                    <p>@message</p>
+                </div>
+            }
+        }
+
+        @if (LineErrorReports.Count > 0)
+        {
+            <div>
+                @foreach (var report in LineErrorReports)
+                {
+                    foreach (var error in report.GetErrors())
+                    {
+                        <p style="color:red;">@FormatErrorMessage(error, report.LineNumber, report.LineId)</p>
+                    }
+                }
+            </div>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

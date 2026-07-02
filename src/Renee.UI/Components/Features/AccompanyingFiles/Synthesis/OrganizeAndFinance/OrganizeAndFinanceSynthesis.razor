@@ -1,0 +1,402 @@
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.OrganizeAndFinanceSynthesis + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+
+<AuthorizeView Context="_"
+            Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        <div class="main-content">
+            @if (!ShouldDisplaySynthesis())
+            {
+                <p>
+                    <strong>@Labels.SynthesisNotAvailable</strong>
+                </p>
+            }
+            else
+            {
+                <h1 class="ml-3 rubric-title">@Labels.OrganizeAndFinanceSynthesisTitle</h1>
+                <div class="grid-container">
+                    <div class="grid-left-child">
+                        <div class="card"
+                            style="height:fit-content">
+                            <div class="d-flex flex-column"
+                                style="row-gap:24px;">
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.Totals</h3>
+                                    <OutlinedDouble Label="@Labels.WorkPackageTotalCost"
+                                                    readonly
+                                                    Double="@ViewModel.WorkPackagesTotalPrice"
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                    <OutlinedDouble Label="@Labels.FinancementPlanTotalCost"
+                                                    readonly
+                                                    Double="@ViewModel.PreFinancingPlanViewModel.PreFinancingPlanTotal"
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                    <OutlinedDouble Label="@Labels.AbsolutGapBetweenWorkPackageCostAndFinancingPlanCost"
+                                                    readonly
+                                                    Double="@ViewModel.AbsoluteValueGapBetweenWorkPackagesAndPreFinancingPlan"
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card"
+                            style="height:fit-content">
+                            <h2 class="rubric-title">@Labels.PreWorkPlanSynthesisTitle</h2>
+                            <div class="d-flex flex-column"
+                                style="row-gap:24px;">
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.WorkProjectTitle</h3>
+                                    <OutlinedText Label="@Labels.PreWorkPlanProjectType"
+                                                readonly
+                                                Value="@ViewModel.PreWorkPlanProjectType" />
+                                    <OutlinedText Label="@Labels.RenovationType"
+                                                readonly
+                                                Value="@ViewModel.RenovationType" />
+                                    <OutlinedText Label="@Labels.NextStepAndVigilancePoints"
+                                                readonly
+                                                Value="@ViewModel.NextStepAndVigilancePoints" />
+                                    <OutlinedText Label="@Labels.EmergencyWorks"
+                                                readonly
+                                                Value="@ViewModel.IsEmergencyWorks" />
+                                    <OutlinedText Label="@Labels.TreatedAirTightness"
+                                                readonly
+                                                Value="@ViewModel.TreatedAirTightness" />
+                                    <OutlinedText Label="@Labels.TreatedThermalBridge"
+                                                readonly
+                                                Value="@ViewModel.TreatedThermalBridge" />
+                                    <OutlinedText Label="@Labels.ExistingHumidityAndVaporMigrationManagedAfterTreatment"
+                                                readonly
+                                                Value="@ViewModel.AreExistingHumidityAndVaporMigrationManagedAfterTreatment" />
+                                </div>
+
+                                @foreach (var workPackage in ViewModel.WorkPackageSummary)
+                                {
+                                    var index = ViewModel.WorkPackageSummary.IndexOf(workPackage);
+
+                                    <h3 class="rubric-title">@($"{Labels.WorkQuote} {index + 1}")</h3>
+                                    <OutlinedText Label="@Labels.RecommendedWork"
+                                                readonly
+                                                Value="@workPackage.CurrentWorkPackageWorkTypes" />
+                                    <OutlinedDouble Double="@workPackage.WorkPackageTotalCost"
+                                                    Label="@Labels.TotalCostOfWorkPackage"
+                                                    readonly
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                }
+
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.TargetedAnnualEnergyPerformanceAfterWorkTitle</h3>
+                                    <OutlinedDouble Double="ViewModel.EstimatedAnnualEnergyConsumptionAfterWork"
+                                                    IsNullable=true
+                                                    Label="@Labels.EstimatedAnnualEnergyConsumptionAfterWork"
+                                                    readonly
+                                                    Type="OutlinedDouble.TypeOfValue.Double" />
+
+                                    <OutlinedText Label="@Labels.HouseEtiquette"
+                                                readonly
+                                                Value="@ViewModel.InitialDpe" />
+
+                                    <OutlinedText Label="@Labels.EstimatedEnergyDpeAfterWork"
+                                                readonly
+                                                Value="@ViewModel.EstimatedEnergyDpeAfterWork" />
+
+                                    <OutlinedText Label="@Labels.EstimatedEnergyClassJump"
+                                                readonly
+                                                Value="@ViewModel.EstimatedEnergyClassJump" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card"
+                                style="height:fit-content">
+                            <div class="d-flex flex-column"
+                                    style="row-gap:24px;">
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.SupportedSelfRehabilitationApproachDetails</h3>
+                                    <OutlinedText Label="@Labels.AnahFolderNumber"
+                                                    readonly
+                                                    Value="@ViewModel.AnahFolderNumber" />
+
+                                    <label class="pure-material-textfield-outlined">
+                                        <ZeeInputDate @bind-Value="ViewModel.AnahFolderFilingDate"
+                                                @bind-Value:format="yyyy-MM-dd"
+                                                readonly />
+
+                                        <span>@Labels.AnahFolderFilingDate</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card fit-height">
+                        <h2 class="rubric-title">@Labels.PreFinancingPlanSynthesisTitle</h2>
+                        <div class="d-flex flex-column"
+                            style="row-gap:24px;">
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.NationalHousingAgency</h3>
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.GuidedPathwayBonus"
+                                                IsNullable="true"
+                                                Label="@Labels.GuidedPathwayBonusWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.CoOwnershipBonus"
+                                                IsNullable="true"
+                                                Label="@Labels.CoOwnershipBonusWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.DecentHousingBonus"
+                                                IsNullable="true"
+                                                Label="@Labels.DecentHousingBonusWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.AdaptationBonus"
+                                                IsNullable="true"
+                                                Label="@Labels.AdaptationBonusWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.ExitEnergySieveBonus"
+                                                IsNullable="true"
+                                                Label="@Labels.ExitEnergySieveBonusWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.NationalHousingAgencyTotal"
+                                                IsNullable="true"
+                                                Label="@Labels.NationalHousingAgencyAmount"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+    
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.LocalPublicAid</h3>
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.Region"
+                                                IsNullable="true"
+                                                Label="@Labels.Region"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.Department"
+                                                IsNullable="true"
+                                                Label="@Labels.Department"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.PublicEstablishmentsIntercommunalCooperation"
+                                                IsNullable="true"
+                                                Label="@Labels.PublicEstablishmentsIntercommunalCooperationWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.Municipality"
+                                                IsNullable="true"
+                                                Label="@Labels.Municipality"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.LocalPublicAidTotalAmount"
+                                                IsNullable="true"
+                                                Label="@Labels.LocalPublicAidTotalAmount"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.OtherPublicAid</h3>
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.DepartmentalHouseForDisabledPersons"
+                                                IsNullable="true"
+                                                Label="@Labels.DepartmentalHouseForDisabledPersons"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.FamilyAllowanceFund"
+                                                IsNullable="true"
+                                                Label="@Labels.FamilyAllowanceFund"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.OtherPublicAidTotalAmount"
+                                                IsNullable="true"
+                                                Label="@Labels.OtherPublicAidTotalAmount"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.PrivateAid</h3>
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.EnergySavingCertificates"
+                                                IsNullable="true"
+                                                Label="@Labels.EnergySavingCertificates"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.PensionFund"
+                                                IsNullable="true"
+                                                Label="@Labels.PensionFund"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.UnderprivilegedHousingFoundation"
+                                                IsNullable="true"
+                                                Label="@Labels.UnderprivilegedHousingFoundationWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.LeroyMerlinFoundation"
+                                                IsNullable="true"
+                                                Label="@Labels.LeroyMerlinFoundationWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.WattForChangeFoundation"
+                                                IsNullable="true"
+                                                Label="@Labels.WattForChangeFoundationWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.SocialProtectionGroup"
+                                                IsNullable="true"
+                                                Label="@Labels.SocialProtectionGroupWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.StopEnergyExclusionFunds"
+                                                IsNullable="true"
+                                                Label="@Labels.StopEnergyExclusionFundsWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                @foreach (var funding in ViewModel.PreFinancingPlanViewModel.FundingModes)
+                                {
+                                    <OutlinedDouble Double="@funding.Amount"
+                                                    IsNullable="true"
+                                                    Label="@funding.Name"
+                                                    readonly
+                                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                                }
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.PrivateAidTotalAmount"
+                                                IsNullable="true"
+                                                Label="@Labels.PrivateAidTotalAmount"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.BankLoan</h3>
+                                <OutlinedText Label="@Labels.BankLoanType"
+                                            readonly
+                                            Value="@ViewModel.PreFinancingPlanViewModel.BankLoanType" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.ClassicBankLoan"
+                                                IsNullable="true"
+                                                Label="@Labels.ClassicBankLoanWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+
+                            <div class="rubric">
+                                <h3 class="rubric-title">@Labels.HouseholdContribution</h3>
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.HouseholdMaximumSavingAmountForRenovationProject"
+                                                IsNullable="true"
+                                                Label="@Labels.HouseholdMaximumSavingAmountForRenovationProjectWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+
+                                <OutlinedDouble Double="@ViewModel.PreFinancingPlanViewModel.ClassicBankLoan"
+                                                IsNullable="true"
+                                                Label="@Labels.ClassicBankLoanWithoutUnit"
+                                                readonly
+                                                Type="OutlinedDouble.TypeOfValue.Currency" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <div class="left-part">
+                        @if (ShouldDisplaySubmissionButton())
+                        {
+                            <div class="left-part-child">
+                                <ZeeToggle @bind-Value="IsFinancingAsked"
+                                        DisplayBackground="DisplayEnumBackground.Blue"
+                                        IsTextPresent="false">
+                                </ZeeToggle>
+
+                                <span class="required">@Labels.FinancingRequest</span>
+                            </div>
+                        }
+
+                        <div class="left-part-child">
+                            <SynthesisFileLoader @bind-MemoryStreamFile="@_anahGrantNotificationStreamFile"
+                                                @bind-ErrorMessage="@_anahGrantNotificationErrorMessage"
+                                                @bind-FileName="@_anahGrantNotificationFileName"
+                                                OnChangeUpload="@UploadAnahGrantNotificationFile"
+                                                ViewFiles="@ViewFile"
+                                                OnClickDeleteFile="@OnClickDeleteAnahGrantNotificationFile"
+                                                ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                FileNotLoadedMessage="@GenerateFilesLabels.Errors.AnahUploadNotification"
+                                                FileLoadedMessage="@($"{Labels.SupportingDocument} {_anahGrantNotificationFileName} {Labels.FileLoaded}")"
+                                                @bind-FileBytes="@_anahGrantNotificationFileData" />
+                        </div>
+
+                        <div class="left-part-child">
+                            <SynthesisFileLoader @bind-MemoryStreamFile="@_energyAuditStreamFile"
+                                                @bind-ErrorMessage="@_energyAuditErrorMessage"
+                                                @bind-FileName="@_energyAuditFileName"
+                                                OnChangeUpload="@UploadEnergyAuditFile"
+                                                ViewFiles="@ViewFile"
+                                                OnClickDeleteFile="@OnClickDeleteEnergyAuditFile"
+                                                ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                FileNotLoadedMessage="@GenerateFilesLabels.Errors.EnergyAuditUploadError"
+                                                FileLoadedMessage="@($"{Labels.SupportingDocument} {_energyAuditFileName} {Labels.FileLoaded}")"
+                                                @bind-FileBytes="@_energyAuditFileData" />
+                        </div>
+
+                    </div>
+
+                    @if (ShouldDisplaySubmissionButton())
+                    {
+                        <div class="right-part">
+                            <ZeeButton @onclick="OnClickCancelButton"
+                                    Text="@Labels.Cancel">
+                            </ZeeButton>
+                            <ZeeButton disabled="@(!IsFinancingAsked.GetValueOrDefault())"
+                                    IsSubmit="true"
+                                    @onclick="OnSubmitSynthesis"
+                                    Text="@Labels.Submit">
+                            </ZeeButton>
+                        </div>
+                    }
+
+                    @if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+                    {
+                        <div class="right-part">
+                            <ZeeButton IsSubmit="true"
+                                    @onclick="@(() => StageValidation(false))"
+                                    Text="Rejeter">
+                            </ZeeButton>
+                            <ZeeButton @onclick="@(() => StageValidation(true))"
+                                    Text="Valider">
+                            </ZeeButton>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

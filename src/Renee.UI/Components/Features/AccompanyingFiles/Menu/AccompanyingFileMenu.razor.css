@@ -1,0 +1,29 @@
+﻿.container-page {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+.card + .card {
+    margin-top: 20px;
+}
+
+.form-actions {
+    margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+    .support-team-members-display {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1200px) {
+    .tasks-display {
+        flex-direction: column;
+    }
+
+    .container-tasks {
+        width: 100%;
+    }
+}

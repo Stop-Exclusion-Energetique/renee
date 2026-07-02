@@ -1,0 +1,86 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Menu.Tasks.Component
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.ViewModel
+@using Renee.Domain
+
+<div class="container-items">
+    <div>
+        <div class="items-title">
+            <h3 class="m-0">@Domain.AccompanyingFileMenu.TaskList</h3>
+
+            <span @onclick="OnShowAddTaskModal"
+                  class="plus-icon">
+                @((MarkupString)Icons.Svg.PictoPlus)
+            </span>
+        </div>
+    </div>
+
+    <div class="tasks-display">
+        <div class="container-tasks">
+            <div class="task-type">
+                @Domain.AccompanyingFileMenu.UpcomingTasks
+            </div>
+
+            @foreach (var task in UpcomingTasks.Where(t => t is not null))
+            {
+                <TaskCard AssignedUserFullName="@task.AssignedUserFullName"
+                          DueDate="@task.DueDate"
+                          OnDelete="OnDeleteTask"
+                          OnShowUpdateTaskModal="OnShowUpdateTaskModal"
+                          Priority="@task.Priority"
+                          TaskId="@task.TaskId"
+                          Title="@task.Title" />
+            }
+        </div>
+
+        <div class="container-tasks">
+            <div class="task-type">
+                @Domain.AccompanyingFileMenu.ToBePerformedTasks
+            </div>
+
+            @foreach (var task in ToBeCompletedTasks.Where(t => t is not null))
+            {
+                <TaskCard AssignedUserFullName="@task.AssignedUserFullName"
+                          DueDate="@task.DueDate"
+                          OnDelete="OnDeleteTask"
+                          OnShowUpdateTaskModal="OnShowUpdateTaskModal"
+                          Priority="@task.Priority"
+                          TaskId="@task.TaskId"
+                          Title="@task.Title" />
+            }
+        </div>
+
+        <div class="container-tasks">
+            <div class="task-type">
+                @Domain.AccompanyingFileMenu.UndoneTasks
+            </div>
+
+            @foreach (var task in UndoneTasks.Where(t => t is not null))
+            {
+                <TaskCard AssignedUserFullName="@task.AssignedUserFullName"
+                          DueDate="@task.DueDate"
+                          OnDelete="OnDeleteTask"
+                          OnShowUpdateTaskModal="OnShowUpdateTaskModal"
+                          Priority="@task.Priority"
+                          TaskId="@task.TaskId"
+                          Title="@task.Title" />
+            }
+        </div>
+
+        <div class="container-tasks">
+            <div class="task-type">
+                @Domain.AccompanyingFileMenu.DoneTasks
+            </div>
+
+            @foreach (var task in DoneTasks.Where(t => t is not null))
+            {
+                <TaskCard AssignedUserFullName="@task.AssignedUserFullName"
+                          DueDate="@task.DueDate"
+                          OnDelete="OnDeleteTask"
+                          OnShowUpdateTaskModal="OnShowUpdateTaskModal"
+                          Priority="@task.Priority"
+                          TaskId="@task.TaskId"
+                          Title="@task.Title" />
+            }
+        </div>
+    </div>
+</div>

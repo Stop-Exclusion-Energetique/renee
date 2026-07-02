@@ -1,0 +1,102 @@
+section {
+    display: flex;
+    width: 100%;
+    flex-flow: row wrap;
+    --pure-material-safari-helper1: rgb(var(--pure-material-primary-rgb, 235, 109, 120));
+    position: relative;
+    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    font-size: 1.1429rem;
+    line-height: 24px;
+    overflow: hidden;
+    padding-top: 6px;
+    margin-top: 6px;
+}
+
+section > div {
+    flex: 1;
+    padding: 0.5rem;
+}
+
+input[type="radio"] {
+    display: none;
+
+    &:not(:disabled) ~ label {
+        cursor: pointer;
+    }
+
+    &:disabled ~ label {
+        color: var(--sidebar);
+        border-color: var(--sidebar);
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+}
+
+label {
+    height: 100%;
+    display: block;
+    background: white;
+    border: 2px solid var(--primary);
+    border-radius: 20px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+input[type="radio"]:checked + label {
+    background: var(--yellow);
+
+    &::after {
+        color: var(--primary);
+        font-family: FontAwesome, "Roboto-Regular", sans-serif;
+        border: 2px solid var(--primary);
+        content: "\f00c";
+        font-size: 1.1429rem;
+        position: absolute;
+        top: -12px;
+        right: 0%;
+        height: 25px;
+        width: 25px;
+        line-height: 25px;
+        text-align: center;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0px 2px 5px -2px var(--sidebar);
+    }
+}
+
+.item-label {
+    font-weight: 900;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    border-color: rgba(0, 0, 0, 0.6);
+    max-height: 100%;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 75%;
+    line-height: 15px;
+    cursor: text;
+    transition: color 0.2s, font-size 0.2s, line-height 0.2s;
+    margin-left: 15px;
+    padding-left: 4px;
+    padding-right: 4px;
+    background: white;
+}
+
+.required-star {
+    color: var(--red);
+}
+
+.label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

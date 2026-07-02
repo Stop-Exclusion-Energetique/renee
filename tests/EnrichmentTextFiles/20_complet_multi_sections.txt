@@ -1,0 +1,44 @@
+== FICHE MÉNAGE - VISITE DU 05/03/2024 ==
+
+OCCUPANT PRINCIPAL
+Nom: GARCIA
+Prénom: Carmen
+Né(e) le: 12/07/1955
+Tél: 06 87 65 43 21
+Email: carmen.garcia@orange.fr
+Profession: Sans activité professionnelle
+
+LOGEMENT
+Type: Maison individuelle
+Surface: 72 m²
+Année construction: 1963
+Statut occupation: Propriétaire occupant (pleine propriété)
+Nb pièces: 3
+Nb étages: 0 (plain-pied)
+Travaux antérieurs: non
+
+ADRESSE
+N° et rue: 24 rue du Moulin
+CP: 31000
+Ville: Toulouse
+Département: Haute-Garonne
+Région: Occitanie
+
+SITUATION SOCIALE
+Suivi travailleur social: non
+Handicap dans foyer: non
+Maladie longue durée: oui
+Perte d'autonomie: non
+Impayés énergie: non
+Revenu fiscal annuel: 11 800 €
+Contexte social: Veuve, vit seule, enfants à l'étranger. Isolation sociale.
+Projet famille: Améliorer confort thermique, réduire les factures
+
+ÉTAT INITIAL (DIAGNOSTIC)
+DPE: G
+GES: F
+Conso annuelle: 350 kWh/m².an
+Émissions GES: 52 kgCO2/m².an
+Énergie chauffage: fioul
+Privation énergie: totale
+Commentaire: Chaudière fioul de 1985, isolation inexistante, combles non traités

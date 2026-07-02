@@ -1,0 +1,67 @@
+﻿@using Renee.Domain.Enums
+@using Renee.UI.Components.Shared.Modals
+
+<CascadingBlazoredModal>
+	<CascadingAuthenticationState>
+		<Router AppAssembly="@typeof(Program).Assembly">
+			<Found Context="routeData">
+				<AuthorizeRouteView DefaultLayout="@typeof(MainLayout)"
+				                    RouteData="@routeData">
+					<NotAuthorized>
+						<h1>@Constants.NotAuthorizedPage</h1>
+					</NotAuthorized>
+				</AuthorizeRouteView>
+				<FocusOnNavigate RouteData="@routeData"
+				                 Selector="h1"/>
+			</Found>
+			<NotFound>
+				<LayoutView Layout="@typeof(MainLayout)">
+					<p>Sorry, there's nothing at this address.</p>
+				</LayoutView>
+			</NotFound>
+		</Router>
+	</CascadingAuthenticationState>
+</CascadingBlazoredModal>
+
+@code {
+	[Inject] private NavigationManager NavigationManager { get; set; } = default!;
+	[Inject] private NavigationHistoryManager NavHistoryManager { get; set; } = default!;
+	[Inject] private UnsavedChangesGuard UnsavedChangesGuard { get; set; } = default!;
+	[Inject] private IModalService ModalService { get; set; } = default!;
+
+	protected override void OnInitialized() 
+	{
+		NavigationManager.RegisterLocationChangingHandler(OnLocationChanging);
+	}
+
+	private async ValueTask OnLocationChanging(LocationChangingContext context)
+	{
+		var targetUrl = context.TargetLocation;
+		
+		NavHistoryManager.Update(targetUrl);
+		
+		if(UnsavedChangesGuard.ShouldIntercept(targetUrl))
+		{
+			context.PreventNavigation();
+
+			var modal = ModalService.Show<UnsavedChangesModal>(
+				new ModalParameters(),
+				new() { HideCloseButton = true, HideHeader = true, Position = Blazored.Modal.ModalPosition.Middle, Size = ModalSize.ExtraLarge });
+
+			var result = await modal.Result;
+			var userDecision = result.Data as UnsavedChangesOption?;
+
+			if (userDecision is null || userDecision == UnsavedChangesOption.Cancel)
+				return;
+
+			if (userDecision == UnsavedChangesOption.SaveAndLeave)
+			{
+				var saved = await UnsavedChangesGuard.SaveAsync();
+				if (!saved) return;
+			}
+
+			await UnsavedChangesGuard.SetUnsavedChangesState(false);
+			NavigationManager.NavigateTo(targetUrl);
+		}
+	}
+}

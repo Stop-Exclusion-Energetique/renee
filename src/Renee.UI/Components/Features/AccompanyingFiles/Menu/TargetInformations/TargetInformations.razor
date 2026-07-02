@@ -1,0 +1,75 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Menu.ViewModel
+@using Renee.UI.Components.FormComponents
+@using Renee.Application.Helpers
+@using Renee.Domain
+@using Renee.Domain.Enums
+
+<EditForm EditContext="@TargetInformationEditContext"
+          OnValidSubmit="@OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <h4 class="section-title">@Domain.AccompanyingFileMenu.TargetInformation</h4>
+
+        <div>
+            <ZeeSelect @bind-CheckedValue="TargetInformation.GeographicalHousingAreaTypology"
+                       ElementName="@($"typology-{Guid.NewGuid()}")"
+                       EditContext="@TargetInformationEditContext"
+                       FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => TargetInformation.GeographicalHousingAreaTypology)"
+                       Items="@ItemsList.GeographicalTypologies"
+                       Label="@Labels.Typology"
+                       TItem="GeographicalHousingAreaTypology ?"
+                       IsDisabled="IsSolidarBuilder"
+                       IsRequired="!IsSolidarBuilder"
+                       OnNewValueSelected="@OnAnyFieldChanged" />
+            <ValidationMessage For="@(() => TargetInformation.GeographicalHousingAreaTypology)" />
+        </div>
+
+        <div>
+            <ZeeSelect @bind-CheckedValue="TargetInformation.AccompanyingType"
+                       ElementName="@($"AccompanyingType-{Guid.NewGuid()}")"
+                       EditContext="@TargetInformationEditContext"
+                       FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => TargetInformation.AccompanyingType)"
+                       Items="@ItemsList.AccompanyingTypes"
+                       Label="@Labels.AccompanyingType"
+                       TItem="AccompanyingType?"
+                       IsDisabled="IsSolidarBuilder || !TargetInformation.IsInTzeeProgram"
+                       IsRequired="!IsSolidarBuilder"
+                       OnNewValueSelected="@OnAnyFieldChanged" />
+            <ValidationMessage For="@(() => TargetInformation.AccompanyingType)" />
+        </div>
+
+        <div>
+            <ZeeSelect @bind-CheckedValue="TargetInformation.AccompanyingTerritory"
+                       ElementName="@($"Territory-{Guid.NewGuid()}")"
+                       EditContext="@TargetInformationEditContext"
+                       FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => TargetInformation.AccompanyingTerritory)"
+                       IsRequired="!IsSolidarBuilder"
+                       Items="@Territory"
+                       Label="@Labels.Territory"
+                       ShowLabelBefore="true"
+                       TItem="Guid?"
+                       ShouldSort="true"
+                       IsDisabled="IsSolidarBuilder"
+                       OnNewValueSelected="@OnAnyFieldChanged" />
+            <ValidationMessage For="@(() => TargetInformation.AccompanyingTerritory)" />
+        </div>
+
+        <div>
+            <OutlinedText IsInForm="false"
+                          Label="@Labels.Mar"
+                          disabled
+                          Value="@TargetInformation.MarValue"
+                          EditContext="@TargetInformationEditContext"
+                          FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => TargetInformation.MarValue)"
+                          InfoBullMessage="@Domain.AccompanyingFileMenu.UpdateMarToolTipAdvice" />
+        </div>
+
+        @if (ShowSubmitButton)
+        {
+            <div class="form-actions">
+                <ZeeButton IsSubmit="true"
+                           Text="@Labels.Submit" />
+            </div>
+        }
+    </div>
+</EditForm>

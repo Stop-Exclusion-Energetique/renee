@@ -1,0 +1,497 @@
+﻿a {
+    color: var(--secondary);
+    display: inline-block;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+input[type=cancel] {
+    background-color: #D3D3D3;
+    border: none;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+    color: white;
+    display: inline-block;
+    font-size: 1.0714rem;
+    margin: 5px 20px 40px 20px;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.flex-container {
+    display: grid;
+    gap: 25px 25px;
+    grid-template-areas:
+        "top-1 top-2"
+        "middle middle"
+        "bottom-1 bottom-2";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+}
+
+
+.item-c {
+    grid-area: middle;
+}
+
+
+item-d {
+    grid-area: bottom-1;
+}
+
+
+.item-e {
+    grid-area: bottom-2;
+    justify-self: center;
+}
+
+
+.grid-form {
+    display: grid;
+    gap: 10px 10px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+}
+
+.difficulties {
+    width: 500px;
+    resize: both;
+}
+
+@media (max-width: 540px) {
+
+    .flex-container {
+        display: grid;
+        grid-template-areas:
+            "top-1"
+            "top-2"
+            "middle"
+            "bottom-1"
+            "bottom-2";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+
+    .resizable-textarea {
+        width: 100px;
+        resize: both;
+        overflow: auto;
+    }
+
+    .alldifficulties {
+        width: 200px;
+        margin-right: 50px;
+        resize: both;
+    }
+
+    .debteness {
+        width: 100%;
+    }
+}
+
+@media (min-width: 540px) and (max-width: 768px) {
+
+    .flex-container {
+        display: grid;
+        grid-template-areas:
+            "top-1"
+            "top-2"
+            "middle"
+            "bottom-1"
+            "bottom-2";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .alldifficulties {
+        width: 200px;
+        margin-right: 50px;
+        resize: both;
+    }
+
+    .debteness {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .flex-container {
+        display: grid;
+        grid-template-areas:
+            "top-1"
+            "top-2"
+            "middle"
+            "bottom-1"
+            "bottom-2";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .alldifficulties {
+        width: 200px;
+        margin-right: 50px;
+        resize: both;
+    }
+
+    .debteness {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .flex-container {
+        display: grid;
+        grid-template-areas:
+            "top-1"
+            "top-2"
+            "middle"
+            "bottom-1"
+            "bottom-2";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .alldifficulties {
+        width: 200px;
+        margin-right: 50px;
+        resize: both;
+    }
+
+    .debteness {
+        width: 70%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .debteness {
+        margin-left: 30%;
+        width: 70%;
+    }
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+
+    display: inline-block;
+}
+
+
+.select:hover {
+    background-color: #E1E9EF;
+}
+
+
+h2 {
+    color: #cccccc;
+    display: inline-block;
+    font-size: 1.1429rem;
+    font-weight: 600;
+    margin: 40px 8px 10px 8px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+
+.wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    padding: 20px;
+    width: 100%;
+}
+
+
+#formContent {
+    background: #fff;
+    max-width: 450px;
+    padding: 30px;
+    padding: 0px;
+    position: relative;
+    text-align: center;
+    width: 90%;
+}
+
+
+#formFooter {
+    background-color: #f6f6f6;
+    -webkit-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
+    border-top: 1px solid #dce8f1;
+    padding: 25px;
+    text-align: center;
+}
+
+
+h2.inactive {
+    color: #cccccc;
+}
+
+
+h2.active {
+    border-bottom: 2px solid #5fbae9;
+    color: #000000;
+}
+
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+    color: white;
+    display: inline-block;
+    font-size: 1.0714rem;
+    margin: 5px 20px 40px 20px;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+
+input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
+    background-color: var(--yellow) !important;
+    color: var(--black) !important;
+}
+
+
+input[type=button]:active, input[type=submit]:active, input[type=reset]:active {
+    background-color: var(--yellow) !important;
+    color: var(--black) !important;
+}
+
+
+input[type=text] {
+    background-color: #f6f6f6;
+    border: none;
+    border: 2px solid #f6f6f6;
+    border-radius: 5px 5px 5px 5px;
+    color: #0d0d0d;
+    display: inline-block;
+    font-size: 1.1429rem;
+    margin: 5px;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    width: 85%;
+}
+
+
+input[type=text]:focus {
+    background-color: #fff;
+    border-bottom: 2px solid #5fbae9;
+}
+
+
+input[type=text]::placeholder {
+    color: #cccccc;
+}
+
+
+.underlineHover:after {
+    background-color: #56baed;
+    bottom: -10px;
+    content: "";
+    display: block;
+    height: 2px;
+    left: 0;
+    transition: width 0.2s;
+    width: 0;
+}
+
+
+.underlineHover:hover {
+    color: #000000;
+}
+
+
+.underlineHover:hover:after {
+    width: 100%;
+}
+
+
+*:focus {
+    outline: none;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+.buttonCustom {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.buttonCustom:hover {
+    background-color: var(--primary);
+}
+
+.item-civility {
+    display: flex;
+    flex-direction: column;
+}
+
+.zeeButtonGroup {
+    display: flex;
+    width: 100%;
+    gap: 3rem;
+    flex-wrap: wrap;
+    margin-top: 2%;
+}
+
+.tab-menu ul {
+    list-style-type: none;
+    display: flex;
+    padding: 0;
+    justify-content: space-between;
+    background: var(--white);
+    gap: 0;
+}
+
+.tab-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1;
+    cursor: pointer;
+    clip-path: polygon(95% 0%, 100% 50%, 95% 100%, 0% 100%, 5% 50%, 0% 0%);
+    height: 50px;
+    padding: 10px 10px;
+    background: var(--grey);
+}
+
+.tab-menu li a {
+    text-decoration: none;
+    color: #333;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.tab-menu li a:hover {
+    /* if needed */
+}
+
+.tab-menu li.active {
+    background: var(--primary);
+}
+
+.tab-menu li:first-of-type {
+    clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 0 50%, 0% 0%);
+}
+
+.tab-menu li:last-of-type {
+    clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%);
+}
+
+.save-btn-container {
+    display: flex;
+    flex-direction: column;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    margin-top: 1em;
+    margin-left: 2%;
+    margin-right: 2%;
+    z-index: 3; /* fix zindex in ZeePhoneNumber */
+}
+
+.tab-title {
+    display: none;
+}
+
+@media (max-width: 1080px) {
+
+    #foyer-tab a {
+        font-size: 0;
+    }
+
+    #foyer-tab a::before {
+        content: "1.";
+        font-size: initial;
+    }
+
+    #housing-tab a {
+        font-size: 0;
+    }
+
+    #housing-tab a::before {
+        content: "2.";
+        font-size: initial;
+    }
+
+    #energy-tab a {
+        font-size: 0;
+    }
+
+    #energy-tab a::before {
+        content: "3.";
+        font-size: initial;
+    }
+
+    #solicitation-tab a {
+        font-size: 0;
+    }
+
+    #solicitation-tab a::before {
+        content: "4.";
+        font-size: initial;
+    }
+
+    .tab-title {
+        display: block;
+        color: var(--primary);
+        font-size: 2.1429rem;
+        font-style: normal;
+        font-weight: 400;
+    }
+
+    div.tab-title-div {
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-left: 15px;
+    }
+}

@@ -1,0 +1,32 @@
+<CascadingValue Name="ZeeSpinner"
+                Value="this">
+	@if (!IsPageLoaded)
+	{
+		<div class="fullscreen">
+			<span class="loader">
+			</span>
+		</div>
+	}
+	@ChildContent
+
+</CascadingValue>
+
+@code{
+
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
+	private bool IsPageLoaded { get; set; } = true;
+
+	public void DisplayLoading()
+	{
+		IsPageLoaded = false;
+		StateHasChanged();
+	}
+
+	public void HideLoading()
+	{
+		IsPageLoaded = true;
+		StateHasChanged();
+	}
+
+}

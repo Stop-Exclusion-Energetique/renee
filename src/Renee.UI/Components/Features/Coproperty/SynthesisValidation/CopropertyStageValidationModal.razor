@@ -1,0 +1,60 @@
+@using Renee.Application.Interfaces
+<p>
+    @if (IsValidationModal)
+    {
+        @Labels.StageValidationPopUpTextForAcceptance
+    }
+    else
+    {
+        @Labels.StageValidationPopUpTextForRejection
+        <OutlinedTextArea IsInForm=false
+                          IsRequired=false
+                          Label="@Labels.CommentOnSynthesisValidation"
+                          @bind-Value="CommentOnSynthesisValidation" />
+
+    }
+</p>
+
+<div class="zeeButtonGroup">
+    <ZeeButton @onclick="ValidateStageValidation" Text="@Labels.Submit" />
+    <ZeeButton @onclick="Cancel" Text="@Labels.Cancel" />
+</div>
+
+@code {
+    [Parameter]
+    public bool IsValidationModal { get; set; }
+
+    [Parameter]
+    public Guid CopropertyProfileId { get; set; }
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = default!;
+
+    [Inject] public ICopropertyProfileService copropertyProfileService { get; set; } = default!;
+
+    private string? CommentOnSynthesisValidation { get; set; }
+
+    public async Task Cancel() => await ModalInstance.CloseAsync(ModalResult.Cancel());
+
+    public async Task ValidateStageValidation()
+    {
+        var result = await copropertyProfileService.ValidateCopropertyStage(CopropertyProfileId, IsValidationModal, UserId, CommentOnSynthesisValidation);
+
+        if (result.IsSuccess)
+        {
+            ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = result.Message, Duration = 4000 });
+        }
+        else
+        {
+            ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = result.Message, Duration = 4000 });
+        }
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+    }
+
+    private void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}

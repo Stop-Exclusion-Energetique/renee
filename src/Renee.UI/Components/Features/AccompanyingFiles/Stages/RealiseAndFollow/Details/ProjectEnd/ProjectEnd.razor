@@ -1,0 +1,71 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<div class="tab-container">
+	<div class="card">
+		<h4 class="section-title">
+			@RealiseAndFollowMilestone.Labels.ProjectEnd
+		</h4>
+
+		<div class="container-field">
+			<div class="field_tooltips">
+				<label class="pure-material-textfield-outlined">
+					<ZeeInputDate disabled="@IsUserAllowedToEdit"
+							   @bind-Value="ViewModel.EndOfAccompanyingDate"
+							   @bind-Value:format="yyyy-MM-dd"
+							   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+							   min="@(ViewModel.StartOfAccompanyingDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.StartOfAccompanyingDate.ToString())" />
+					<span>
+						@RealiseAndFollowMilestone.Labels.EndOfAccompanyingDate
+						<span class="required"></span>
+					</span>
+				</label>
+				<ValidationMessage For="@(() => ViewModel.EndOfAccompanyingDate)" />
+
+				<ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.EndOfAccompanyingDateTooltip"
+							style="margin-top: 1em" />
+			</div>
+
+			<div>
+				<label>
+					@RealiseAndFollowMilestone.Labels.AccompanyingTime
+					<span style="font-weight: bold">@ViewModel.AccompanyingTime</span>
+				</label>
+			</div>
+
+			<div class="field_tooltips">
+				<label class="pure-material-textfield-outlined">
+					<ZeeInputDate disabled="@IsUserAllowedToEdit"
+							   @bind-Value="ViewModel.EndOfEncounterDate"
+							   @bind-Value:format="yyyy-MM-dd"
+							   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+							   min="@(ViewModel.EndOfAccompanyingDate is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd") : ViewModel.EndOfAccompanyingDate)" />
+					<span>
+						@RealiseAndFollowMilestone.Labels.EndOfEncounterDate
+						<span class="required"></span>
+					</span>
+				</label>
+				<ValidationMessage For="@(() => ViewModel.EndOfEncounterDate)" />
+				<ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.EndOfEncounterDateTooltip"
+							style="margin-top: 1em" />
+			</div>
+
+			<div>
+				<ZeeToolTip InfoBullMessage="@Labels.AccompayingTimeDurationTooltipText"
+							style="margin-top: 1em" />
+				<ZeeSelect @bind-CheckedValue="@ViewModel.AccompanyingTimeDuration"
+						   EditContext="_editContext"
+						   ElementName="@($"accompanying-time-duration-{Guid.NewGuid().ToString()}")"
+						   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AccompanyingTimeDuration)"
+						   IsMultiSelect="false"
+						   IsRequired="true"
+						   Items="@AccompanyingTimeDurations"
+						   Label="@string.Format(Labels.AccompayingTimeDuration, "3")"
+						   TItem="AccompanyingTimeDuration?"
+						   IsDisabled="@IsUserAllowedToEdit"
+						   ShouldSort="false" />
+				<ValidationMessage For="@(() => ViewModel.AccompanyingTimeDuration)" />
+			</div>
+		</div>
+	</div>
+</div>

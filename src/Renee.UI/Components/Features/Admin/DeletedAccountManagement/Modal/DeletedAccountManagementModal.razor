@@ -1,0 +1,40 @@
+﻿@using Renee.Application.Interfaces
+@inject IUserService userService
+
+<h3>@Labels.ApproveAccountDeletionRequest</h3>
+
+<div class="btn-display">
+    <ZeeButton DisplayBackground="DisplayEnumBackground.Green"
+    Icon=@Icons.AddButton
+    @onclick="@(async () => await ValidateAccountDeletionRequest())"
+    Text="@Labels.Approve">
+    </ZeeButton>
+    <ZeeButton DisplayBackground="DisplayEnumBackground.Red"
+    Icon="delete_forever"
+    @onclick="@( async () => await RejectAccountDeletionRequest())"
+    Text="@Labels.Reject">
+    </ZeeButton>
+</div>
+
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    public async Task ValidateAccountDeletionRequest()
+    {
+        var deletionResult = await userService.DeleteUserAccount(UserId);
+
+        if (deletionResult.IsSuccess && deletionResult.Value)
+            await BlazoredModal.CloseAsync(ModalResult.Ok(UserId));
+    }
+
+    public async Task RejectAccountDeletionRequest()
+    {
+        var result = await userService.UpdateUserAccountDeletionRequestState(UserId, false);
+
+        if (result.IsSuccess && result.Value)
+            await BlazoredModal.CloseAsync(ModalResult.Ok(UserId));
+    }
+}

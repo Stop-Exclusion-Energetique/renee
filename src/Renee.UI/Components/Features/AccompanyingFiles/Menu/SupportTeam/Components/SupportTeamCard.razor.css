@@ -1,0 +1,29 @@
+﻿.card-title {
+    color: var(--renee-secondary-purple);
+}
+
+.spaced {
+    justify-content: space-between;
+}
+
+.inner-card-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.information {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-icon {
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    fill: var(--primary);
+}
+
+.edit-icon > img {
+    width: 30px;
+    height: 30px;
+}

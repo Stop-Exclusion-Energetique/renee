@@ -1,0 +1,66 @@
+@if(!string.IsNullOrWhiteSpace(ContextMenuRedirectUrl))
+{
+	<ContextMenuTrigger Data="@ContextMenuRedirectUrl" MenuId="myMenu">
+		<button @attributes="AdditionalAttributes"
+		class="btn @DisplayBackgroundCssClass btn-hover-yellow d-flex align-items-center @CssClass"
+		type="@(IsSubmit ? "submit" : "button")">
+			@if (Icon is not null)
+			{
+				<RadzenIcon class="mx-2 zee-button-icon"
+				Icon="@Icon" />
+			}
+			<span class="@(IsSmallButtonType ? "zee-button-text--small" : "zee-button-text")">
+				@Text
+			</span>
+		</button>
+	</ContextMenuTrigger>
+}
+else
+{
+	<button @attributes="AdditionalAttributes"
+			class="btn @DisplayBackgroundCssClass btn-hover-yellow d-flex align-items-center @CssClass"
+			type="@(IsSubmit ? "submit" : "button")">
+		@if (Icon is not null)
+		{
+			<RadzenIcon class="mx-2 zee-button-icon"
+						Icon="@Icon" />
+		}
+		<span class="@(IsSmallButtonType ? "zee-button-text-small" : "zee-button-text")">
+			@Text
+		</span>
+	</button>
+}
+
+@code {
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+	[Parameter] public DisplayEnumBackground DisplayBackground { get; set; } = DisplayEnumBackground.Blue;
+
+	[Parameter] public string? Icon { get; set; }
+
+	[Parameter] public string? Text { get; set; }
+
+	[Parameter] public string? CssClass { get; set; }
+
+	[Parameter] public bool IsSubmit { get; set; }
+
+	[Parameter] public string? ContextMenuRedirectUrl { get; set; }
+
+	[Parameter] public bool IsSmallButtonType { get; set; }
+
+	private string DisplayBackgroundCssClass =>
+		DisplayBackground switch
+		{
+			DisplayEnumBackground.Green => "btn-valid ",
+			DisplayEnumBackground.Pink => "btn-pink ",
+			DisplayEnumBackground.Red => "btn-danger ",
+			DisplayEnumBackground.Blue => "btn-bg ",
+			DisplayEnumBackground.DarkBlue => "btn-dark-blue ",
+			DisplayEnumBackground.Yellow => "btn-yellow ",
+			DisplayEnumBackground.Empty => "btn-disabled ",
+			DisplayEnumBackground.White => "btn-white ",
+			_ => string.Empty
+		};
+}

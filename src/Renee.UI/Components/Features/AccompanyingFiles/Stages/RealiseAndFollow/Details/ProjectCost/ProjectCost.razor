@@ -1,0 +1,110 @@
+@using Renee.Application.Helpers
+<div class="tab-container">
+    <div class="card">
+        <h4 class="section-title">
+            @RealiseAndFollowMilestone.Labels.ProjectCost
+        </h4>
+
+        <div class="container-field">
+            <div style="flex-grow: 3;">
+                <OutlinedDouble @bind-Double="@ViewModel.Invoices[0].InvoiceTotalCost"
+                                EditContext="@FormEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Invoices[0].InvoiceTotalCost)"
+                                IsNullable="true"
+                                Label="@($"{RealiseAndFollowMilestone.Labels.TotalCost} {1}")"
+                                Type="OutlinedDouble.TypeOfValue.Currency" 
+                                disabled="@IsUserAllowedToEdit" />
+            </div>
+
+            <div style="flex-grow: 3;">
+                <OutlinedDouble @bind-Double="@ViewModel.Invoices[0].LaborBilled"
+                                EditContext="@FormEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Invoices[0].LaborBilled)"
+                                IsNullable="true"
+                                Label="@RealiseAndFollowMilestone.Labels.BilledWorkForce"
+                                Type="OutlinedDouble.TypeOfValue.Currency" 
+                                disabled="@IsUserAllowedToEdit" />
+            </div>
+        </div>
+
+        @for (var i = 1; i < ViewModel.Invoices.Count; i++)
+        {
+            var invoiceIndex = i;
+
+            <div class="container-field">
+                <span>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                                  Click="@(() => RemoveInvoice(invoiceIndex))"
+                                  Icon="@Icons.DeleteButton"
+                                  Size="ButtonSize.Medium"
+                                  style="margin-top: 10px;"
+                                  Disabled="@IsUserAllowedToEdit" />
+                </span>
+                <div style="flex-grow: 3;">
+                    <OutlinedDouble @bind-Double="@ViewModel.Invoices[invoiceIndex].InvoiceTotalCost"
+                                    EditContext="@FormEditContext"
+                                    FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Invoices[invoiceIndex].InvoiceTotalCost)"
+                                    IsNullable="true"
+                                    Label="@($"{RealiseAndFollowMilestone.Labels.TotalCost} {i + 1}")"
+                                    Type="OutlinedDouble.TypeOfValue.Currency"
+                                    disabled="@IsUserAllowedToEdit" />
+                </div>
+
+                <div style="flex-grow: 3;">
+                    <OutlinedDouble @bind-Double="@ViewModel.Invoices[invoiceIndex].LaborBilled"
+                                    EditContext="@FormEditContext"
+                                    FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Invoices[invoiceIndex].LaborBilled)"
+                                    IsNullable="true"
+                                    Label="@RealiseAndFollowMilestone.Labels.BilledWorkForce"
+                                    Type="OutlinedDouble.TypeOfValue.Currency"
+                                    disabled="@IsUserAllowedToEdit" />
+                </div>
+            </div>
+        }
+
+        <div class="grid-container">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                          class="flex-button"
+                          Click="@(() => AddInvoice())"
+                          Size="ButtonSize.Large"
+                          Text="@RealiseAndFollowMilestone.Labels.AddAnInvoice"
+                          Disabled="@IsUserAllowedToEdit" />
+        </div>
+
+        <div>
+            <label>@RealiseAndFollowMilestone.Labels.AccompanyingCost</label>
+        </div>
+
+        <div class="container-grid">
+            <div>
+                <ZeeSelect @bind-CheckedValue="ViewModel.AccompanyingCost"
+                           IsDisabled="true"
+                           EditContext="@FormEditContext"
+                           ElementName="@($"accompanyingCost-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AccompanyingCost)"
+                           Items="@_costsList"
+                           TItem="double?" 
+                           />
+            </div>
+
+            <div>
+                <OutlinedDouble @bind-Double="@ViewModel.HouseholdAutoFinancing"
+                                EditContext="@FormEditContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HouseholdAutoFinancing)"
+                                IsNullable="true"
+                                Label="@RealiseAndFollowMilestone.Labels.HouseholdAutoFinancing"
+                                Type="OutlinedDouble.TypeOfValue.Currency" 
+                                disabled="@IsUserAllowedToEdit" />
+            </div>
+
+            <div>
+                <OutlinedDouble disabled="disabled"
+                                Double="@ViewModel.WorkTotalCost"
+                                Label="@RealiseAndFollowMilestone.Labels.WorkTotalCost"
+                                readonly="readonly"
+                                Type="OutlinedDouble.TypeOfValue.Currency">
+                </OutlinedDouble>
+            </div>
+        </div>
+    </div>
+</div>

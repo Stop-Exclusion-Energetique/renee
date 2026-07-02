@@ -1,0 +1,28 @@
+﻿@inject IModalService ModalService
+
+<span @attributes="AdditionalAttributes"
+@onclick="ShowMessage">
+	<img alt="info"
+		src="/images/infoBull.svg"
+		width="@Width"/>
+</span>
+
+@code {
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+
+	[Parameter] public string? InfoBullMessage { get; set; } = string.Empty;
+
+	[Parameter] public string? InfoBullTitle { get; set; }
+
+	[Parameter] public string? Width { get; set; } = "30";
+
+
+	private void ShowMessage()
+	{
+		ModalService.Show<ZeeErrorModal>(InfoBullTitle ?? "Info", new ModalParameters { { "Message", InfoBullMessage } }, new ModalOptions { Position = ModalPosition.Middle, Size = ModalSize.Large });
+	}
+
+}

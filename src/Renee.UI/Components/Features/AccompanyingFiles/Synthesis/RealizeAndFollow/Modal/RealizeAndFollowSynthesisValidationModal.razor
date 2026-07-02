@@ -1,0 +1,21 @@
+﻿<h3 class="section-title">
+    @Labels.SynthesisModalTitle
+</h3>
+
+<p>Félicitations, vous avez complété toutes les étapes du dossier !</p>
+
+<div class="align-toggle">
+    <ZeeToggle @bind-Value="@ViewModel.IsUserAwareOfNoPossibilitiesToUpdateAccompanyingFile"
+            DisplayBackground="@DisplayEnumBackground.Blue" />
+    <span>@Labels.NoMoreUpdateAllowedAfterValidation</span>
+</div>
+
+<div class="zeeButtonGroup">
+    <ZeeButton @onclick="@Close"
+            Text="@Labels.Cancel" />
+    <ZeeButton disabled="@(!ViewModel.IsUserAwareOfNoPossibilitiesToUpdateAccompanyingFile.GetValueOrDefault())"
+            DisplayBackground="DisplayEnumBackground.Blue"
+            IsSubmit="false"
+            @onclick="@Submit"
+            Text="@Labels.Submit" />
+</div>

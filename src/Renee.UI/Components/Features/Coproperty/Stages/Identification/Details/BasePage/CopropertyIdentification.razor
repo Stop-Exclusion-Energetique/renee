@@ -1,0 +1,91 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.Features.Coproperty.Stages.Identification.Details.GeneralInfo
+@using Renee.UI.Components.Features.Coproperty.Stages.Identification.Details.GovernanceContacts
+@using Renee.UI.Components.Features.Coproperty.Stages.Identification.Details.DiagnosticsPerformance
+@using Renee.UI.Components.Layout.StageLayout
+@attribute [Route(Endpoints.CopropertyIdentification + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+@layout StageLayout
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+
+	<Authorized>
+
+		<HorizontalTabsMenu OnChangeTab="@ChangeTab"
+							SelectedTab="@SelectedTab"
+							TabsList="@([Labels.CopropertyGeneralInfoTitle, Labels.CopropertyGovernanceContactsTitle, Labels.CopropertyDiagnosticsTitle])" />
+
+		<div class="tab-content">
+			@if (EditContext != null)
+			{
+				<EditForm EditContext="EditContext"
+						  OnSubmit="SubmitWithValidation">
+					<CascadingValue Value="EditContext">
+						<CascadingValue Value="@IsUserNotAllowedToEdit" Name="IsUserAllowedToEdit">
+							<ObjectGraphDataAnnotationsValidator />
+							@switch (SelectedTab)
+							{
+								case 0:
+									<GeneralInfo ViewModel="@CopropertyIdentificationViewModel?.GeneralInfoViewModel"
+												 AddressList="@AddressList"
+												 LoadAddresses="@LoadAddresses">
+									</GeneralInfo>
+									break;
+								case 1:
+									<GovernanceContacts ViewModel="@CopropertyIdentificationViewModel?.GovernanceContactsViewModel"
+														HousingTypology="@CopropertyIdentificationViewModel?.GeneralInfoViewModel?.HousingTypology">
+									</GovernanceContacts>
+									break;
+								case 2:
+									<DiagnosticsPerformance ViewModel="@CopropertyIdentificationViewModel?.DiagnosticsPerformanceViewModel">
+									</DiagnosticsPerformance>
+									<ValidationSummary />
+									break;
+							}
+						</CascadingValue>
+					</CascadingValue>
+				</EditForm>
+				<div class="zeeButtonGroup">
+
+					@if (SelectedTab == 0)
+					{
+						<ZeeButton @onclick="NavigateToCopropertyProfileList"
+								   Text="@Labels.Previous" />
+					}
+					else
+					{
+						<ZeeButton @onclick="() => ChangeTab(SelectedTab - 1)"
+								   Text="@Labels.Previous" />
+					}
+
+					@if (SelectedTab == 2)
+					{
+						<ZeeButton disabled=@(IsUserNotAllowedToEdit && UserRole != Constants.StructuralReferentRole)
+								   IsSubmit=true
+								   @onclick="SubmitWithValidation"
+								   Text="@Labels.Submit" />
+					}
+					else
+					{
+						<ZeeButton @onclick="() => ChangeTab(SelectedTab + 1)"
+								   Text="@Labels.Next" />
+					}
+				</div>
+			}
+			@if (SaveButtonIsActive)
+			{
+				<div class="save-btn-container">
+					<ZeeButton CssClass="btn-full-width"
+							   DisplayBackground="DisplayEnumBackground.DarkBlue"
+							   @onclick="@SaveWithoutValidation"
+							   Text="@Labels.Save" />
+				</div>
+			}
+		</div>
+
+	</Authorized>
+
+
+</AuthorizeView>

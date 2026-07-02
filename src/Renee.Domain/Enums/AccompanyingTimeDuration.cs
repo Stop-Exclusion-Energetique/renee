@@ -1,0 +1,15 @@
+﻿using System.ComponentModel;
+
+namespace Renee.Domain.Enums;
+
+public enum AccompanyingTimeDuration
+{
+	[Description(AccompanyingTimeDurationLabel.LessThanTwoHours)] LessThanTwoHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenTwoAndFiveHours)] BetweenTwoAndFiveHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenFiveAndFourteenHours)] BetweenFiveAndFourteenHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenFourteenAndTwentyHours)] BetweenFourteenAndTwentyHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenTwentyAndTwentyEightHours)] BetweenTwentyAndTwentyEightHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenTwentyEightAndFourtyHours)] BetweenTwentyEightAndFourtyHours,
+	[Description(AccompanyingTimeDurationLabel.BetweenFourtyAndSixtyHours)] BetweenFourtyAndSixtyHours,
+	[Description(AccompanyingTimeDurationLabel.MoreThanSixtyHours)] MoreThanSixtyHours
+}

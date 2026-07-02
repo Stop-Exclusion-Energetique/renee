@@ -1,0 +1,329 @@
+@using Renee.Domain.Enums
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.IdentificationSynthesis + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+
+<AuthorizeView Context="_"
+            Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        <div class="main-content">
+            @if (!ShouldDisplaySynthesis())
+            {
+                <p>
+                    <strong>@Labels.SynthesisNotAvailable</strong>
+                </p>
+            }
+            else
+            {
+                <div class="main-content">
+
+                    <h1 class="ml-3 rubric-title">@Labels.ValidationHouseholdSynthesis</h1>
+
+                    <div class="grid-container">
+
+                        <div class="card grid-item identity">
+
+                            <h2 class="rubric-title">@Labels.HouseholdIdentity</h2>
+
+                            <div class="d-flex flex-column"
+                            style="row-gap:24px;">
+
+                                <div class="rubric">
+
+                                    <h3 class="rubric-title">@Labels.HomeComposition</h3>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.Name"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.Name">
+                                    </OutlinedText>
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.FirstName"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.FirstName">
+                                    </OutlinedText>
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.Trigram"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.Trigram">
+                                    </OutlinedText>
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.PhoneNumberOccupant"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.PhoneNumber">
+                                    </OutlinedText>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.AgeOccupant"
+                                    readonly="readonly"
+                                    Value="@GetFieldWithProperUnit(OccupantSynthesisViewModel.Age, Labels.AgeUnit)">
+                                    </OutlinedText>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.SocioProfessionalCategorySynthesis"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.SocioProfessionalCategory">
+                                    </OutlinedText>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.MarkerNature"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.MarkerNature">
+                                    </OutlinedText>
+
+                                    <OutlinedText Label="@Labels.NumberOfOccupants"
+                                    readonly="readonly"
+                                    Type="OutlinedInt.TypeOfValue.Int"
+                                    Value="@OccupantSynthesisViewModel.NumberOfOccupants.ToString()">
+                                    </OutlinedText>
+                                </div>
+
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.Household</h3>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.HouseholdTypology"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.HouseholdTypology">
+                                    </OutlinedText>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.HouseholdDifficulties"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.HouseholdDifficulties">
+                                    </OutlinedText>
+                                </div>
+
+                                <div class="rubric">
+                                    <h3 class="rubric-title">@Labels.Finance</h3>
+
+                                    <OutlinedDouble Double="@OccupantSynthesisViewModel.TaxIncome"
+                                    Label="@Labels.TaxIncomeSynthesis"
+                                    readonly="readonly"
+                                    Type="OutlinedDouble.TypeOfValue.Currency">
+                                    </OutlinedDouble>
+
+                                    <OutlinedText IsInForm="false"
+                                    Label="@Labels.AnahCategory"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.AnahCategory">
+                                    </OutlinedText>
+
+                                    <OutlinedDouble Double="@OccupantSynthesisViewModel.AvailableBudget"
+                                    Label="@Labels.HouseholdBudget"
+                                    readonly="readonly"
+                                    Type="OutlinedDouble.TypeOfValue.Currency">
+                                    </OutlinedDouble>
+
+                                    <OutlinedDouble Double="@OccupantSynthesisViewModel.EnergeticTotal"
+                                    Label="@Labels.EnergeticTotalSynthesis"
+                                    readonly="readonly"
+                                    Type="OutlinedDouble.TypeOfValue.Currency">
+                                    </OutlinedDouble>
+
+                                    <OutlinedDouble Double="@OccupantSynthesisViewModel.EnergyEffortRate"
+                                    Label="@Labels.EnergyEffortRate"
+                                    readonly="readonly"
+                                    Type="OutlinedDouble.TypeOfValue.Percentage">
+                                    </OutlinedDouble>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card grid-item housing">
+                            <div class="rubric">
+                                <h2 class="rubric-title">@Labels.Housing</h2>
+
+                                <OutlinedText IsInForm="false"
+                                    Label="@Labels.Address"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.Address">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                    Label="@Labels.PostalCode"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.PostalCode">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                    Label="@Labels.Municipality"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.City">
+                                </OutlinedText>
+
+                                <ZeeSelect @bind-CheckedValue="@OccupantSynthesisViewModel.GeographicAreaTypology"
+                                    ElementName="@($"typology-{Guid.NewGuid().ToString()}")"
+                                    IsRequired="true"
+                                    Items="@ItemsList.GeographicalTypologies"
+                                    Label="@Labels.Typology"
+                                    IsDisabled="true"
+                                    TItem="GeographicalHousingAreaTypology?">
+                                </ZeeSelect>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.PropertyType"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.HousingType">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.PropertyStatus"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.OwnershipStatus">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.LivingSpaceInSquareMeterSynthesis"
+                                readonly="readonly"
+                                Value="@GetFieldWithProperUnit(OccupantSynthesisViewModel.LivingSpaceInSquareMeter, Labels.SquareMeterUnit)">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.ConstructionYear"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.BuildingYear">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.DegradationIndex"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.DegradationIndex">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.UnsanitaryCoefficient"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.UnsanitaryCoefficient">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                    Label="@Labels.Mar"
+                                    readonly="readonly"
+                                    Value="@OccupantSynthesisViewModel.MarClassification">
+                                </OutlinedText>
+                            </div>
+
+                        </div>
+
+                        <div class="card energetic-profile grid-item">
+
+                            <div class="rubric">
+
+                                <h2 class="rubric-title">@Labels.InitialEnergyProfile</h2>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.HouseEtiquette"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.DpeLabel">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.EnergyConsumptionBeforeWork"
+                                readonly="readonly"
+                                Value="@GetFieldWithProperUnit(OccupantSynthesisViewModel.EnergyConsumption, Labels.KilowattHour)">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.GesEtiquette"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.GesLabel">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.GesEmissions"
+                                readonly="readonly"
+                                Value="@GetFieldWithProperUnit(OccupantSynthesisViewModel.GesEmissions, Labels.KilogrammeCO2)">
+                                </OutlinedText>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.EnergyDeprivation"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.ElectricityDeprivation">
+                                </OutlinedText>
+                            </div>
+                        </div>
+
+                        <div class="card solicitation-reason">
+                            <div>
+                                <h2 class="rubric-title">@Labels.ReasonOfProject</h2>
+
+                                <OutlinedText IsInForm="false"
+                                Label="@Labels.DifficultyEncountered"
+                                readonly="readonly"
+                                Value="@OccupantSynthesisViewModel.DifficultiesFacedByFamily">
+                                </OutlinedText>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <div class="left-part">
+                            @if(ShouldDisplaySubmissionButton())
+                            {
+                                <div class="left-part-child">
+                                    <ZeeToggle @bind-Value="IsFinancingAsked"
+                                    DisplayBackground="DisplayEnumBackground.Blue"
+                                    IsTextPresent="false">
+                                    </ZeeToggle>
+                                    <span class="required">@Labels.FinancingRequest</span>
+                                </div>
+                            }
+
+                            <div class="left-part-child">
+                                <SynthesisFileLoader 
+                                    @bind-MemoryStreamFile = "@_memoryStreamFile"
+                                    @bind-ErrorMessage = "@ErrorMessage"
+                                    @bind-FileName= "@_fileName"
+                                    OnChangeUpload="@OnChangeUpload"
+                                    ViewFile="@ViewFile"
+                                    OnClickDeleteFile="@OnClickDeleteFile"
+                                    ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                    IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                    IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                    FileNotLoadedMessage="@Labels.SignedHouseholdSupportContract"
+                                    FileLoadedMessage="@($"{Labels.SupportingDocument} {_fileName} {Labels.FileLoaded}")" />
+                            </div>
+                        </div>
+
+                        @if(ShouldDisplaySubmissionButton())
+                        {
+                            <div class="right-part">
+                                <ZeeButton @onclick="OnClickCancelButton"
+                                Text="@Labels.Cancel">
+                                </ZeeButton>
+                                <ZeeButton disabled="@(!IsFinancingAsked.GetValueOrDefault())"
+                                IsSubmit="true"
+                                @onclick="OnSubmitSynthesis"
+                                Text="@Labels.Submit">
+                                </ZeeButton>
+                            </div>
+                        }
+
+                        @if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+                        {
+                            <div class="right-part">
+                                <ZeeButton IsSubmit="true"
+                                        @onclick="@(() => StageValidation(false))"
+                                        Text="Rejeter">
+                                </ZeeButton>
+                                <ZeeButton @onclick="@(() => StageValidation(true))"
+                                        Text="Valider">
+                                </ZeeButton>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

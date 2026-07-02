@@ -1,0 +1,32 @@
+﻿<div class="d-flex flex-column length">
+	<label class="pure-material-textfield-outlined">
+		<input class="form-control"
+		       @onchange="OnChange"
+		       type="text"
+		       value="@FilterValue"/>
+		<span>@_label</span>
+		<span class="center-image">
+			<img alt="search"
+			     class="fixed-size"
+			     src="/images/menu/loupe.svg"/>
+		</span>
+	</label>
+
+</div>
+
+@code {
+	[Parameter] public string? FilterValue { get; set; }
+	[Parameter] public EventCallback<string> OnFilterValueChanged { get; set; }
+
+	private readonly string _label = Labels.FilteringOnReference;
+
+	private void OnChange(ChangeEventArgs args)
+	{
+		FilterValue = string.Empty;
+
+		if (args.Value != null && !string.IsNullOrEmpty(args.Value.ToString())) FilterValue = args.Value.ToString();
+
+		OnFilterValueChanged.InvokeAsync(FilterValue);
+	}
+
+}

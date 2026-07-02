@@ -1,0 +1,433 @@
+﻿@using Renee.Application.DTOs.Occupant
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using System.Reflection.Metadata
+<div>
+    @if (PropertyStatuses is not null && PropertyTypes is not null)
+    {
+        <div class="flex-container">
+
+            <div class="card grid-form top-1">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.Address
+                    </h4>
+                </div>
+
+                @if (!IsUserAllowedToEdit)
+                {
+                    <div class="manualAddress">
+                        <ZeeToggle @bind-Value="ViewModel.IsManualInput"
+                                   disabled="@AreAddressFieldsDisabled"
+                                   DisplayBackground="DisplayEnumBackground.Blue"
+                                   IsTextPresent="false">
+                        </ZeeToggle>
+                        <span>@Labels.ManualAddress</span>
+                    </div>
+                }
+
+                @if (ViewModel.IsManualInput == false)
+                {
+                    <label class="required">
+                        @Labels.StreetNumberName
+                    </label>
+                    <div>
+                        <RadzenDropDown AllowFiltering="true"
+                        @bind-Value="ViewModel.StreetNumberName"
+                        Count="20"
+                        Data="AddressList"
+                        FilterAsYouType="true"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterDelay="1000"
+                        LoadData="@OnLoadAddresses"
+                        Multiple="false"
+                        Placeholder=@Labels.DropDownPlaceholder
+                        Style="width: 100%"
+                        TextProperty="Label"
+                        TValue="AddressDto"
+                        Disabled="@AreAddressFieldsDisabled">
+                            <ValueTemplate Context="address">
+                                @((address as AddressDto)?.Name ?? (address as AddressDto)?.Label)
+                            </ValueTemplate>
+                        </RadzenDropDown>
+
+                        <ValidationMessage For="@(() => ViewModel.StreetNumberName)" />
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <OutlinedText @bind-Value="ViewModel.ManualAddress"
+                                      EditContext="_editContext"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ManualAddress)"
+                                      IsInForm="false"
+                                      IsRequired="@IsCustomAddress"
+                                      disabled="@AreAddressFieldsDisabled"
+                                      Label="@Labels.StreetNumberName">
+                        </OutlinedText>
+                        <ValidationMessage For="@(() => ViewModel.ManualAddress)" />
+                    </div>
+                }
+
+                <div>
+                    <OutlinedText @bind-Value="@ViewModel.AdditionalAddress"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AdditionalAddress)"
+                                  IsInForm="false"
+                                  Label="@Labels.AdditionalAddress"
+                                  disabled="@AreAddressFieldsDisabled">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => ViewModel.AdditionalAddress)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="@ViewModel.PostalCode"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PostalCode)"
+                                  IsInForm="false"
+                                  IsRequired=true
+                                  Label="@Labels.PostalCode"
+                                  disabled="@(!IsCustomAddress || IsSoliha || IsLinkedToCoproperty)">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => ViewModel.PostalCode)" />
+                </div>
+
+                <div>
+
+                    <OutlinedText @bind-Value="@ViewModel.Municipality"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Municipality)"
+                                  IsInForm="false"
+                                  IsRequired=true
+                                  Label="@Labels.Municipality"
+                                  disabled="@(!IsCustomAddress || IsSoliha || IsLinkedToCoproperty)">
+                    </OutlinedText>
+
+                    <ValidationMessage For="@(() => ViewModel.Municipality)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="@ViewModel.Departement"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Departement)"
+                                  IsInForm="false"
+                                  IsRequired=true
+                                  Label="@Labels.Department"
+                                  disabled="@(!IsCustomAddress || IsSoliha || IsLinkedToCoproperty)">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => ViewModel.Departement)" />
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="@ViewModel.Region"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Region)"
+                                  IsInForm="false"
+                                  IsRequired=true
+                                  Label="@Labels.Region"
+                                  disabled="@(!IsCustomAddress || IsSoliha || IsLinkedToCoproperty)">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => ViewModel.Region)" />
+                </div>
+
+                <label class="required">
+                    @Labels.Typology
+                </label>
+                <div>
+                    <ZeeSelect @bind-CheckedValue="@ViewModel.Typology"
+                               EditContext="_editContext"
+                               ElementName="@($"typology-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Typology)"
+                               Items="@ItemsList.GeographicalTypologies"
+                               TItem="GeographicalHousingAreaTypology?"
+                               IsDisabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </ZeeSelect>
+                    <ValidationMessage For="@(() => ViewModel.Typology)" />
+                </div>
+
+                <div>
+                    <label>
+                        @Labels.AbfZone
+                    </label>
+                    <ZeeSelect @bind-CheckedValue="@ViewModel.AbfZoneYes"
+                               EditContext="_editContext"
+                               ElementName="@($"abfZone-{Guid.NewGuid().ToString()}")"
+                               FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AbfZoneYes)"
+                               Items="@ItemsList.NullableYesNoList"
+                               TItem="bool?"
+                               IsDisabled="@IsUserAllowedToEdit">
+                    </ZeeSelect>
+                </div>
+
+                <div>
+                    <OutlinedTextArea @bind-Value=@ViewModel.ArchitecturalOrUrbanStandards
+                                      EditContext="_editContext"
+                                      FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ArchitecturalOrUrbanStandards)"
+                                      IsInForm=false
+                                      IsRequired=false
+                                      Label="@Labels.ArchitecturalOrUrbanPlanningStandards"
+                                      disabled="@IsUserAllowedToEdit">
+                    </OutlinedTextArea>
+                </div>
+            </div>
+
+            <div class="card grid-form top-2">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.HousingCharacteristics
+                    </h4>
+                </div>
+
+                <label class="required">
+                    @Labels.PropertyStatus
+                </label>
+                <div>
+                    @if (PropertyStatuses != null)
+                    {
+                        <ZeeSelect @bind-CheckedValue="@ViewModel.AskedPropertyStatus"
+                                   EditContext="_editContext"
+                                   ElementName="@($"propertystatus-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AskedPropertyStatus)"
+                                   Items="@PropertyStatuses"
+                                   TItem="OwnershipStatus?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => ViewModel.AskedPropertyStatus)" />
+                    }
+                </div>
+
+                <label class="required">
+                    @Labels.PropertyType
+                </label>
+                <div>
+                    @if (PropertyTypes != null)
+                    {
+                        <ZeeSelect @bind-CheckedValue="@ViewModel.AskedPropertyType"
+                                   EditContext="_editContext"
+                                   ElementName="@($"propertytype-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AskedPropertyType)"
+                                   Items="@PropertyTypes"
+                                   OnNewValueSelected="OnPropertyTypeChanged"
+                                   TItem="HousingType?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => ViewModel.AskedPropertyType)" />
+                    }
+                </div>
+
+                @if(ShouldDisplayCopropertyAttachmentField)
+                {
+                        <label class="required">
+                            @Labels.CopropertyAttachment
+                    </label>
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="@ViewModel.CopropertyProfileId"
+                                   EditContext="_editContext"
+                                   ElementName="@($"copropertyprofile-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CopropertyProfileId)"
+                                   Items="@CopropertyProfiles"
+                                   TItem="Guid?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                                   ShouldSort="true">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => ViewModel.CopropertyProfileId)" />
+                    </div>
+                    <ZeeButton 
+                        Text="@Labels.CreateANewCopropertyProfile"
+                        DisplayBackground = "@DisplayEnumBackground.Pink"
+                        IsSubmit="false"
+                        @onclick="CreateNewCopropertyProfile"/>
+                }
+
+                <label class="required">
+                    @Labels.ConstructionYear
+                </label>
+                <div>
+                        <ZeeSelect @bind-CheckedValue="@ViewModel.AskedConstructionYear"
+                                   EditContext="_editContext"
+                                   ElementName="@($"propertyconstructionyear-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AskedConstructionYear)"
+                                   Items="@PropertyConstructionYears"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                                   TItem="HousingYearConstruction?">
+                        </ZeeSelect>
+                        <ValidationMessage For="@(() => ViewModel.AskedConstructionYear)" />
+                </div>
+
+                <div>
+                    <OutlinedDouble @bind-Double=@ViewModel.Surface
+                                    EditContext="_editContext"
+                                    FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Surface)"
+                                    Label="@Labels.Surface"
+                                    Type=OutlinedDouble.TypeOfValue.Double
+                                    IsRequired="true"
+                                    disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </OutlinedDouble>
+                    <ValidationMessage For="@(() => ViewModel.Surface)" />
+                </div>
+
+                <div>
+                    <ZeeCounter @bind-Count=@ViewModel.NumberOfRooms
+                                EditContext="_editContext"
+                                FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NumberOfRooms)"
+                                Label="@Labels.NumberOfRooms"
+                                IsDisabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </ZeeCounter>
+                </div>
+
+                <div>
+                    <ZeeCounter @bind-Count=@ViewModel.NumberOfFloor
+                                EditContext="_editContext"
+                                FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NumberOfFloor)"
+                                Label="@Labels.NumberOfFloor"
+                                IsDisabled="@IsUserAllowedToEdit">
+                    </ZeeCounter>
+                </div>
+
+                <div>
+                    <OutlinedInt @bind-Intgr=@ViewModel.YearOfacquisition
+                                 EditContext="_editContext"
+                                 FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.YearOfacquisition)"
+                                 Label="@Labels.YearOfAcquisition"
+                                 Type=OutlinedInt.TypeOfValue.Year
+                                 disabled="@(IsUserAllowedToEdit || IsSoliha)">
+                    </OutlinedInt>
+                </div>
+
+                <div>
+                    <OutlinedText @bind-Value="@ViewModel.CadastralReference"
+                                  EditContext="_editContext"
+                                  FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.CadastralReference)"
+                                  IsInForm="false"
+                                  Label="@Labels.LandRegisterReference"
+                                  disabled="@IsUserAllowedToEdit">
+                    </OutlinedText>
+                    <ValidationMessage For="@(() => ViewModel.CadastralReference)" />
+                </div>
+            </div>
+
+            <div class="bottom-1 card grid-form"
+                 style="margin-bottom:50px; display:flex;">
+                <div>
+                    <h4 class="section-title">
+                        @Labels.HouseState
+                    </h4>
+                </div>
+
+                <div>
+                    <label>
+                        @Labels.RenovationWork
+                    </label>
+                    <div class="item-civility">
+                        <div class="item-civility">
+                            <ZeeSelect @bind-CheckedValue="ViewModel.RenovationWorkYes"
+                                       EditContext="_editContext"
+                                       ElementName="@($"RenovationWork-{Guid.NewGuid().ToString()}")"
+                                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.RenovationWorkYes)"
+                                       Items="@ItemsList.NullableYesNoList"
+                                       TItem="bool?"
+                                       IsDisabled="@IsUserAllowedToEdit">
+                            </ZeeSelect>
+                        </div>
+                    </div>
+                    @if (ViewModel.RenovationWorkYes.HasValue && ViewModel.RenovationWorkYes.Value)
+                    {
+                        <div class="item-civility">
+                            <OutlinedTextArea @bind-Value=@ViewModel.RenovationExplanations
+                                              EditContext="_editContext"
+                                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.RenovationExplanations)"
+                                              IsInForm=false
+                                              IsRequired=true
+                                              Label="@Labels.Explanations"
+                                              disabled="@IsUserAllowedToEdit">
+                            </OutlinedTextArea>
+                            <ValidationMessage For="@(() => ViewModel.RenovationExplanations)" />
+                        </div>
+                    }
+                </div>
+
+                <label class="required">
+                    @Labels.EitherDegradationIndexOr0UnsanitaryCoefficientMustBeChecked
+                </label>
+
+                <div class="d-flex"
+                     style="flex-wrap:wrap; row-gap: 1em;">
+                    <div class="item-civility">
+                        <label>
+                            @Labels.DegradationIndex
+                        </label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.DegradationIndex"
+                                   @bind-CheckedValue:after="ValidateUnsanitaryCoefficient"
+                                   EditContext="_editContext"
+                                   ElementName="@($"DegradationIndex-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.DegradationIndex)"
+                                   Items="@DegradationIndexes"
+                                   TItem="DegradationIndex?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                        <ValidationMessage For="@(() => ViewModel.DegradationIndex)" />
+                    </div>
+
+                    <div class="item-civility">
+                        <label>
+                            @Labels.UnsanitaryCoefficient
+                        </label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.UnsanitaryCoefficient"
+                                   @bind-CheckedValue:after="ValidateDegradationIndex"
+                                   EditContext="_editContext"
+                                   ElementName="@($"UnsanitaryCoefficient-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.UnsanitaryCoefficient)"
+                                   Items="@UnsanitaryCoefficients"
+                                   TItem="UnsanitaryCoefficient?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <ValidationMessage For="@(() => ViewModel.UnsanitaryCoefficient)" />
+                    </div>
+
+                    <div class="item-civility">
+                        <label>
+                            @Labels.SummerComfort
+                        </label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.SummerComfort"
+                                   EditContext="_editContext"
+                                   ElementName="@($"SummerComfort-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SummerComfort)"
+                                   Items="@BadAverageGoodList"
+                                   TItem="ComfortLevel?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+
+                    <div class="item-civility">
+                        <label>
+                            @Labels.WinterComfort
+                        </label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.WinterComfort"
+                                   EditContext="_editContext"
+                                   ElementName="@($"WinterComfort-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WinterComfort)"
+                                   Items="@BadAverageGoodList"
+                                   TItem="ComfortLevel?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+
+                    <div class="item-civility">
+                        <label>
+                            @Labels.SoundComfort
+                        </label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.SoundComfort"
+                                   EditContext="_editContext"
+                                   ElementName="@($"SoundComfort-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.SoundComfort)"
+                                   Items="@BadAverageGoodList"
+                                   TItem="ComfortLevel?"
+                                   IsDisabled="@IsUserAllowedToEdit">
+                        </ZeeSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

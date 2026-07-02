@@ -1,0 +1,375 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreWorkPlanTab.Components.WorkPackage
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreWorkPlanTab.ViewModel
+<div class="flex tab-container">
+    <div class="bloc-container card">
+        <h2 class="section-title">
+            @Labels.WorkProjectTitle
+        </h2>
+
+        <div>
+            <ZeeSelect @bind-CheckedValues="ViewModel.PreWorkPlanProjectTypes"
+                       EditContext="@FormEditContext"
+                       ElementName="@($"projectTypes-{Guid.NewGuid().ToString()}")"
+                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PreWorkPlanProjectTypes)"
+                       IsMultiSelect="true"
+                       Items="PreWorkPlanProjectTypes"
+                       Label="@Labels.PreWorkPlanProjectType"
+                       TItem="Guid"
+                       IsDisabled="true"
+                       ShouldSort="true" />
+            <ValidationMessage For="() => ViewModel.PreWorkPlanProjectTypes" />
+        </div>
+
+        <div>
+            <label class="required">@Labels.RenovationType</label>
+            <ZeeSelect @bind-CheckedValue="ViewModel.RenovationType"
+                       EditContext="@FormEditContext"
+                       ElementName="@($"renovationType-{Guid.NewGuid().ToString()}")"
+                       FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.RenovationType)"
+                       Items="_renovationTypeList"
+                       TItem="RenovationType?"
+                       IsDisabled="@(IsUserAllowedToEdit || IsSoliha)"
+                       ShouldSort="true" />
+            <ValidationMessage For="() => ViewModel.RenovationType" />
+        </div>
+
+        @if (ViewModel.RenovationType is RenovationType.EfficientRenovationInStages)
+        {
+            <OutlinedTextArea @bind-Value=ViewModel.NextStepAndVigilancePoints
+                              EditContext="@FormEditContext"
+                              FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NextStepAndVigilancePoints)"
+                              IsInForm=false
+                              IsRequired=false
+                              Label="@Labels.NextStepAndVigilancePoints"
+                              disabled="@IsUserAllowedToEdit" />
+        }
+
+        <div class="group-form">
+            <div class="group-form_item">
+                <label>@Labels.InterestInPossibleSupportedSelfRehabilitationAra</label>
+                <ZeeSelect @bind-CheckedValue="ViewModel.InterestInPossibleSupportedSelfRehabilitationAra"
+                           EditContext="FormEditContext"
+                           ElementName="@($"possibleSupportedSelfRehabilitationAra-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.InterestInPossibleSupportedSelfRehabilitationAra)"
+                           Items="@ItemsList.NullableYesNoList"
+                           TItem="bool?"
+                           IsDisabled="@IsUserAllowedToEdit" />
+            </div>
+
+            <div class="group-form_item">
+                <label>@Labels.NeedTemporaryRehousingSolution</label>
+                <ZeeSelect @bind-CheckedValue="ViewModel.NeedTemporaryRehousingSolution"
+                           EditContext="FormEditContext"
+                           ElementName="@($"temporaryRehousingSolution-{Guid.NewGuid().ToString()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.NeedTemporaryRehousingSolution)"
+                           Items="@ItemsList.NullableYesNoList"
+                           TItem="bool?"
+                           IsDisabled="@IsUserAllowedToEdit" />
+            </div>
+
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.IsEmergencyWorks"
+                           ElementName="@($"EmergencyWorks-{Guid.NewGuid()}")"
+                           IsRequired="false"
+                           Items="@ItemsList.NullableYesNoList"
+                           Label="@Labels.EmergencyWorks"
+                           TItem="bool?"
+                           IsDisabled="@IsUserAllowedToEdit">
+                </ZeeSelect>
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.IsEnergeticsRenovationWorks"
+                           ElementName="@($"EnergeticsRenovationWorks-{Guid.NewGuid()}")"
+                           IsRequired="false"
+                           Items="@ItemsList.NullableYesNoList"
+                           Label="@Labels.EnergeticsRenovationWorks"
+                           TItem="bool?"
+                           IsDisabled="@(IsUserAllowedToEdit || IsSoliha)">
+                </ZeeSelect>
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.IsInducedWorks"
+                           ElementName="@($"InducedWorks-{Guid.NewGuid()}")"
+                           IsRequired="false"
+                           Items="@ItemsList.NullableYesNoList"
+                           Label="@Labels.InducedWorks"
+                           TItem="bool?"
+                           IsDisabled="@IsUserAllowedToEdit">
+                </ZeeSelect>
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.IsSafetyAndHealthWorks"
+                           ElementName="@($"SafetyAndHealthWorks-{Guid.NewGuid()}")"
+                           IsRequired="false"
+                           Items="@ItemsList.NullableYesNoList"
+                           Label="@Labels.SafetyAndHealthWorks"
+                           TItem="bool?"
+                           IsDisabled="@(IsUserAllowedToEdit || IsSoliha)">
+                </ZeeSelect>
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.TreatedAirTightness"
+                           EditContext="@FormEditContext"
+                           ElementName="@($"TreatedAirTightness-{Guid.NewGuid()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.TreatedAirTightness)"
+                           IsRequired="true"
+                           Items="@_yesNoPartialList"
+                           Label="@Labels.TreatedAirTightness"
+                           TItem="PartlyStateTreatment?"
+                           IsDisabled="@IsUserAllowedToEdit">
+                </ZeeSelect>
+                <ValidationMessage For="() => ViewModel.TreatedAirTightness" />
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.TreatedThermalBridge"
+                           EditContext="@FormEditContext"
+                           ElementName="@($"TreatedThermalBridge-{Guid.NewGuid()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.TreatedThermalBridge)"
+                           IsRequired="true"
+                           Items="@_yesNoPartialList"
+                           Label="@Labels.TreatedThermalBridge"
+                           TItem="PartlyStateTreatment?"
+                           IsDisabled="@IsUserAllowedToEdit">
+                </ZeeSelect>
+                <ValidationMessage For="() => ViewModel.TreatedThermalBridge" />
+            </div>
+            <div class="group-form_item">
+                <ZeeSelect @bind-CheckedValue="ViewModel.AreExistingHumidityAndVaporMigrationManagedAfterTreatment"
+                           EditContext="@FormEditContext"
+                           ElementName="@($"ExistingHumidityAndVaporMigrationManagedAfterTreatment-{Guid.NewGuid()}")"
+                           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AreExistingHumidityAndVaporMigrationManagedAfterTreatment)"
+                           IsRequired="true"
+                           Items="@_yesNoPartialList"
+                           Label="@Labels.ExistingHumidityAndVaporMigrationManagedAfterTreatment"
+                           TItem="PartlyStateTreatment?"
+                           IsDisabled="@IsUserAllowedToEdit">
+                </ZeeSelect>
+                <ValidationMessage For="() => ViewModel.AreExistingHumidityAndVaporMigrationManagedAfterTreatment" />
+            </div>
+        </div>
+    </div>
+
+    <ValidationMessage For="() => ViewModel.WorkPackages" />
+
+    <div class="wrapper">
+        @foreach (var workPackage in ViewModel.WorkPackages)
+        {
+            var index = ViewModel.WorkPackages.IndexOf(workPackage);
+            <div>
+                <div class="bloc-container card">
+                    <h2 class="section-title">
+                        @($"{Labels.WorkQuote} {index + 1}")
+                    </h2>
+                    <WorkPackage EditContext="@FormEditContext"
+                                 Index="index + 1"
+                                 SelectedWorkTypesIds="@workPackage.WorkTypes.Select(w => w.Id).ToList()"
+                                 ViewModel="ViewModel.WorkPackages[index]"
+                                 WorkTypes="WorkTypes"
+                                 IsUserAllowedToEdit="@IsUserAllowedToEdit"
+                                 SelectedWorkTypesIdsChanged="@UpdateProjectTypesList" >
+                    </WorkPackage>
+
+                    @if (index > 0)
+                    {
+                        <div>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                                          Click="() => OnDeleteWorkPackage(index)"
+                                          Icon="@Icons.DeleteButton"
+                                          Size="ButtonSize.Large"
+                                          style="margin-top: 10px;"
+                                          Disabled="@IsUserAllowedToEdit" />
+                        </div>
+                    }
+                </div>
+
+                @if (index == ViewModel.WorkPackages.Count - 1)
+                {
+                    <div class="button-container">
+                        <ZeeButton CssClass="btn-full-width"
+                                   @onclick="OnAddWorkPackage"
+                                   Text="@Labels.PreWorkPlanAddButton"
+                                   disabled="@(IsUserAllowedToEdit || IsInitialWorkPackageNotFilled)" />
+                    </div>
+                }
+            </div>
+        }
+        <div class="flex @(ViewModel.WorkPackages.Count % 2 == 0 ? "even" : "odd")">
+            <div class="d-flex flex-column gap-3">
+                <div class="bloc-container card">
+                    <h2 class="section-title">
+                        @Labels.RecommendedWorkLabel
+                    </h2>
+                    <div>
+                        <OutlinedDouble disabled="disabled"
+                                        Double="ViewModel.RecommendedWorkTotalPrice"
+                                        Label="@Labels.TotalCostOfRecommendedWork"
+                                        readonly="readonly"
+                                        Type="OutlinedDouble.TypeOfValue.Currency">
+                        </OutlinedDouble>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex @(ViewModel.WorkPackages.Count % 2 == 0 ? "even" : "odd")">
+            <div class="d-flex flex-column gap-3">
+                <div class="bloc-container card">
+                    <h2 class="section-title">
+                        @Labels.CraftsmenQualificationTitle
+                    </h2>
+
+                    <div>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.IsRgeLabelUpToDate"
+                                   EditContext="@FormEditContext"
+                                   ElementName="@($"RgeLabelUpToDate-{Guid.NewGuid()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IsRgeLabelUpToDate)"
+                                   IsRequired="true"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   Label="@Labels.IsRgeLabelUpToDate"
+                                   TItem="bool?"
+                                   IsDisabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <ValidationMessage For="() => ViewModel.IsRgeLabelUpToDate" />
+                    </div>
+
+                    <div>
+                        <OutlinedTextArea @bind-Value="ViewModel.OtherQualification"
+                                          EditContext="@FormEditContext"
+                                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.OtherQualification)"
+                                          Label="@Labels.OtherQualification"
+                                          disabled="@IsUserAllowedToEdit" />
+                    </div>
+
+                </div>
+
+                <div class="bloc-container card">
+                    <h2 class="section-title">
+                        @Labels.InsurancesBlocTitle
+                    </h2>
+
+                    <div>
+                        <ZeeSelect @bind-CheckedValues="ViewModel.PreWorkPlanInsuranceTypes"
+                                   EditContext="@FormEditContext"
+                                   ElementName="@($"insuranceType-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.PreWorkPlanInsuranceTypes)"
+                                   IsMultiSelect="true"
+                                   IsRequired="false"
+                                   Items="PreWorkPlanInsuranceTypes"
+                                   Label="@Labels.InsuranceType"
+                                   TItem="Guid"
+                                   ShouldSort="true" />
+                    </div>
+
+                    @if (ViewModel.PreWorkPlanInsuranceTypes != null && ViewModel.PreWorkPlanInsuranceTypes.Contains(TenYearCivilLiabilityAraInsuranceType))
+                    {
+                        <label>@Labels.AraOpeningStatementSent</label>
+                        <ZeeSelect @bind-CheckedValue="ViewModel.AraOpeningStatementSent"
+                                   EditContext="@FormEditContext"
+                                   ElementName="@($"araOpeningStatementSent-{Guid.NewGuid().ToString()}")"
+                                   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.AraOpeningStatementSent)"
+                                   Items="@ItemsList.NullableYesNoList"
+                                   TItem="bool?"
+                                   IsDisabled="@IsUserAllowedToEdit" />
+                    }
+
+                </div>
+            </div>
+            <div>
+                <div class="bloc-container card">
+                    <h2 class="section-title">
+                        @Labels.TargetedAnnualEnergyPerformanceAfterWorkTitle
+                    </h2>
+
+                    <OutlinedDouble @bind-Double="ViewModel.EstimatedAnnualEnergyConsumptionAfterWork"
+                                    EditContext="@FormEditContext"
+                                    FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedAnnualEnergyConsumptionAfterWork)"
+                                    IsNullable="true"
+                                    Label="@Labels.EstimatedAnnualEnergyConsumptionAfterWork"
+                                    Type="OutlinedDouble.TypeOfValue.Double"
+                                    IsRequired="true"
+                                    disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                    <ValidationMessage For="() => ViewModel.EstimatedAnnualEnergyConsumptionAfterWork" />
+
+                    <div>
+                        <label class="required">
+                           @IndexLabels.StartingDpe
+                        </label>
+                        <ZeeSelectDpe @bind-CheckedValue="ViewModel.EstimatedEnergyDpeBeforeWork"
+                                      @bind-CheckedValue:after="@UpdateEnergeticClassJump"
+                                      EditContext="@FormEditContext"
+                                      ElementName="@($"estimatedDpeAfterWork-{Guid.NewGuid().ToString()}")"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedEnergyDpeBeforeWork)"
+                                      Items="@ItemsList.DpeLabels"
+                                      disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <ValidationMessage For="() => ViewModel.EstimatedEnergyDpeBeforeWork" />
+                    </div>
+
+                    <div>
+                        <label class="required">
+                            @Labels.EstimatedEnergyDpeAfterWork
+                        </label>
+                        <ZeeSelectDpe @bind-CheckedValue="ViewModel.EstimatedEnergyDpeAfterWork"
+                                      @bind-CheckedValue:after="@UpdateEnergeticClassJump"
+                                      EditContext="@FormEditContext"
+                                      ElementName="@($"estimatedDpeAfterWork-{Guid.NewGuid().ToString()}")"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedEnergyDpeAfterWork)"
+                                      Items="@ItemsList.DpeLabels"
+                                      disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <ValidationMessage For="() => ViewModel.EstimatedEnergyDpeAfterWork" />
+                    </div>
+
+                    <div>
+                        <label>
+                            @Labels.EstimatedEnergyClassJump :
+                            <span style="font-weight: bold">@ViewModel.EstimatedEnergyClassJump</span>
+                        </label>
+                    </div>
+
+                    <OutlinedDouble @bind-Double="ViewModel.EstimatedAnnualGhgEmissionsAfterWork"
+                                    EditContext="@FormEditContext"
+                                    FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedAnnualGhgEmissionsAfterWork)"
+                                    IsNullable="true"
+                                    Label="@Labels.EstimatedAnnualGhgEmissionsAfterWork"
+                                    Type="OutlinedDouble.TypeOfValue.Double"
+                                    disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+
+                    <div>
+                        <label class="required">
+                            @Labels.EstimatedEnergyGesAfterWork
+                        </label>
+                        <ZeeSelectGes @bind-CheckedValue="ViewModel.EstimatedEnergyGesAfterWork"
+                                      EditContext="@FormEditContext"
+                                      ElementName="@($"estimatedDpeAfterWork-{Guid.NewGuid().ToString()}")"
+                                      FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedEnergyGesAfterWork)"
+                                      Items="@ItemsList.GesLabels"
+                                      disabled="@(IsUserAllowedToEdit || IsSoliha)" />
+                        <ValidationMessage For="() => ViewModel.EstimatedEnergyGesAfterWork" />
+                    </div>
+
+                    <div>
+                        <label>
+                            @Labels.KWhSavedPerYear :
+                            <span style="font-weight: bold">@ViewModel.KWhSavedPerYear</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            @Labels.EnergyGain :
+                            <span style="font-weight: bold">@ViewModel.EnergyGain @(ViewModel.EnergyGain is not null ? Labels.PercentUnit : null)</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            @Labels.GhgEmissionsAvoidedPerYear :
+                            <span style="font-weight: bold">@ViewModel.GhgEmissionsAvoidedPerYear @(ViewModel.GhgEmissionsAvoidedPerYear is not null ? Labels.TonnesOfCo2Equivalent : null)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+﻿@using Renee.Application.Helpers
+@using Renee.UI.Components.ErrorHandling
+
+@inject NavigationManager NavigationManager
+@attribute [Route(Endpoints.RemainingAmountFound)]
+@attribute [Authorize]
+
+<AuthorizeView Context="_"
+            Roles=@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.StructuralReferentRole}")>
+    <Authorized>
+        <h1>@Labels.RemainingAmountFoundTitle</h1>
+
+        <div class="card">
+            <span>@Labels.RemainingAmountFoundMention</span>
+
+            <EditForm Context="form" EditContext="@_editContext">
+                <ObjectGraphDataAnnotationsValidator />
+                <div>
+                    <OutlinedText Label="Référence du dossier"
+                                @bind-Value="@ViewModel.Reference"
+                                IsRequired
+                                EditContext="@_editContext"
+                                FieldIdentifier="@(FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.Reference))" />
+
+                    <div>
+                        <ValidationMessage For="@(() => ViewModel.Reference)" />
+                        <p style="display:@(string.IsNullOrEmpty(errorMessage) ? "none" : ""); color: red;">
+                            @errorMessage
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <OutlinedDouble @bind-Double="@ViewModel.EstimatedRemainingAmount"
+                                    EditContext="@_editContext"
+                                    FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.EstimatedRemainingAmount)"
+                                    IsNullable="true"
+                                    IsRequired="true"
+                                    Label="@Labels.EstimatedRemainingAmount"
+                                    Type="OutlinedDouble.TypeOfValue.Currency" />
+                    <div>
+                        <ValidationMessage For="@(() => ViewModel.EstimatedRemainingAmount)" />
+                    </div>
+                </div>
+
+                @if(showButton)
+                {
+                    <div class="submission-folder-button">
+                        <ZeeButton Text="@Labels.AccompanyingFileSubmissionForm"
+                                CssClass="btn-full-width"
+                                @onclick="CreateRemainingFoundrequestForAirtableAsync" />
+                    </div>
+                }
+            </EditForm>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

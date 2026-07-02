@@ -1,0 +1,71 @@
+﻿@using Renee.Domain.Enums
+@using Renee.Application.Helpers
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.Billing
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.Documents
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.SupportTeam
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.TargetInformations
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.Tasks
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.AccompanyingFileMenu + "/{AccompanyingFileId:guid}")]
+@attribute [Authorize]
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AssociationMemberRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        @if (ViewModel is not null)
+        {
+            <div class="container-page">
+               <SupportTeam SupportTeamMembers="@ViewModel.SupportTeamMembers"
+                            OnShowUpdateSupportTeamMemberModal="@ShowUpdateSupportTeamMemberModal" />
+
+                <AuthorizeView Roles="@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+                    <Authorized>
+                        @if (ViewModel.ShouldDisplayTask || _userRole == Constants.StructuralReferentRole)
+                        {
+                            <Tasks ToBeCompletedTasks="@ViewModel.ToBeCompletedTask"
+                                   UndoneTasks="@ViewModel.Tasks"
+                                   DoneTasks="@ViewModel.DoneTasks"
+                                   UpcomingTasks="@ViewModel.UpcomingTasks"
+                                   OnShowAddTaskModal="@ShowAddTaskModal"
+                                   OnDeleteTask="@DeleteTask"
+                                   OnShowUpdateTaskModal="@ShowUpdateTaskModal" />
+                        }
+
+                        @if (ViewModel.TargetInformation is not null)
+                        {
+                            <TargetInformations TargetInformation="@ViewModel.TargetInformation"
+                                                TargetInformationEditContext="@_targetInformationEditContext"
+                                                Territory="@Territory"
+                                                UserRole="@_userRole"
+                                                ShowSubmitButton="@_showSubmitButtonForTargetInformation"
+                                                OnSubmit="@SubmitTargetInformation"
+                                                OnTargetInformationChanged="@HandleTargetInformationDataChange" />                            
+                        }
+
+                        @if (ViewModel.BillingLog is not null)
+                        {
+                            <AccompanyingFileBilling BillingLog="@ViewModel.BillingLog"
+                                                     BillingEditContext="@_billingLogEditContext"
+                                                     ShowSubmitButtonForFirstFacturationData="@_showSubmitButtonForFirstFacturationData"
+                                                     ShowSubmitButtonForSecondFacturationData="@_showSubmitButtonForSecondFacturationData"
+                                                     ShowSubmitButtonForThirdFacturationData="@_showSubmitButtonForThirdFacturationData"
+                                                     OnSubmit="@SubmitFacturationData"
+                                                     OnFacturationDataChange="@HandleFacturationDataChange"
+                                                     FacturationFieldShouldBeDisabled="@FacturationFieldShouldBeDisabled" />
+                        }
+
+                        <AccompanyingFileDocuments Documents="@ViewModel.Documents"
+                                                   ErrorMessages="@_errorMessages"
+                                                   OnUpload="@OnChangeUpload"
+                                                   OnClickDeleteFile="@OnClickDeleteFile"
+                                                   OnViewFile="@OnViewFileRequested" />
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

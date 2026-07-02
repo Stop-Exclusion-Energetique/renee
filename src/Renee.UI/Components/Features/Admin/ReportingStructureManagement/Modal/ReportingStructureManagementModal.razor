@@ -1,0 +1,39 @@
+﻿@using Renee.Application.Interfaces
+@inject IUserCredentialService userCredentialService
+
+<h2>@Labels.AddReportingStructure</h2>
+
+<div class="btn-display">
+    <ZeeButton DisplayBackground="DisplayEnumBackground.Green"
+               Icon=@Icons.AddButton
+               @onclick="@(async () => await AddReportingStructure())"
+               Text="@Labels.Approve">
+    </ZeeButton>
+    <ZeeButton DisplayBackground="DisplayEnumBackground.Red"
+               Icon="delete_forever"
+               @onclick="@( async () => await RejectReportingStructure())"
+               Text="@Labels.Reject">
+    </ZeeButton>
+</div>
+
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    [Parameter]
+    public string? ReportingStructureName { get; set; }
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    public async Task AddReportingStructure()
+    {
+        await userCredentialService.LinkReportingStructureWithUnRegisteredUser(UserId, ReportingStructureName);
+        await BlazoredModal.CloseAsync(ModalResult.Ok(ReportingStructureName));
+    }
+
+    public async Task RejectReportingStructure()
+    {
+        await userCredentialService.StickUserToNoReportingStructure(UserId);
+        await BlazoredModal.CloseAsync(ModalResult.Ok(ReportingStructureName));
+    }
+}

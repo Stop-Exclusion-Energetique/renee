@@ -1,0 +1,17 @@
+﻿.save-btn-container {
+    display: flex;
+    flex-direction: column;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    margin-top: 1em;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.zeeButtonGroup {
+    display: flex;
+    width: 100%;
+    gap: 3rem;
+    flex-wrap: wrap;
+}

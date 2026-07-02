@@ -1,0 +1,584 @@
+@using System.Linq.Dynamic.Core
+@using System.Net.Http.Headers
+@using Azure
+@using Azure.AI.DocumentIntelligence
+@using Azure.AI.OpenAI
+@using ChatMessage = Microsoft.Extensions.AI.ChatMessage
+@using Microsoft.Extensions.AI
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Extensions.Logging
+@using ModelContextProtocol.Client
+@using Renee.Application.Interfaces
+@using Renee.Infrastructure.FileServices
+@using Renee.Infrastructure.Providers
+@using Renee.UI.Components.Features.ReneeAIChat.Components
+@using System.Text
+@using System.Text.Json
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IServiceProvider ServiceProvider
+@inject ITelemetryService TelemetryService
+@inject ILoggerFactory LoggerFactory
+
+<div class="chatbot-widget">
+    @if (_isOpen)
+    {
+        <div class="chatbot-panel @(_isExpanded ? "chatbot-panel--expanded" : "")">
+            <div class="chatbot-header">
+                <span class="chatbot-title">Renee AI</span>
+                <div class="chatbot-header-actions">
+                    <button class="chatbot-header-btn @(_showTools ? "chatbot-header-btn--active" : "")"
+                            @onclick="ToggleTools"
+                            title="@(_showTools ? "Retour au chat" : "Outils disponibles")">
+                        <RadzenIcon Icon="build" />
+                        @if (tools.Count > 0)
+                        {
+                            <span class="chatbot-tools-badge">@tools.Count</span>
+                        }
+                    </button>
+                    <button class="chatbot-header-btn"
+                            @onclick="ToggleExpand"
+                            title="@(_isExpanded ? "Réduire" : "Agrandir")">
+                        <RadzenIcon Icon="@(_isExpanded ? "close_fullscreen" : "open_in_full")" />
+                    </button>
+                    <button class="chatbot-header-btn chatbot-close-btn" @onclick="ToggleOpen" aria-label="Fermer">
+                        <RadzenIcon Icon="close" />
+                    </button>
+                </div>
+            </div>
+
+            @if (_showTools)
+            {
+                <div class="chatbot-tools-panel">
+                    <div class="chatbot-tools-header">Outils disponibles (@tools.Count)</div>
+                    @foreach (var tool in tools)
+                    {
+                        <div class="chatbot-tool-item">
+                            <div class="chatbot-tool-name">@tool.Name</div>
+                            @if (!string.IsNullOrWhiteSpace(tool.Description))
+                            {
+                                <div class="chatbot-tool-desc">@tool.Description</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="chat-thread">
+                    @for (int i = 0; i < messages.Count; i++)
+                    {
+                        var message = messages[i];
+                        var usedTools = i < messageTools.Count ? messageTools[i] : new List<string>();
+                        <div class="chat-message-row">
+                            <ReneeChatComponent Message="@message.Text" IsAiChat="message.Role == ChatRole.Assistant" ToolsUsed="@usedTools" />
+                        </div>
+                    }
+                    @if (_isSending)
+                    {
+                        <div class="chat-message-row">
+                            <div class="chat-typing-indicator">
+                                <div class="chat-typing-dot"></div>
+                                <div class="chat-typing-dot"></div>
+                                <div class="chat-typing-dot"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="chat-input-container">
+                    @if (_processingStatus is not null)
+                    {
+                        <div class="chat-processing-status">
+                            <div class="chat-spinner"></div>
+                            @_processingStatus
+                        </div>
+                    }
+                    @if (_fileError is not null)
+                    {
+                        <div class="chat-file-error">@_fileError</div>
+                    }
+                    @if (_attachedFileName is not null)
+                    {
+                        <div class="chat-file-badge">
+                            <RadzenIcon Icon="@(_attachedFileIsAudio ? "headphones" : "attach_file")" />
+                            <span class="chat-file-badge-name">@_attachedFileName</span>
+                            <button class="chat-file-badge-remove" @onclick="ClearAttachment" aria-label="Supprimer la pièce jointe">×</button>
+                        </div>
+                    }
+                    <div class="chat-input-row">
+                        <label class="chat-attach-btn @(_isSending ? "chat-attach-btn--disabled" : "")" title="Joindre un fichier texte, PDF ou audio">
+                            <InputFile OnChange="OnFileSelected" accept=".txt,.md,.csv,.log,.pdf,.mp3,.wav,.ogg,.m4a,.flac,.webm" style="display:none" disabled="@_isSending" />
+                            <RadzenIcon Icon="attach_file" />
+                        </label>
+                        <div class="chat-input-wrapper">
+                            <InputTextArea @bind-Value="userInput" class="chat-input-text chat-float" rows="3" placeholder="Posez votre question..." disabled="@_isSending" />
+                            <button type="button" class="send-arrow-btn" @onclick="@(async () => await SendMessage())" disabled="@_isSending" aria-label="Envoyer">
+                                @if (_isSending)
+                                {
+                                    <div class="chat-spinner send-spinner"></div>
+                                }
+                                else
+                                {
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <p class="chat-disclaimer">
+                        Les réponses peuvent contenir des erreurs — vérifiez toujours les informations importantes.
+                        Vos messages et les données affichées sont transmis à Azure OpenAI (Microsoft, région UE) et historisés par Renée.
+                    </p>
+                </div>
+            }
+        </div>
+    }
+    <button class="chatbot-toggle-btn" @onclick="ToggleOpen" aria-label="@(_isOpen ? "Fermer le chat" : "Ouvrir Renee AI")">
+        <RadzenIcon Icon="face" />
+    </button>
+</div>
+
+@code {
+
+    public ILogger _logger = default!;
+
+    public McpClient mcpClient = default!;
+    public IList<McpClientTool> tools = [];
+    public IList<McpClientPrompt> prompts = [];
+
+    public List<ChatMessage> messages = new List<ChatMessage>();
+    public List<List<string>> messageTools = new List<List<string>>();
+    public List<ChatResponseUpdate> updates = [];
+
+    public string userInput = string.Empty;
+    public string userIdentifier = string.Empty;
+
+    public HttpClient httpClient = new HttpClient();
+    private IConfiguration _appConfig = new ConfigurationBuilder().Build();
+
+    private bool _isOpen = false;
+    private bool _isExpanded = false;
+    private bool _showTools = false;
+    private bool _isSending = false;
+    private string? _processingStatus = null;
+
+    private string? _attachedFileName;
+    private string? _attachedFileContent;
+    private byte[]? _attachedFilePdfBytes;
+    private byte[]? _attachedFileAudioBytes;
+    private string? _attachedFileAudioMimeType;
+    private bool    _attachedFileIsAudio;
+    private string? _fileError;
+
+    private const long MaxFileSizeBytes  = 500 * 1024;        //  500 KB
+    private const long MaxPdfSizeBytes   = 5  * 1024 * 1024;  //    5 MB
+    private const long MaxAudioSizeBytes = 25 * 1024 * 1024;  //   25 MB
+
+    protected override async Task OnInitializedAsync()
+    {
+        _logger = LoggerFactory.CreateLogger<AIChatBasePage>();
+        _appConfig = ServiceProvider.GetService<IConfiguration>() ?? _appConfig;
+
+        var connectedUserClaims = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Claims;
+        var connectedUserClaimsDictionary = connectedUserClaims.ToDictionary(c => c.Type, c => c.Value);
+        userIdentifier = connectedUserClaimsDictionary.GetValueOrDefault("preferred_username")
+            ?? connectedUserClaimsDictionary.GetValueOrDefault("upn")
+            ?? "unknown";
+
+        var mcpUri = _appConfig["McpServerStream:MCPuri"];
+        if (string.IsNullOrWhiteSpace(mcpUri))
+        {
+            _logger.LogWarning("Configuration 'McpServerStream:MCPuri' manquante. Initialisation du chat ignorée.");
+            return;
+        }
+
+        httpClient.BaseAddress = new Uri(mcpUri);
+
+        var jwtGeneratorService = ServiceProvider.GetService<JwtGeneratorService>();
+        if (jwtGeneratorService is not null)
+        {
+            var token = jwtGeneratorService.CreateJwtHs256(userClaimsDictionary: connectedUserClaimsDictionary);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        httpClient.DefaultRequestHeaders.Add("MCP-Protocol-Version", "2025-06-18");
+
+        try
+        {
+            mcpClient = await McpClient.CreateAsync(
+                new ModelContextProtocol.Client.HttpClientTransport(
+                    new HttpClientTransportOptions()
+                    {
+                        Endpoint = new Uri(mcpUri),
+                    },
+                    httpClient,
+                    null,
+                    true
+                ));
+
+            tools = await mcpClient.ListToolsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Impossible d'initialiser Renee AI chat dans ce contexte.");
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        _fileError = null;
+        var file = e.File;
+
+        if (file.Size == 0)
+        {
+            _fileError = "Le fichier est vide et ne peut pas être analysé.";
+            _attachedFileName = null;
+            _attachedFileContent = null;
+            _attachedFilePdfBytes = null;
+            return;
+        }
+
+        var isPdf   = file.Name.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
+        var isAudio = !isPdf && IsAudioFile(file.Name);
+        var sizeLimit = isAudio ? MaxAudioSizeBytes : isPdf ? MaxPdfSizeBytes : MaxFileSizeBytes;
+
+        if (file.Size > sizeLimit)
+        {
+            _fileError = $"Fichier trop volumineux ({file.Size / 1024} Ko). Maximum : {sizeLimit / 1024} Ko.";
+            _attachedFileName = null;
+            _attachedFileContent = null;
+            _attachedFilePdfBytes = null;
+            _attachedFileAudioBytes = null;
+            return;
+        }
+
+        try
+        {
+            if (isPdf)
+            {
+                using var stream = file.OpenReadStream(MaxPdfSizeBytes);
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                _attachedFilePdfBytes   = ms.ToArray();
+                _attachedFileContent    = null;
+                _attachedFileAudioBytes = null;
+                _attachedFileIsAudio    = false;
+                _attachedFileName       = file.Name;
+            }
+            else if (isAudio)
+            {
+                using var stream = file.OpenReadStream(MaxAudioSizeBytes);
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                _attachedFileAudioBytes    = ms.ToArray();
+                _attachedFileAudioMimeType = GetAudioMimeType(file.Name);
+                _attachedFilePdfBytes      = null;
+                _attachedFileContent       = null;
+                _attachedFileIsAudio       = true;
+                _attachedFileName          = file.Name;
+            }
+            else
+            {
+                using var stream = file.OpenReadStream(MaxFileSizeBytes);
+                using var reader = new System.IO.StreamReader(stream, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+                _attachedFileContent    = await reader.ReadToEndAsync();
+                _attachedFilePdfBytes   = null;
+                _attachedFileAudioBytes = null;
+                _attachedFileIsAudio    = false;
+                _attachedFileName       = file.Name;
+            }
+        }
+        catch
+        {
+            _fileError = isPdf   ? "Impossible de lire le fichier PDF."
+                       : isAudio ? "Impossible de lire le fichier audio."
+                                 : "Impossible de lire le fichier. Vérifiez qu'il s'agit bien d'un fichier texte (UTF-8).";
+            _attachedFileName       = null;
+            _attachedFileContent    = null;
+            _attachedFilePdfBytes   = null;
+            _attachedFileAudioBytes = null;
+            _attachedFileIsAudio    = false;
+        }
+    }
+
+    private void ClearAttachment()
+    {
+        _attachedFileName          = null;
+        _attachedFileContent       = null;
+        _attachedFilePdfBytes      = null;
+        _attachedFileAudioBytes    = null;
+        _attachedFileAudioMimeType = null;
+        _attachedFileIsAudio       = false;
+        _fileError                 = null;
+    }
+
+    private void ToggleOpen()
+    {
+        _isOpen = !_isOpen;
+        if (!_isOpen)
+            _showTools = false;
+    }
+
+    private void ToggleExpand() => _isExpanded = !_isExpanded;
+
+    private void ToggleTools() => _showTools = !_showTools;
+
+    public async Task SendMessage()
+    {
+        if (_isSending)
+            return;
+
+        if (string.IsNullOrWhiteSpace(userInput) && _attachedFileContent is null && _attachedFilePdfBytes is null && _attachedFileAudioBytes is null)
+            return;
+
+        _isSending = true;
+        _fileError = null;
+        _processingStatus = "Envoi de votre message...";
+        StateHasChanged();
+
+        ChatMessage? contextMessage = null;
+        string displayText;
+
+        try {
+            if (_attachedFileAudioBytes is not null)
+            {
+                _processingStatus = "Transcription de l'audio...";
+                StateHasChanged();
+
+                var (transcription, audioError) = await AnalyzeAudioWithSpeechToText(_attachedFileAudioBytes, _attachedFileAudioMimeType!);
+                if (audioError is not null)
+                {
+                    _fileError = audioError;
+                    return;
+                }
+
+                displayText = string.IsNullOrWhiteSpace(userInput)
+                    ? $"[Audio joint : {_attachedFileName}]"
+                    : $"[Audio joint : {_attachedFileName}]\n{userInput}";
+
+                if (transcription is not null)
+                    contextMessage = new ChatMessage(ChatRole.System,
+                        $"[Audio joint : {_attachedFileName}]\nTranscription :\n---\n{transcription}\n---");
+            }
+            else if (_attachedFilePdfBytes is not null)
+            {
+                _processingStatus = "Analyse du PDF...";
+                StateHasChanged();
+
+                var (extracted, pdfError) = await AnalyzePdfWithDocumentIntelligence(_attachedFilePdfBytes);
+                if (pdfError is not null)
+                {
+                    _fileError = pdfError;
+                    return;
+                }
+
+                displayText = string.IsNullOrWhiteSpace(userInput)
+                    ? $"[PDF joint : {_attachedFileName}]"
+                    : $"[PDF joint : {_attachedFileName}]\n{userInput}";
+
+                if (extracted is not null)
+                    contextMessage = new ChatMessage(ChatRole.System,
+                        $"[PDF joint : {_attachedFileName}]\n---\n{extracted}\n---");
+            }
+            else if (_attachedFileContent is not null)
+            {
+                displayText = string.IsNullOrWhiteSpace(userInput)
+                    ? $"[Fichier joint : {_attachedFileName}]"
+                    : $"[Fichier joint : {_attachedFileName}]\n{userInput}";
+
+                contextMessage = new ChatMessage(ChatRole.System,
+                    $"[Fichier joint : {_attachedFileName}]\n---\n{_attachedFileContent}\n---");
+            }
+            else
+            {
+                displayText = userInput;
+            }
+
+            var userMessage = new ChatMessage(ChatRole.User, displayText);
+            TelemetryService.TrackAiChatMessageSent(userIdentifier, userInput?.Length ?? 0);
+
+            messages.Add(userMessage);
+            messageTools.Add(new List<string>());
+            userInput = string.Empty;
+            ClearAttachment();
+            updates.Clear();
+
+            List<ChatMessage> aiMessages;
+            if (contextMessage is not null)
+            {
+                aiMessages = new List<ChatMessage>(messages);
+                aiMessages.Insert(aiMessages.Count - 1, contextMessage);
+            }
+            else
+            {
+                aiMessages = messages;
+            }
+
+            _processingStatus = "Renee réfléchit...";
+            StateHasChanged();
+
+            var chatClient = ServiceProvider.GetService<IChatClient>();
+            if (chatClient is null)
+            {
+                _fileError = "Le service de chat IA n'est pas disponible dans ce contexte.";
+                return;
+            }
+
+            ChatOptions chatOptions = new() {
+                Tools = [.. tools.Select(t => new LoggingMcpTool(t, _logger))],
+                Instructions = ReneeAiPromptSystem.BasePrompt,
+                AllowMultipleToolCalls = true,
+                MaxOutputTokens = 16384
+            };
+
+            await foreach (ChatResponseUpdate update in chatClient.GetStreamingResponseAsync(messages, chatOptions))
+            {
+                updates.Add(update);
+            }
+
+            var toolsUsed = updates
+                .SelectMany(u => u.Contents ?? Enumerable.Empty<AIContent>())
+                .OfType<FunctionCallContent>()
+                .Select(f => f.Name)
+                .Distinct()
+                .ToList();
+
+            var responseText = string.Join("", updates.Select(u => u.Text));
+            if (!string.IsNullOrWhiteSpace(responseText))
+            {
+                messages.Add(new ChatMessage(ChatRole.Assistant, responseText));
+                messageTools.Add(toolsUsed);
+            }
+        }
+        finally
+        {
+            _isSending = false;
+            _processingStatus = null;
+            StateHasChanged();
+        }
+    }
+
+    private async Task<(string? text, string? error)> AnalyzePdfWithDocumentIntelligence(byte[] pdfBytes)
+    {
+        var endpoint = _appConfig["AzureDocumentIntelligence:Endpoint"];
+        var apiKey   = _appConfig["AzureDocumentIntelligence:ApiKey"];
+        if (string.IsNullOrWhiteSpace(endpoint) || string.IsNullOrWhiteSpace(apiKey))
+            return (null, "Azure Document Intelligence n'est pas configuré. Contactez un administrateur.");
+
+        try
+        {
+            var diClient  = new DocumentIntelligenceClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
+            var operation = await diClient.AnalyzeDocumentAsync(Azure.WaitUntil.Completed, "prebuilt-read", BinaryData.FromBytes(pdfBytes));
+            var result    = operation.Value;
+
+            var content = DocumentIntelligenceHelper.ProcessContent(result.Content);
+            var tables  = DocumentIntelligenceHelper.RenderTables(result);
+            var full    = string.IsNullOrWhiteSpace(tables)
+                ? content
+                : $"{content}\n\n---\nTableaux :\n{tables}";
+
+            return (string.IsNullOrWhiteSpace(full) ? null : full.Trim(), null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erreur Document Intelligence lors de l'analyse PDF");
+            return (null, "Impossible d'analyser le PDF. Vérifiez que le fichier est valide et réessayez.");
+        }
+    }
+
+    private static bool IsAudioFile(string fileName) =>
+        fileName.EndsWith(".mp3",  StringComparison.OrdinalIgnoreCase) ||
+        fileName.EndsWith(".wav",  StringComparison.OrdinalIgnoreCase) ||
+        fileName.EndsWith(".ogg",  StringComparison.OrdinalIgnoreCase) ||
+        fileName.EndsWith(".m4a",  StringComparison.OrdinalIgnoreCase) ||
+        fileName.EndsWith(".flac", StringComparison.OrdinalIgnoreCase) ||
+        fileName.EndsWith(".webm", StringComparison.OrdinalIgnoreCase);
+
+    private static string GetAudioMimeType(string fileName) =>
+        fileName.EndsWith(".mp3",  StringComparison.OrdinalIgnoreCase) ? "audio/mpeg"  :
+        fileName.EndsWith(".wav",  StringComparison.OrdinalIgnoreCase) ? "audio/wav"   :
+        fileName.EndsWith(".ogg",  StringComparison.OrdinalIgnoreCase) ? "audio/ogg"   :
+        fileName.EndsWith(".m4a",  StringComparison.OrdinalIgnoreCase) ? "audio/mp4"   :
+        fileName.EndsWith(".flac", StringComparison.OrdinalIgnoreCase) ? "audio/flac"  :
+        fileName.EndsWith(".webm", StringComparison.OrdinalIgnoreCase) ? "audio/webm"  :
+        "application/octet-stream";
+
+    private async Task<(string? text, string? error)> AnalyzeAudioWithSpeechToText(byte[] audioBytes, string mimeType)
+    {
+        var region = _appConfig["AzureSpeechToText:Region"];
+        var apiKey = _appConfig["AzureSpeechToText:ApiKey"];
+        var locale = _appConfig["AzureSpeechToText:Locale"] ?? "fr-FR";
+
+        if (string.IsNullOrWhiteSpace(region) || string.IsNullOrWhiteSpace(apiKey))
+            return (null, "Azure Speech-to-Text n'est pas configuré. Contactez un administrateur.");
+
+        try
+        {
+            using var sttClient = new HttpClient();
+            sttClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", apiKey);
+
+            var url = $"https://{region}.api.cognitive.microsoft.com/speechtotext/transcriptions:transcribe?api-version=2024-11-15";
+
+            using var form = new MultipartFormDataContent();
+
+            var definition = $$$"""{"locales":["{{{locale}}}"],"diarizationEnabled":false}""";
+            form.Add(new StringContent(definition, Encoding.UTF8, "application/json"), "definition");
+
+            var audioContent = new ByteArrayContent(audioBytes);
+            audioContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(mimeType);
+            form.Add(audioContent, "audio", "audio");
+
+            var response = await sttClient.PostAsync(url, form);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Azure STT error {Status}: {Body}", (int)response.StatusCode, json);
+                return (null, "Impossible de transcrire l'audio. Vérifiez que le fichier est valide et réessayez.");
+            }
+
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            if (!root.TryGetProperty("combinedPhrases", out var phrases) || phrases.GetArrayLength() == 0)
+                return (null, "Aucune parole détectée dans le fichier audio.");
+
+            var text = phrases[0].GetProperty("text").GetString();
+            return (string.IsNullOrWhiteSpace(text) ? null : text.Trim(), null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erreur Azure Speech-to-Text lors de la transcription audio");
+            return (null, "Impossible de transcrire l'audio. Vérifiez que le fichier est valide et réessayez.");
+        }
+    }
+
+    private sealed class LoggingMcpTool(McpClientTool inner, ILogger logger) : DelegatingAIFunction(inner)
+    {
+        protected override async ValueTask<object?> InvokeCoreAsync(
+            AIFunctionArguments arguments,
+            CancellationToken cancellationToken)
+        {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                var result = await base.InvokeCoreAsync(arguments, cancellationToken);
+                stopwatch.Stop();
+                logger.LogInformation(
+                    "MCP tool {Tool} executed in {ElapsedMs}ms (success)",
+                    Name, stopwatch.ElapsedMilliseconds);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
+                logger.LogError(
+                    "MCP tool {Tool} failed in {ElapsedMs}ms: {ErrorType}",
+                    Name, stopwatch.ElapsedMilliseconds, ex.GetType().Name);
+                throw;
+            }
+        }
+    }
+}

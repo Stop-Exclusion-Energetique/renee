@@ -1,0 +1,6 @@
+﻿.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}

@@ -1,0 +1,63 @@
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.Tasks.Component
+@attribute [Route(Endpoints.MyTasks)]
+@attribute [Authorize]
+
+
+<AuthorizeView Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}")">
+    <Authorized>
+        <h1 class="page-title">@Labels.MyTasks</h1>
+
+        @if (_taskGroups.Count == 0)
+        {
+            <p>@Labels.NoTasksForUser</p>
+        }
+        else
+        {
+            @foreach (var group in _taskGroups)
+            {
+                <div class="file-group">
+                    <div class="file-group-header"
+                         @onclick="() => NavigateToAccompanyingFileMenu(group.AccompanyingFileId)">
+                        <div class="file-group-field">
+                            <div class="file-group-label">@Labels.MainOccupant</div>
+                            <div class="file-group-value">@group.MainOccupantFullName</div>
+                        </div>
+                        <div class="file-group-field">
+                            <div class="file-group-label">@Labels.AssociatedResourceAddress</div>
+                            <div class="file-group-value">@group.Address</div>
+                        </div>
+                        <div class="file-group-field">
+                            <div class="file-group-label">@AccompanyingFileMenu.TaskCount</div>
+                            <div class="file-group-value">@group.TaskCount</div>
+                        </div>
+                    </div>
+                    <div class="file-group-tasks">
+                        @foreach (var (headerClass, label, tasks) in GetTaskColumns(group))
+                        {
+                            <div class="task-column">
+                                <div class="task-column-header @headerClass">
+                                    <span>@label</span>
+                                    @if (tasks.Count > 0)
+                                    {
+                                        <span class="task-column-badge">@tasks.Count</span>
+                                    }
+                                </div>
+
+                                @foreach (var task in tasks)
+                                {
+                                    <TaskCard AssignedUserFullName="@task.AssignedUserName"
+                                              DueDate="@task.DueDate"
+                                              Priority="@task.Priority"
+                                              TaskId="@task.TaskId"
+                                              Title="@task.TaskName"
+                                              IsUpdateMode="false" />
+                                }
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </Authorized>
+</AuthorizeView>

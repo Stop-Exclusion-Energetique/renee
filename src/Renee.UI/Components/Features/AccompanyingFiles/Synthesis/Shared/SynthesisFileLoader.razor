@@ -1,0 +1,76 @@
+﻿@using Renee.UI.Components.ErrorHandling
+
+@if (MemoryStreamFile != null && string.IsNullOrEmpty(ErrorMessage))
+{
+    <a class="trash-icon" href="javascript:void(0)" @onclick="@(ViewFile.HasDelegate ? async () => await ViewFile.InvokeAsync() : () => { if (ViewFiles != null) ViewFiles(FileBytes, FileName!); })" rel="noopener noreferrer">
+        <span>
+            @((MarkupString)Icons.Svg.PictoVoir)
+        </span>
+    </a>
+
+    @if (!string.IsNullOrWhiteSpace(FileLoadedMessage))
+    {
+        <span class="spaced">@((MarkupString)FileLoadedMessage)</span>
+    }
+
+    @if (ShouldDisplaySubmissionButton() || (IsAccompanyingFileWaitingForValidation() && IsUserAllowedToModifyDataFolder()))
+    {
+        <label class="trash-icon pointer">
+            <span @onclick="@OnClickDeleteFile">
+                @((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+            </span>
+        </label>
+    }
+}
+else
+{
+    <InputFile accept=".pdf, .png, .jpeg, .jpg, .webp"
+            class="d-none"
+            id="@inputId"
+            OnChange="@OnChangeUpload" />
+
+    @if (ShouldDisplaySubmissionButton() || (IsAccompanyingFileWaitingForValidation() && IsUserAllowedToModifyDataFolder()))
+    {
+        <label class="@($"spaced pointer {(IsFileRequired ? "required" : "")}")" for="@inputId">
+            <span>
+                @((MarkupString)Icons.Svg.Upload)
+                @FileNotLoadedMessage
+            </span>
+        </label>
+    }
+}
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p class="validation-message">@ErrorMessage</p>
+}
+
+@code {
+    [Parameter] public MemoryStream? MemoryStreamFile { get; set; }
+    [Parameter] public EventCallback<MemoryStream?> MemoryStreamFileChanged { get; set; }
+
+    [Parameter] public byte[]? FileBytes { get; set; }
+    [Parameter] public EventCallback<byte[]?> FileBytesChanged { get; set; }
+
+    [Parameter] public string? ErrorMessage { get; set; }
+    [Parameter] public EventCallback<string?> ErrorMessageChanged { get; set; }
+
+    [Parameter] public string? FileName { get; set; }
+    [Parameter] public EventCallback<string?> FileNameChanged { get; set; }
+
+    [Parameter] public string? FileNotLoadedMessage { get; set; }
+    [Parameter] public string? FileLoadedMessage { get; set; }
+
+    [Parameter] public EventCallback<InputFileChangeEventArgs> OnChangeUpload { get; set; }
+    [Parameter] public EventCallback ViewFile { get; set; }
+    [Parameter] public EventCallback OnClickDeleteFile { get; set; }
+    [Parameter] public Func<byte[]?, string, Task>? ViewFiles { get; set; }
+
+    [Parameter] public Func<bool> ShouldDisplaySubmissionButton { get; set; } = () => false;
+    [Parameter] public Func<bool> IsAccompanyingFileWaitingForValidation { get; set; } = () => false;
+    [Parameter] public Func<bool> IsUserAllowedToModifyDataFolder { get; set; } = () => false;
+
+    [Parameter] public bool IsFileRequired { get; set; } = true;
+
+    private readonly string inputId = $"file-upload-{Guid.NewGuid()}";
+}

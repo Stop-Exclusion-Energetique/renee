@@ -1,0 +1,22 @@
+.fullscreen {
+    align-items: center;
+    background: inherit;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    justify-content: space-evenly;
+    position: absolute;
+    width: 100%;
+    z-index: 99999;
+}
+
+.loader {
+    animation: rotation 1s linear infinite;
+    border: 7px solid var(--yellow);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 70px;
+    width: 70px;
+}

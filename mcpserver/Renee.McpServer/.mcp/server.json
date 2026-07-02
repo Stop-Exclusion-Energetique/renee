@@ -1,0 +1,21 @@
+{
+	"$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+	"name": "io.github.your-username/repo-name",
+	"description": "<your description here>",
+	"version": "0.1.0-beta",
+	"remotes": [
+		{
+			"type": "streamable-http",
+			"url": "https://your-remote-url-here.com",
+			"headers": [
+				{
+					"name": "Authorization",
+					"value": "Bearer <your-token-here>",
+					"format": "string",
+					"isRequired": true,
+					"isSecret": true
+				}
+			]
+		}
+	]
+}

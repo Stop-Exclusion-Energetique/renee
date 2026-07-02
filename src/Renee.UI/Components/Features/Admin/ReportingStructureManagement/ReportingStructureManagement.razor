@@ -1,0 +1,57 @@
+﻿@using Renee.UI.Components.Features.Admin.ReportingStructureManagement.ViewModel
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route($"{Endpoints.ReportingStructureManagement}")]
+
+<AuthorizeView Context="_"
+               Roles="@Constants.AdminRole">
+    <Authorized>
+        <ZeeHeader ShouldRenderLogo="false"
+                   Title="@Labels.AddingReportingStructureAvailable">
+        </ZeeHeader>
+
+        @if (ReportingStructureList.Any())
+        {
+            <ZeeDataGrid Data="@ReportingStructureList">
+                <Columns>
+                    <RadzenDataGridColumn Property="SubscriptionDate"
+                                          TItem="ReportingStructureManagementViewModel"
+                                          Title="@Labels.AskedAt">
+                        <Template Context="reportingStructureManagementViewModel">
+                            @reportingStructureManagementViewModel.SubscriptionDate
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="ReportingStructureName"
+                                          TItem="ReportingStructureManagementViewModel"
+                                          Title="@Labels.AskedReportingStructure">
+                        <Template Context="reportingStructureManagementViewModel">
+                            @reportingStructureManagementViewModel.ReportingStructureName
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Context="userDto"
+                                          Filterable="false"
+                                          Sortable="false"
+                                          TextAlign="TextAlign.Right"
+                                          TItem="ReportingStructureManagementViewModel"
+                                          Width="156px">
+                        <Template Context="reportingStructureManagementViewModel">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                          Icon="edit"
+                                          Click="@(() => AddReportingStructure(reportingStructureManagementViewModel.UserId, reportingStructureManagementViewModel.ReportingStructureName!))"
+                                          Size="ButtonSize.Medium"
+                                          Variant="Variant.Flat">
+                            </RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </ZeeDataGrid>
+        }
+        else
+        {
+            <span> @Labels.NoReportingStructure</span>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

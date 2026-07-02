@@ -1,0 +1,123 @@
+@using System.Globalization
+@using System.Text.RegularExpressions
+@using static Domain.Labels
+<div class="d-flex flex-column">
+	<label class="pure-material-textfield-outlined">
+		<input @attributes="AdditionalAttributes"
+		       class="@(EditContext is not null ? EditContext.FieldCssClass(FieldIdentifier) : "")"
+		       @onblur="OnBlur"
+		       @onchange="OnValueChanged"
+		       Placeholder=" "
+		       type="text"
+		       value="@IntgrAsString"/>
+
+		<span>
+			@Label
+			<span class="@(IsRequired ?? false ? "required" : "")"> </span>
+		</span>
+	</label>
+	<span class="validation-message">
+		@Validation
+	</span>
+</div>
+
+@code{
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+	[Parameter] public int? Intgr { get; set; }
+
+	[Parameter] public EventCallback<int?> IntgrChanged { get; set; }
+
+	[Parameter] public string? Label { get; set; }
+
+	[Parameter] public TypeOfValue Type { get; set; }
+
+	[Parameter] public EditContext? EditContext { get; set; }
+
+	[Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+
+	[Parameter] public EventCallback<int?> Event { get; set; }
+
+	[Parameter] public bool IsMoneyField { get; set; }
+
+	[Parameter] public bool? IsRequired { get; set; }
+
+	private string? Validation { get; set; }
+
+	private string? IntgrAsString => IsMoneyField ? Intgr?.ToString("C", CultureInfo.CreateSpecificCulture("fr-FR")) : Intgr?.ToString();
+
+
+	public enum TypeOfValue
+	{
+		Int, Year
+	}
+
+	private async Task OnValueChanged(ChangeEventArgs args)
+	{
+		if (string.IsNullOrEmpty(args.Value?.ToString())) { await IntgrChanged.InvokeAsync(null); }
+		else
+		{
+			await GetValueAsync(args);
+
+			if (Event.HasDelegate) await Event.InvokeAsync(Intgr);
+		}
+	}
+
+	private async Task GetValueAsync(ChangeEventArgs args)
+	{
+		var argsValue = args.Value?.ToString();
+
+		if (argsValue != null && Regex.IsMatch(argsValue, Constants.FrenchIntPattern, RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(1000))) { await GetNumberAsync(argsValue); }
+		else if (IsMoneyField) { await GetCurrencyAmountAsync(argsValue); }
+		else
+		{
+			var val = IntgrAsString ?? "0";
+			Intgr = null;
+			await Task.Yield();
+			Intgr = int.TryParse(val, out var intgr) ? intgr : null;
+			StateHasChanged();
+			Validation = Errors.NumberShouldBeCorrect;
+		}
+	}
+
+	private async Task GetNumberAsync(string argsValue)
+	{
+		if (int.TryParse(argsValue, out var amount))
+		{
+			if ((Type == TypeOfValue.Year && Constants.MinimalYear < amount && amount <= DateTime.UtcNow.Year) || Type == TypeOfValue.Int)
+			{
+				Intgr = amount;
+				Validation = string.Empty;
+				await IntgrChanged.InvokeAsync(Intgr);
+			}
+			else
+			{
+				if (Type == TypeOfValue.Year && argsValue.Length < 4) return;
+				Validation = string.Format(Errors.IntShouldBeBetween, Constants.MinimalYear, DateTime.UtcNow.Year);
+				var val = IntgrAsString;
+				Intgr = null;
+				await Task.Yield();
+				Intgr = int.TryParse(val, out var intgr) ? intgr : null;
+				await IntgrChanged.InvokeAsync(Intgr);
+			}
+		}
+	}
+
+	private async Task GetCurrencyAmountAsync(string? argsValue)
+	{
+		if (int.TryParse(argsValue, NumberStyles.Currency, CultureInfo.CreateSpecificCulture("fr-FR"), out var amount))
+		{
+			Intgr = amount;
+			Validation = string.Empty;
+			await IntgrChanged.InvokeAsync(Intgr);
+		}
+	}
+
+	private void OnBlur()
+	{
+		if (EditContext != default!) { EditContext.NotifyFieldChanged(FieldIdentifier); }
+	}
+
+}

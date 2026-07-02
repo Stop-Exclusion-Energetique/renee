@@ -1,0 +1,69 @@
+﻿.tab-container {
+    padding: 1em;
+    flex-direction: column;
+    row-gap: 1em;
+}
+
+.flex {
+    display: flex;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+}
+
+.even {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column: span 2;
+    grid-column-gap: 1em;
+}
+
+.odd {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column: 2;
+    grid-row-gap: 1em;
+}
+
+.zeeButtonGroup {
+    display: flex;
+    align-items: center;
+    Gap: 1rem;
+    justify-content: right;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.bloc-container {
+    display: flex;
+    width: 100%;
+    row-gap: 1em;
+}
+
+
+.two-fields-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.button-container {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.select:hover {
+    background-color: #E1E9EF;
+}

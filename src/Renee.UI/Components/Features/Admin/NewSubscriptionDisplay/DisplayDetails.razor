@@ -1,0 +1,167 @@
+@using Renee.UI.Components.ErrorHandling
+@attribute [Route(Endpoints.DisplayDetailsId)]
+@attribute [Authorize]
+
+<AuthorizeView Context="_"
+               Roles="@Constants.AdminRole">
+    <Authorized>
+        <ZeeHeader DisplayReturn="true"
+                   ShouldRenderLogo="false"
+                   Title="@Labels.InscriptionForm">
+        </ZeeHeader>
+
+        <div>
+            <h3>@Labels.AskedAt @_user?.SubscriptionDateUtc</h3>
+        </div>
+        @if (_user is not null && Roles is not null && Roles.Any())
+        {
+            <EditForm Model="_user">
+                <div class="grid-container">
+                    <div class="card grid-form">
+
+                        <div>
+                            <label for="Name">
+                                @Labels.FirstName
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.FirstName"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="Name"
+                                       readonly="true" />
+                        </div>
+
+                        <div>
+                            <label for="LastName">
+                                @Labels.Name
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.LastName"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="LastName"
+                                       readonly="true" />
+                        </div>
+
+                        <div>
+                            <label for="Email">
+                                @Labels.Mail
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.Email"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="Email"
+                                       readonly="true" />
+                        </div>
+
+                        <div>
+                            <label for="PhoneNumber">
+                                @Labels.PhoneNumber
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.PhoneNumber"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="PhoneNumber"
+                                       readonly="true" />
+                        </div>
+                    </div>
+
+                    <div class="card grid-form">
+
+                        <div>
+                            <label for="ReportingStructure">
+                                @Labels.StructureAssociated
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.ReportingStructureDto!.Name"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="ReportingStructure"
+                                       readonly="true" />
+                        </div>
+
+                        <div>
+                            <label for="Job">
+                                @Labels.Job
+                            </label>
+                        </div>
+                        <div>
+                            <InputText @bind-Value="_user.Function"
+                                       class="field"
+                                       disabled="disabled"
+                                       id="Job"
+                                       readonly="true" />
+                        </div>
+
+                        <div>
+                            <label for="DepartmentId">
+                                @Labels.Department
+                            </label>
+                        </div>
+                        <div>
+                            <InputSelect @bind-Value="@_user.TerritoryId"
+                                         class="field"
+                                         disabled="disabled"
+                                         id="DepartmentId"
+                                         readonly="true">
+                                @if (Territories != null)
+                                {
+                                    foreach (var territory in Territories)
+                                    {
+                                        <option value="@territory.TerritoryId">
+                                            @territory.TerritoryName
+                                        </option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div>
+                            <label>@Labels.AskedRole</label>
+                        </div>
+                        <div>
+                            <InputSelect @bind-Value="@_user.AskedRole"
+                                         class="field">
+                                @foreach (var role in Roles)
+                                {
+                                    <option value="@role.Id">
+                                        @role.LongName
+                                    </option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                    </div>
+
+                    <div class="align-items-end card d-flex flex-row item-c">
+                        <span class="mr-2">
+                            <ZeeButton DisplayBackground="DisplayEnumBackground.Green"
+                                       Icon=@Icons.AddButton
+                                       @onclick="ConfirmNewUser"
+                                       Text="@Labels.Approve">
+                            </ZeeButton>
+                        </span>
+                        <span>
+                            <ZeeButton DisplayBackground="DisplayEnumBackground.Red"
+                                       Icon="delete_forever"
+                                       @onclick="DeleteConfirmation"
+                                       Text="@Labels.Reject">
+                            </ZeeButton>
+                        </span>
+                    </div>
+                </div>
+            </EditForm>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

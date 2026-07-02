@@ -1,0 +1,72 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.CopropertyRealizeAndFollowSynthesis + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+<AuthorizeView Context="_"
+               Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+    <Authorized>
+        <div class="main-content">
+            @if (!ShouldDisplaySynthesis())
+            {
+                <p>
+                    <strong>@Labels.SynthesisNotAvailable</strong>
+                </p>
+            }
+            else
+            {
+                <div class="main-content">
+                    <h1 class="ml-3 rubric-title">@RealiseAndFollowMilestone.Labels.RealiseAndFollowSynthesisTitle</h1>
+                    <div class="grid-container">
+                        <div class="card grid-item">
+                            <h2 class="rubric-title">@Labels.WorkProgress</h2>
+                            <OutlinedText IsInForm="false" Label="@Labels.CollectiveWorksStartDate" readonly="readonly" Value="@ViewModel.CollectiveWorksStartDate?.ToString("dd/MM/yyyy")" />
+                            <OutlinedText IsInForm="false" Label="@Labels.PlannedEndDate" readonly="readonly" Value="@ViewModel.PlannedEndDate?.ToString("dd/MM/yyyy")" />
+                            <OutlinedDouble Label="@Labels.ProgressPercentage" readonly Double="@ViewModel.ProgressPercentage" Type="OutlinedDouble.TypeOfValue.Percentage" />
+                            <OutlinedText IsInForm="false" Label="@Labels.ActualCompletionDate" readonly="readonly" Value="@ViewModel.ActualCompletionDate?.ToString("dd/MM/yyyy")" />
+                            <OutlinedDouble Label="@Labels.InvoiceTotalAmount" readonly Double="@ViewModel.InvoiceTotalAmount" Type="OutlinedDouble.TypeOfValue.Currency" />
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <div class="left-part">
+                            <div class="left-part-child">
+                                <SynthesisFileLoader @bind-MemoryStreamFile="@_memoryStreamFile"
+                                                     @bind-ErrorMessage="@ErrorMessage"
+                                                     @bind-FileName="@_fileName"
+                                                     OnChangeUpload="@OnChangeUpload"
+                                                     ViewFile="@ViewFile"
+                                                     OnClickDeleteFile="@OnClickDeleteFile"
+                                                     ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+                                                     IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+                                                     IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+                                                     FileNotLoadedMessage="@Labels.HandoverReportDocument"
+                                                     FileLoadedMessage="@($"{Labels.SupportingDocument} {_fileName} {Labels.FileLoaded}")" />
+                            </div>
+                        </div>
+
+                        @if (ShouldDisplaySubmissionButton())
+                        {
+                            <div class="right-part">
+                                <ZeeButton @onclick="OnClickCancelButton" Text="@Labels.Cancel"></ZeeButton>
+                                <ZeeButton IsSubmit="true" @onclick="OnSubmitSynthesis" Text="@Labels.Submit"></ZeeButton>
+                            </div>
+                        }
+
+                        @if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+                        {
+                            <div class="right-part">
+                                <ZeeButton IsSubmit="true" @onclick="@(() => StageValidation(false))" Text="Rejeter"></ZeeButton>
+                                <ZeeButton @onclick="@(() => StageValidation(true))" Text="Valider"></ZeeButton>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+</AuthorizeView>

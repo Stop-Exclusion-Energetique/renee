@@ -1,0 +1,149 @@
+@using Renee.Application.Helpers
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.RealiseAndFollow.Details.SiteSupervision.Components.WorkParticipant
+
+<div class="tab-container">
+
+    <div class="card">
+        <label class="pure-material-textfield-outlined">
+            <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                       @bind-Value="ViewModel.AnahGrantDate"
+                       @bind-Value:format="yyyy-MM-dd"
+                       max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                       min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+            <span>
+                @RealiseAndFollowMilestone.Labels.AnahGrantDate
+                <span class="required"></span>
+            </span>
+
+            <ValidationMessage For="@(() => ViewModel.AnahGrantDate)" />
+        </label>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">@RealiseAndFollowMilestone.Labels.ConstructionSite</h2>
+
+        <div class="container-field">
+            <div class="field-tooltips">
+                <label class="pure-material-textfield-outlined">
+                    <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                                @bind-Value="ViewModel.PreSiteSupervisionMeetingDate"
+                                @bind-Value:format="yyyy-MM-dd"
+                                max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                                min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+                    <span>@RealiseAndFollowMilestone.Labels.PreSiteSupervisionMeetingDate</span>
+                </label>
+
+                <ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.PreSiteSupervisionMeetingDateTooltip"
+                            style="margin-top: 1em" />
+            </div>
+
+            <div class="field-tooltips">
+                <label class="pure-material-textfield-outlined">
+                        <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                                    @bind-Value="ViewModel.OverallStartDate"
+                                    @bind-Value:format="yyyy-MM-dd"
+                                    max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                                    min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+                        <span>@RealiseAndFollowMilestone.Labels.OverallStartDate</span>
+                </label>
+
+                <ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.OverallStartDateTooltip"
+                                style="margin-top: 1em" />
+            </div>
+
+            <label class="pure-material-textfield-outlined">
+                <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                            @bind-Value="ViewModel.EstimatedOverallCompletionDate"
+                            @bind-Value:format="yyyy-MM-dd"
+                            max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                            min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+                <span>@RealiseAndFollowMilestone.Labels.EstimatedOverallCompletionDate</span>
+            </label>
+
+            <div class="field-tooltips">
+                <label class="pure-material-textfield-outlined">
+                    <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                                @bind-Value="ViewModel.ActualOverallEndDate"
+                                @bind-Value:format="yyyy-MM-dd"
+                                max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                                min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+                    <span>@RealiseAndFollowMilestone.Labels.ActualOverallEndDate</span>
+                </label>
+
+                <ZeeToolTip InfoBullMessage="@RealiseAndFollowMilestone.Labels.ActualOverallEndDateTooltip"
+                            style="margin-top: 1em" />
+            </div>
+
+            <OutlinedDouble @bind-Double="ViewModel.OverallProgress"
+                            EditContext="_editContext"
+                            FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.OverallProgress)"
+                            Label="@RealiseAndFollowMilestone.Labels.OverallProgress"
+                            Type="OutlinedDouble.TypeOfValue.Percentage"
+                            IsNullable="true"
+                            disabled="@(IsUserAllowedToEdit)" />
+            <ValidationMessage For="@(() => ViewModel.OverallProgress)" />
+
+            <label class="pure-material-textfield-outlined">
+                <ZeeInputDate disabled="@IsUserAllowedToEdit"
+                            @bind-Value="ViewModel.NextCoordinationMeetingScheduledFor"
+                            @bind-Value:format="yyyy-MM-dd"
+                            max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+                            min="@(new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd"))" />
+
+                <span>@RealiseAndFollowMilestone.Labels.NextCoordinationMeetingScheduledFor</span>
+            </label>
+
+            <OutlinedTextArea @bind-Value="ViewModel.OverallObservations"
+                                EditContext="@_editContext"
+                                FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.OverallObservations)"
+                                Label="@RealiseAndFollowMilestone.Labels.OverallObservations"
+                                disabled="@IsUserAllowedToEdit" />
+        </div>
+    </div>
+
+    <div class="wrapper">
+        @foreach (var workParticipant in ViewModel.WorkParticipants)
+        {
+            var index = ViewModel.WorkParticipants.IndexOf(workParticipant);
+
+            <div>
+                <div class="bloc-container card">
+
+                    <WorkParticipant EditContext="@_editContext"
+                                     SelectedWorkParticipantsIds="@workParticipant.WorkParticipantDifficulties"
+                                     Index="index + 1"
+                                     ViewModel="@ViewModel.WorkParticipants[index]"
+                                     SiteSupervisionDifficulties="@SiteSupervisionDifficulties"
+                                     IsUserAllowedToEdit="@IsUserAllowedToEdit" />
+
+                    @if (index > 0)
+                    {
+                        <div>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                                          Click="() => DeleteWorkParticipant(index)"
+                                          Icon="@Icons.DeleteButton"
+                                          Size="ButtonSize.Large"
+                                          style="margin-top: 10px;"
+                                          Disabled="@IsUserAllowedToEdit" />
+                        </div>
+                    }
+                </div>
+
+                @if (index == ViewModel.WorkParticipants.Count - 1)
+                {
+                    <div class="button-container">
+                        <ZeeButton CssClass="btn-full-width"
+                                   @onclick="@AddWorkParticipant"
+                                   Text="Ajouter un intervenant"
+                                   disabled="@IsUserAllowedToEdit" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

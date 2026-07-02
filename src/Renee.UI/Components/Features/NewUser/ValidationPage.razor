@@ -1,0 +1,18 @@
+﻿@attribute [Route(Endpoints.Validation)]
+
+<ZeeHeader ShouldRenderLogo="true"
+           Title="@Labels.InscriptionForm">
+</ZeeHeader>
+<p>@Labels.ThanksToSubscribe</p>
+
+@code {
+
+	[CascadingParameter(Name = "ZeeSpinner")]
+	public ZeeSpinner? ZeeSpinner { get; set; }
+
+	protected override void OnInitialized()
+	{
+		ZeeSpinner?.HideLoading();
+	}
+
+}

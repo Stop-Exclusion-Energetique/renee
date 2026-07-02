@@ -1,0 +1,38 @@
+﻿.container-page {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+.container-items {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 15px;
+}
+
+.support-team-members-display {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 25px;
+}
+
+.items-title {
+    display: flex;
+    align-items: center;
+}
+
+
+.plus-icon {
+    display: flex;
+    align-items: center;
+    width: 50px;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .support-team-members-display {
+        grid-template-columns: 1fr;
+    }
+}
+

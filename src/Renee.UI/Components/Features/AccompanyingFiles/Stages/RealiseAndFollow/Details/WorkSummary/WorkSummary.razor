@@ -1,0 +1,212 @@
+﻿@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+<div class="tab-container">
+	<div class="card">
+		<h4 class="section-title">
+			@RealiseAndFollowMilestone.Labels.WorkSummary
+		</h4>
+
+		<div class="container-field">
+			<div>
+				<OutlinedText @bind-Value="ViewModel.IntermediateAirtightnessTestResult"
+				              EditContext="@_editContext"
+				              FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.IntermediateAirtightnessTestResult)"
+				              Label="@RealiseAndFollowMilestone.Labels.IntermediateAirtightnessTestResult" 
+							  disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				<OutlinedTextArea @bind-Value="ViewModel.WaterproofingTreatmentActions"
+				                  EditContext="@_editContext"
+				                  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.WaterproofingTreatmentActions)"
+				                  Label="@RealiseAndFollowMilestone.Labels.WaterproofingTreatmentActions" 
+								  disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				<ZeeSelect @bind-CheckedValue="ViewModel.HasEffectiveComplianceWithWorkRecommendations"
+						   EditContext="@_editContext"
+						   Label="@RealiseAndFollowMilestone.Labels.EffectiveComplianceWithWorkRecommendations"
+						   ElementName="@($"HasEffectiveComplianceWithWorkRecommendations-{Guid.NewGuid().ToString()}")"
+						   OnNewValueSelected="@OnHasEffectiveComplianceWithWorkRecommendationsChanged"
+						   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasEffectiveComplianceWithWorkRecommendations)"
+						   Items="@ItemsList.NullableYesNoList"
+						   TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit"
+						   IsRequired="true" />
+				<ValidationMessage For="@(() => ViewModel.HasEffectiveComplianceWithWorkRecommendations)"/>
+			</div>
+
+			@if (ViewModel.HasEffectiveComplianceWithWorkRecommendations == false)
+			{
+				<div>
+					<ZeeSelect @bind-CheckedValue="@ViewModel.ShouldChangeFinalEstimatedDpe"
+							   @bind-CheckedValue:after="@OnShouldChangeFinalEstimatedDpeChanged"
+							   EditContext="@_editContext"
+							   Label="@RealiseAndFollowMilestone.Labels.ShouldChangeFinalEstimatedDpe"
+							   ElementName="@($"ShouldChangeFinalEstimatedDpe-{Guid.NewGuid().ToString()}")"
+							   FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ShouldChangeFinalEstimatedDpe)"
+							   Items="@ItemsList.NullableYesNoList"
+							   TItem="bool?"
+							   IsDisabled="@IsUserAllowedToEdit"
+							   IsRequired="true" />
+				</div>
+
+				@if (ViewModel.ShouldChangeFinalEstimatedDpe == true)
+				{
+					<div>
+						<label class="required">
+                            @RealiseAndFollowMilestone.Labels.FinalDpe
+						</label>
+						<ZeeSelectDpe @bind-CheckedValue="ViewModel.FinalDpe"
+									  @bind-CheckedValue:after="@UpdateEnergeticClassJump"
+									  EditContext="@FormEditContext"
+									  ElementName="@($"finalDpe-{Guid.NewGuid().ToString()}")"
+									  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.FinalDpe)"
+									  Items="@ItemsList.DpeLabels"
+									  disabled="@IsUserAllowedToEdit" />
+
+						<ValidationMessage For="@(() => ViewModel.FinalDpe)" />
+					</div>
+
+					<div>
+						<label>
+							@RealiseAndFollowMilestone.Labels.FinalDpeClassJump :
+							<span style="font-weight: bold">@ViewModel.FinalDpeClassJump</span>
+						</label>
+					</div>
+                }
+			}
+
+			<div>
+				<ZeeSelect @bind-CheckedValue="ViewModel.HasWorkEnablingHomeSupport"
+				           EditContext="@_editContext"
+				           ElementName="@($"HasWorkEnablingHomeSupport-{Guid.NewGuid()}")"
+				           FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.HasWorkEnablingHomeSupport)"
+				           IsRequired="false"
+				           Items="@ItemsList.NullableYesNoList"
+				           Label="@RealiseAndFollowMilestone.Labels.HasWorkEnablingHomeSupport"
+				           TItem="bool?"
+						   IsDisabled="@IsUserAllowedToEdit" >
+				</ZeeSelect>
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasHousingAdaptationWorks
+				<RadzenDropDown @bind-Value="@ViewModel.HasHousingAdaptationWorks"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasFinishingWorks
+				<RadzenDropDown @bind-Value="@ViewModel.HasFinishingWorks"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasSafetyWorks
+				<RadzenDropDown @bind-Value="@ViewModel.HasSafetyWorks"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasPreparationWorks
+				<RadzenDropDown @bind-Value="@ViewModel.HasPreparationWorks"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasEmergencyWorks
+				<RadzenDropDown @bind-Value="@ViewModel.HasEmergencyWorks"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasUnsanitaryExit
+				<RadzenDropDown @bind-Value="@ViewModel.HasUnsanitaryExit"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.TreatedAirTightness
+				<RadzenDropDown @bind-Value="@ViewModel.TreatedAirTightness"
+				                Data="@_yesNoPartialList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="PartlyStateTreatment?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.TreatedThermalBridges
+				<RadzenDropDown @bind-Value="@ViewModel.TreatedThermalBridges"
+				                Data="@_yesNoPartialList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="PartlyStateTreatment?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+
+			<div>
+				@RealiseAndFollowMilestone.Labels.HasHumidityManagement
+				<RadzenDropDown @bind-Value="@ViewModel.HasHumidityManagement"
+				                Data="@ItemsList.NullableYesNoList"
+				                Placeholder="@Labels.DropDownPlaceholder"
+				                Style="width: 100%"
+				                TextProperty="Label"
+								FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+				                TValue="bool?"
+				                ValueProperty="Value"
+								Disabled="@IsUserAllowedToEdit" />
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,69 @@
+﻿@using Renee.Application.DTOs.Occupant
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+
+<div>
+	<div>
+		<h4 class="section-title">
+			@Labels.CopropertyDiagnosticsTitle
+		</h4>
+	</div>
+	<div class="flex-container">
+		<label class="required">
+			@Labels.BuidlingOrApartmentEnergy
+		</label>
+		<div class="card grid-form">
+			<div class="d-flex"
+				 style="flex-direction: column;">
+				<div>
+					<label>
+						@Labels.BuildingDpeLabel
+					</label>
+					<ZeeSelectDpe @bind-CheckedValue="ViewModel.BuildingDpeLabel"
+								  EditContext="@_editContext"
+								  ElementName="@($"BuildingDpeLabel-{Guid.NewGuid().ToString()}")"
+								  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.BuildingDpeLabel)"
+								  Items="@ItemsList.DpeLabels"
+								  disabled="@IsUserAllowedToEdit" />
+				</div>
+
+				<div>
+					<OutlinedDouble @bind-Double="ViewModel.BuildingDpeEnergy"
+									EditContext="@_editContext"
+									FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.BuildingDpeEnergy)"
+									IsNullable="true"
+									Label="@Labels.BuildingDpeEnergy"
+									Type="OutlinedDouble.TypeOfValue.Double"
+									disabled="@IsUserAllowedToEdit" />
+					<ValidationMessage For="() => ViewModel.BuildingDpeEnergy" />
+				</div>
+			</div>
+
+			<div class="d-flex"
+				 style="flex-direction: column;">
+				<div>
+					<label>
+						@Labels.ApartmentDpeLabel
+					</label>
+					<ZeeSelectDpe @bind-CheckedValue="ViewModel.ApartmentDpeLabel"
+								  EditContext="@_editContext"
+								  ElementName="@($"ApartmentDpeLabel-{Guid.NewGuid().ToString()}")"
+								  FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ApartmentDpeLabel)"
+								  Items="@ItemsList.DpeLabels"
+								  disabled="@IsUserAllowedToEdit" />
+				</div>
+
+				<div>
+					<OutlinedDouble @bind-Double="ViewModel.ApartmentDpeEnergy"
+									EditContext="@_editContext"
+									FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ApartmentDpeEnergy)"
+									IsNullable="true"
+									Label="@Labels.ApartmentDpeEnergy"
+									Type="OutlinedDouble.TypeOfValue.Double"
+									disabled="@IsUserAllowedToEdit" />
+					<ValidationMessage For="() => ViewModel.ApartmentDpeEnergy" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

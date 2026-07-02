@@ -1,0 +1,31 @@
+﻿.btn-bg {
+    background: var(--white) !important;
+    color: var(--black) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--primary);
+    width: 38px;
+    margin-right: 10px;
+}
+
+.btn-hover-yellow:hover {
+    background-color: var(--yellow) !important;
+    color: var(--black) !important;
+    border: 1px solid var(--primary);
+}
+
+.btn-hover-yellow *:hover {
+    background-color: inherit !important;
+    color: inherit !important;
+}
+
+.counter-grid {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+}
+
+@media (max-width: 1024px) {
+    .counter-grid {
+        grid-template-columns: 1fr;
+    }
+}

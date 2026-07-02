@@ -1,0 +1,25 @@
+﻿@using Renee.UI.Components.Features.AccompanyingFiles.Stages.SharedComponents
+@using Renee.UI.Components.ErrorHandling
+@inherits LayoutComponentBase
+@layout MainLayout
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		@if (IsStateLoaded)
+		{
+			<HorizontalHeadband
+				AccompanyingFileNumber="@StageNavigationStateService.AssociatedResourceReference"
+				StageNavigationModels="@StageNavigationStateService.GetAccompanyingFileStageNavigation()"
+				OnChangeStage="ChangeStage"/>
+		}
+
+		<div>
+			@Body
+		</div>
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

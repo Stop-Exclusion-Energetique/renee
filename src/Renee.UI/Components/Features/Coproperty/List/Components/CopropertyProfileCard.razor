@@ -1,0 +1,143 @@
+﻿@using Renee.Application.Helpers
+<div class="copropertyProfile-card affected-folder">
+	<div class="@(IsUserAllowedToModifyDataFolder() ? "card-items-in-charge" : "card-items")">
+		<div class="card-item fixed-width">
+			<div class="card-item-label">
+				@Labels.CopropertyProfileReference
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Reference</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceAddress
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Address</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceStage
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Stage.GetDescription()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceStatus
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.Status.GetDescription()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.AssociatedResourceOpeningDate
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.CreatedDateUtc?.ToShortDateString()</span>
+			</div>
+		</div>
+		<div class="card-item">
+			<div class="card-item-label">
+				@Labels.LastModificationDate
+			</div>
+			<div class="card-item-value">
+				<span class="text-wrap">@ViewModel.LastUpdatedDateUtc?.ToShortDateString()</span>
+			</div>
+		</div>
+	</div>
+	<div class="card-btn-container">
+		<AuthorizeView>
+			<Authorized>
+				<AuthorizeView Context="_"
+							   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+					@if (IsUserAllowedToModifyDataFolder())
+					{
+						<ContextMenuTrigger Data="ViewModel.EditUrl" MenuId="myMenu">
+							<button class="btn1 card-btn"
+									@onclick="OnEdit">
+								<span class="icon-available" alt="@Labels.EditAccompanyingFileButtonAltText">
+									@((MarkupString)Icons.Svg.PictoRedigerFiche2)
+								</span>
+							</button>
+						</ContextMenuTrigger>
+					}
+					else
+					{
+						<div class="btn1 card-btn-fake">
+							<span class="icon-disable">
+								@((MarkupString)Icons.Svg.PictoRedigerFiche2)
+							</span>
+						</div>
+					}
+
+					@if (IsUserAllowedToModifyDataFolder())
+					{
+						<button class="btn2 card-btn"
+								id="delete-btn"
+								@onclick="OnDeleteCopropertyProfile">
+							<span class="icon-available">
+								@((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+							</span>
+						</button>
+					}
+					else
+					{
+						<div class="btn2 card-btn-fake">
+							<span class="icon-disable">
+								@((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+							</span>
+						</div>
+					}
+				</AuthorizeView>
+
+				<ContextMenuTrigger Data="ViewModel.ShowCopropertyProfileTeamUrl" MenuId="myMenu">
+					<button class="btn3 card-btn"
+							@onclick="@(() => NavigationManager.NavigateTo(ViewModel.ShowCopropertyProfileTeamUrl))">
+						<span class="icon-available">
+							@((MarkupString)Icons.Svg.PictoFicheDossier)
+						</span>
+
+					</button>
+				</ContextMenuTrigger>
+
+				@if (ShownSynthesisButton())
+				{
+					<ContextMenuTrigger Data="ViewModel.ShowSynthesisUrl" MenuId="myMenu">
+						<button class="btn4 card-btn"
+								@onclick="@(() => NavigationManager.NavigateTo(ViewModel.ShowSynthesisUrl))">
+							<span class="icon-available"
+								  alt="@Labels.ShowSynthesisButtonAltText">
+								@((MarkupString)Icons.Svg.PictoFiche)
+							</span>
+						</button>
+					</ContextMenuTrigger>
+				}
+				else
+				{
+					<div class="btn4 card-btn-fake">
+						<span class="icon-disable">
+							@((MarkupString)Icons.Svg.PictoFiche)
+						</span>
+					</div>
+				}
+				<AuthorizeView Context="_"
+							   Roles="@($"{Constants.AdminRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.TerritorialBuilderRole}")">
+					@if (IsUserAllowedToModifyDataFolder() && IsCopropertyProfileWaitingForValidation() && !IsUserSolidarBuilder)
+					{
+						<ContextMenuTrigger Data="@ViewModel.SynthesisUrl" style="display:contents;" MenuId="myMenu">
+							<button class="card-btn btn-full"
+									@onclick="@AnalyzeToValidate">
+								@Labels.CheckSynthesis
+							</button>
+						</ContextMenuTrigger>
+					}
+				</AuthorizeView>
+			</Authorized>
+		</AuthorizeView>
+	</div>
+</div>

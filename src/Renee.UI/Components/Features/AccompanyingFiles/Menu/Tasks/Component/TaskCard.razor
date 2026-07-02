@@ -1,0 +1,73 @@
+﻿@using System.Globalization
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+<div class="card container">
+    <div class="task-informations">
+        <div class="task-section @_priorityCssClass white">
+            <span>@(Priority.GetDescription())</span>
+        </div>
+
+        <div class="task-section">
+            <span>@Title</span>
+        </div>
+
+        <div class="task-section @_dateCssClass">
+            <span>@(DateOnly.FromDateTime(DueDate).ToString("dd/MM/yyyy", new CultureInfo("fr-FR")))</span>
+        </div>
+
+        <div class="task-section assigned-name white">
+            <span>@AssignedUserFullName</span>
+        </div>
+    </div>
+
+    @if (IsUpdateMode)
+    {
+        <AuthorizeView Roles="@($"{Constants.SolidarBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TerritorialBuilderRole}, {Constants.AdminRole}")">
+            <Authorized>
+                <div class="task-btn">
+                    <div class="trash-cell fill-edit"
+                         @onclick="@(async () => await OnShowUpdateTaskModal.InvokeAsync(TaskId))">
+                        @((MarkupString)Icons.Svg.FileEdit)
+                    </div>
+
+                    <div class="trash-cell fill-trash"
+                         @onclick="@(async () => await OnDelete.InvokeAsync(TaskId))">
+                        @((MarkupString)Icons.Svg.PictoSupprimerCorbeille)
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    }
+</div>
+
+@code {
+
+    [Parameter] public Guid TaskId { get; set; }
+
+    [Parameter] public TaskPriority Priority { get; set; }
+
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    [Parameter] public DateTime DueDate { get; set; }
+
+    [Parameter] public string AssignedUserFullName { get; set; } = string.Empty;
+
+    [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+
+    [Parameter] public EventCallback<Guid> OnShowUpdateTaskModal { get; set; }
+
+    [Parameter] public bool IsUpdateMode { get; set; } = true;
+
+    private string _priorityCssClass =>
+        Priority switch
+        {
+            TaskPriority.Low => "priority-low",
+            TaskPriority.Middle => "priority-middle",
+            TaskPriority.High => "priority-high",
+            _ => string.Empty
+        };
+
+    private string _dateCssClass => DueDate < DateTime.Now ? "passed-date" : "date";
+
+    private string _svgCalendarSrc => DueDate < DateTime.Now ? "/images/crimson_calendar.svg" : "/images/grey_calendar.svg";
+}

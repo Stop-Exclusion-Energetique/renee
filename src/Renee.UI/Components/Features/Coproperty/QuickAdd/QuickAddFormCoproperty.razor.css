@@ -1,0 +1,68 @@
+﻿.grid-form {
+    height: fit-content;
+    display: grid;
+    gap: 10px 10px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+}
+
+.flex-form {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.grid-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "card-1 card-2"
+        "card-1 button";
+    gap: 10px 25px;
+    padding: 10px;
+}
+
+.card-1 {
+    grid-area: card-1;
+}
+
+.card-2 {
+    grid-area: card-2;
+}
+
+
+@media (max-width: 1199px) {
+    .grid-container {
+        display: grid;
+        grid-template-areas:
+            "card-1"
+            "card-2"
+            "button";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+}
+
+.zeeButton {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3%;
+    grid-area: button;
+    justify-self: center;
+    align-items: start;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.manual-address {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}

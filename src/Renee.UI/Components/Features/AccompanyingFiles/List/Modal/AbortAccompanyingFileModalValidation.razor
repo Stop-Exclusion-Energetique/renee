@@ -1,0 +1,181 @@
+﻿@using Microsoft.Graph
+@using Renee.Application.Abstraction.Query.SendEvent
+@using Renee.Application.Helpers
+@using Renee.Application.Interfaces
+@using Renee.Application.Queries.AbortAccompanyingFile
+@using Renee.Infrastructure.FileServices
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@using System.Security.Claims
+@using Renee.UI.Components.Features.AccompanyingFiles.List.Modal.ViewModel
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ISendEventQuery SendEventQuery
+@inject IFileService FileService
+@inject IJSRuntime JSRuntime
+@inject IAccompanyingFileService AccompanyingFileService
+
+@if (_editContext != null)
+{
+    <h3 class="@(IsBillingRequested ? "bg-warning" : "")">@GetAbortTypeText()</h3>
+
+    <EditForm EditContext="@_editContext">
+        <ObjectGraphDataAnnotationsValidator />
+
+        <ZeeSelect @bind-CheckedValue="@AbortReasonLabelId"
+                   EditContext="null"
+                   ElementName="@($"abort-reason-{Guid.NewGuid().ToString()}")"
+                   IsMultiSelect="false"
+                   IsRequired="true"
+                   Items="@AbortReasonLabels"
+                   Label="@Labels.AbortReason"
+                   TItem="Guid ?"
+                   ShouldSort="true"
+                   IsDisabled="true" />
+
+        <OutlinedTextArea IsInForm="false"
+                          @bind-Value="@SolidarBuilderAbortRequestDetails"
+                          Label="@Labels.AbortRequestDetails"
+                          readonly />
+
+        <SynthesisFileLoader @bind-MemoryStreamFile="@_memoryStreamFile"
+                             @bind-FileName="@_fileName"
+                             ViewFile="@ViewFile"
+                             ShouldDisplaySubmissionButton="() => false"
+                             IsAccompanyingFileWaitingForValidation="() => false"
+                             IsUserAllowedToModifyDataFolder="() => false"
+                             FileNotLoadedMessage="@Labels.SignedHouseholdSupportContract"
+                             FileLoadedMessage="@($"{Labels.SupportingDocument} {_fileName} {Labels.FileLoaded}")" />
+
+        <OutlinedTextArea @bind-Value="@ViewModel.ValidatorComment"
+                          FieldIdentifier="FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ValidatorComment)"
+                          IsInForm="false"
+                          Label="@Labels.CommentToSolidarBuilderAttention" />
+
+        <ValidationMessage For="@(() => ViewModel.ValidatorComment)" />
+
+        <div style="display: flex; gap: 16px; margin-top: 5px">
+            <ZeeButton DisplayBackground="@DisplayEnumBackground.Green"
+                       Text="@ValidateButtonText"
+                       @onclick="@(() => ValidateAccompanyingFileAbort(true))" />
+            <ZeeButton DisplayBackground="@DisplayEnumBackground.Red"
+                       Text="@Labels.RefuseAbortRequest"
+                       @onclick="@(() => ValidateAccompanyingFileAbort(false))" />
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid AccompanyingFileId { get; set; }
+    [Parameter] public Guid? AbortReasonLabelId { get; set; }
+    [Parameter] public string AccompanyingFileReference { get; set; } = string.Empty;
+    [Parameter] public bool IsBillingRequested { get; set; }
+    [Parameter] public string? SolidarBuilderAbortRequestDetails { get; set; }
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    public List<ZeeSelectItem<Guid?>>? AbortReasonLabels { get; set; } = [];
+    private MemoryStream? _memoryStreamFile;
+    private string _fileName = string.Empty;
+    private byte[]? _fileData;
+    private string _blobName = string.Empty;
+    private string _fileExtension = string.Empty;
+    private Guid _userId;
+    private string _userName = string.Empty;
+    private EditContext _editContext = null!;
+    private AbortAccompanyingFileModalValidationViewModel ViewModel { get; set; } = new AbortAccompanyingFileModalValidationViewModel();
+    private ValidationMessageStore _validationMessageStore = null!;
+
+    private string ValidateButtonText => IsBillingRequested ? Labels.ValidateAbortRequestAndBilling : Labels.ValidateAbortRequest;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claims = (await AuthStateProvider.GetAuthenticationStateAsync()).User.Claims;
+        _userName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+        _userId = Guid.Parse(claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+
+        var abortReasonResult = await SendEventQuery.Send(new GetAllAbortReasonLabelsQuery());
+        if (abortReasonResult.IsSuccess && abortReasonResult.Value is not null)
+            AbortReasonLabels = abortReasonResult.Value
+                .Select(x => new ZeeSelectItem<Guid?>(x.Label, x.Id)).ToList();
+
+        _blobName = $"{AccompanyingFileReference}_{Labels.AbortionJustification}";
+        _editContext = new EditContext(ViewModel);
+        _validationMessageStore = new ValidationMessageStore(_editContext);
+
+        try
+        {
+            (_memoryStreamFile, _fileName) = await FileService.DownloadFileForSynthesisAsync(_blobName);
+            if (_memoryStreamFile != null)
+            {
+                _fileData = _memoryStreamFile.ToArray();
+                _fileExtension = GetFileExtension(_fileName);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while downloading the file: {ex.Message}");
+        }
+    }
+
+    private string GetAbortReasonLabelText()
+    {
+        if (AbortReasonLabelId == null || AbortReasonLabels == null || !AbortReasonLabels.Any())
+        {
+            return string.Empty;
+        }
+
+        var selectedLabel = AbortReasonLabels.FirstOrDefault(x => x.Value == AbortReasonLabelId);
+        return selectedLabel != null ? selectedLabel.Label! : string.Empty;
+    }
+
+    public async Task ViewFile()
+    {
+        if (_fileData != null)
+        {
+            var base64 = Convert.ToBase64String(_fileData);
+
+            var mimeType = "application/octet-stream";
+            if (_fileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)) mimeType = "application/pdf";
+            if (_fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)) mimeType = "image/jpeg";
+            if (_fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)) mimeType = "image/jpeg";
+            if (_fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) mimeType = "image/png";
+            if (_fileName.EndsWith(".webp", StringComparison.OrdinalIgnoreCase)) mimeType = "image/webp";
+
+
+            await JSRuntime.InvokeVoidAsync("viewFile", base64, mimeType, _fileName);
+        }
+    }
+
+    private async Task ValidateAccompanyingFileAbort(bool shouldAbort)
+    {
+        _validationMessageStore.Clear();
+
+        if (!shouldAbort && string.IsNullOrWhiteSpace(ViewModel.ValidatorComment))
+        {
+            _validationMessageStore.Add(
+                _editContext.Field(nameof(ViewModel.ValidatorComment)),
+                Labels.Errors.RequiredValidatorComment);
+
+            _editContext.NotifyValidationStateChanged();
+            return;
+        }
+
+        var result = await AccompanyingFileService.ValidateOrNotAccompanyingFileAbort(AccompanyingFileId, _userId, ViewModel.ValidatorComment, AccompanyingFileReference, _userName, shouldAbort);
+
+        NotificationService.Notify(new NotificationMessage
+        {
+            Severity = result.IsSuccess ? NotificationSeverity.Success : NotificationSeverity.Error,
+            Summary = result.Message,
+            Duration = 4000
+        });
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+    }
+
+    private string GetAbortTypeText()
+    {
+        return IsBillingRequested ? Labels.AbortWithBillingModalTitle : Labels.AbortWithoutBillingRequest;
+    }
+
+    public static string GetFileExtension(string fileName) =>
+        fileName.Split('.')[^1];
+}

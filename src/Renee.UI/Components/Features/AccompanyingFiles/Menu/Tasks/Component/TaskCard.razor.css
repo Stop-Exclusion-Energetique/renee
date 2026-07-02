@@ -1,0 +1,84 @@
+﻿.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.task-informations {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    width: 70%;
+}
+
+.task-section {
+    border-radius: 5px;
+    padding: 5px 5px 5px 15px;
+    width: 100%;
+}
+
+.priority-low {
+    background-color: var(--green);
+}
+
+.priority-middle {
+    background-color: var(--renee-tertiary-yellow);
+}
+
+.priority-high {
+    background-color: var(--primary);
+}
+
+.date {
+    background-color: #F7F7F7;
+    color: grey;
+}
+
+.passed-date {
+    background-color: #FFE7E7;
+    color: crimson;
+}
+
+.assigned-name {
+    background-color: var(--dark-grey);
+    color: #096343;
+}
+
+.trash-cell {
+    justify-self: end;
+    align-self: center;
+    margin: 5px;
+}
+
+.task-btn {
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+.fill-edit {
+    fill: var(--primary);
+    cursor: pointer;
+}
+
+.fill-trash {
+    fill: var(--black);
+    width: 50px;
+    cursor: pointer;
+}
+
+.white {
+    color: white;
+}
+
+@media (max-width: 470px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 15px;
+    }
+
+    .task-btn {
+        justify-content: center;
+    }
+}

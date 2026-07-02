@@ -1,0 +1,125 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Synthesis.Shared
+@attribute [Route(Endpoints.CopropertyIdentificationSynthesis + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+@layout SynthesisLayout
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AdminRole}, {Constants.AssociationMemberRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		<div class="main-content">
+			@if (!ShouldDisplaySynthesis())
+			{
+				<p>
+					<strong>@Labels.SynthesisNotAvailable</strong>
+				</p>
+			}
+			else
+			{
+				<div class="main-content">
+					<h1 class="ml-3 rubric-title">@Labels.CopropertyIdentitySynthesis</h1>
+					<div class="grid-container">
+
+						<div class="card grid-item identity">
+							<h2 class="rubric-title">@Labels.Address</h2>
+							<div class="d-flex flex-column" style="row-gap:24px;">
+								<OutlinedText IsInForm="false" Label="@Labels.Region" readonly="readonly" Value="@IdentificationViewModel.Region" />
+								<OutlinedText IsInForm="false" Label="@Labels.Department" readonly="readonly" Value="@IdentificationViewModel.Departement" />
+								<OutlinedText IsInForm="false" Label="@Labels.Municipality" readonly="readonly" Value="@IdentificationViewModel.Municipality" />
+								<OutlinedText IsInForm="false" Label="@Labels.PostalCode" readonly="readonly" Value="@IdentificationViewModel.PostalCode" />
+								<OutlinedText IsInForm="false" Label="@Labels.Name" readonly="readonly" Value="@IdentificationViewModel.Name" />
+								<OutlinedText IsInForm="false" Label="@Labels.StreetNumberName" readonly="readonly" Value="@IdentificationViewModel.StreetNumberName?.Label" />
+								<OutlinedText IsInForm="false" Label="@Labels.AdditionalAddress" readonly="readonly" Value="@IdentificationViewModel.AdditionalAddress" />
+							</div>
+						</div>
+
+						<div class="card grid-item housing">
+							<h2 class="rubric-title">@Labels.Housing</h2>
+							<OutlinedText IsInForm="false" Label="@Labels.Typology" readonly="readonly" Value="@GetEnumDescription(IdentificationViewModel.Typology)" />
+							<OutlinedText IsInForm="false" Label="@Labels.HousingTypology" readonly="readonly" Value="@GetEnumDescription(IdentificationViewModel.HousingTypology)" />
+							<OutlinedText IsInForm="false" Label="@Labels.NumberOfLots" readonly="readonly" Value="@IdentificationViewModel.NumberOfLots?.ToString()" />
+							<OutlinedText IsInForm="false" Label="@Labels.NumberOfFloor" readonly="readonly" Value="@IdentificationViewModel.NumberOfFloor?.ToString()" />
+							<OutlinedText IsInForm="false" Label="@Labels.HeatingType" readonly="readonly" Value="@GetEnumDescription(IdentificationViewModel.HeatingType)" />
+						</div>
+
+						<div class="card grid-item syndic">
+							<h2 class="rubric-title">@Labels.SyndicIdentity</h2>
+							<OutlinedText IsInForm="false" Label="@Labels.PerilType" readonly="readonly" Value="@GetEnumDescription(IdentificationViewModel.PerilTypeLabel)" />
+							<OutlinedText IsInForm="false" Label="@Labels.NatureOfSyndic" readonly="readonly" Value="@GetEnumDescription(IdentificationViewModel.NatureOfSyndic)" />
+							<OutlinedText IsInForm="false" Label="@Labels.NameOfSyndic" readonly="readonly" Value="@IdentificationViewModel.NameOfSyndic" />
+							<OutlinedText IsInForm="false" Label="@Labels.PhoneOfSyndic" readonly="readonly" Value="@IdentificationViewModel.PhoneOfSyndic" />
+							<OutlinedText IsInForm="false" Label="@Labels.MailOfSyndic" readonly="readonly" Value="@IdentificationViewModel.MailOfSyndic" />
+						</div>
+
+						<div class="card grid-item amo">
+							<h2 class="rubric-title">@Labels.AmoIdentity</h2>
+							<OutlinedText IsInForm="false" Label="@Labels.NameOfAmo" readonly="readonly" Value="@IdentificationViewModel.NameOfAmo" />
+							<OutlinedText IsInForm="false" Label="@Labels.ContactOfAmo" readonly="readonly" Value="@IdentificationViewModel.ContactOfAmo" />
+							<OutlinedText IsInForm="false" Label="@Labels.NumberOfContacts" readonly="readonly" Value="@IdentificationViewModel.NumberOfContacts?.ToString()" />
+						</div>
+
+						<div class="card grid-item dpe">
+							<h2 class="rubric-title">@Labels.BuildingDpe</h2>
+							<OutlinedText IsInForm="false" Label="@Labels.BuildingDpeLabel" readonly="readonly" Value="@IdentificationViewModel.BuildingDpeLabel?.ToString()" />
+							<OutlinedText IsInForm="false" Label="@Labels.BuildingDpeEnergy" readonly="readonly" Value="@IdentificationViewModel.BuildingDpeEnergy?.ToString()" />
+						</div>
+
+						<div class="card grid-item dpe">
+							<h2 class="rubric-title">@Labels.ApartmentDpe</h2>
+							<OutlinedText IsInForm="false" Label="@Labels.ApartmentDpeLabel" readonly="readonly" Value="@IdentificationViewModel.ApartmentDpeLabel?.ToString()" />
+							<OutlinedText IsInForm="false" Label="@Labels.ApartmentDpeEnergy" readonly="readonly" Value="@IdentificationViewModel.ApartmentDpeEnergy?.ToString()" />
+						</div>
+					</div>
+
+					<div class="button-group">
+						<div class="left-part">
+
+							<div class="left-part-child">
+								<SynthesisFileLoader @bind-MemoryStreamFile="@_memoryStreamFile"
+													 @bind-ErrorMessage="@ErrorMessage"
+													 @bind-FileName="@_fileName"
+													 OnChangeUpload="@OnChangeUpload"
+													 ViewFile="@ViewFile"
+													 OnClickDeleteFile="@OnClickDeleteFile"
+													 ShouldDisplaySubmissionButton="@ShouldDisplaySubmissionButton"
+													 IsAccompanyingFileWaitingForValidation="@IsAccompanyingFileWaitingForValidation"
+													 IsUserAllowedToModifyDataFolder="@IsUserAllowedToModifyDataFolder"
+													 FileNotLoadedMessage="@GenerateFilesLabels.Errors.AuditReportFileError"
+													 FileLoadedMessage="@($"{Labels.SupportingDocument} {_fileName} {Labels.FileLoaded}")" />
+							</div>
+						</div>
+
+						@if (ShouldDisplaySubmissionButton())
+						{
+							<div class="right-part">
+								<ZeeButton @onclick="OnClickCancelButton"
+										   Text="@Labels.Cancel">
+								</ZeeButton>
+								<ZeeButton IsSubmit="true"
+										   @onclick="OnSubmitSynthesis"
+										   Text="@Labels.Submit">
+								</ZeeButton>
+							</div>
+						}
+
+						@if (IsUserAllowedToModifyDataFolder() && IsAccompanyingFileWaitingForValidation() && !IsUserSolidarBuilder)
+						{
+							<div class="right-part">
+								<ZeeButton IsSubmit="true"
+										   @onclick="@(() => StageValidation(false))"
+										   Text="Rejeter">
+								</ZeeButton>
+								<ZeeButton @onclick="@(() => StageValidation(true))"
+										   Text="Valider">
+								</ZeeButton>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

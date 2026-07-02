@@ -1,0 +1,105 @@
+@using Renee.Application.Helpers
+@using Renee.Domain.Enums
+@using Renee.UI.Components.Features.AccompanyingFiles.Stages.OrganizeAndFinance.Details.PreWorkPlanTab.Components.WorkPackage
+@using Renee.UI.Components.Features.Coproperty.Stages.OrganizeAndFinance.BasePage.ViewModel
+
+<div class="flex tab-container">
+	<div class="bloc-container card">
+		<h2 class="section-title">
+			@Labels.CopropertyWorkFinance
+		</h2>
+
+		<label class="pure-material-textfield-outlined">
+			<ZeeInputDate disabled="@IsUserAllowedToEdit"
+					   @bind-Value="ViewModel.DateOfAgVote"
+					   @bind-Value:format="yyyy-MM-dd"
+					   max="@(new DateTime(2100, 12, 31, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-dd"))"
+					   min="@(ViewModel.DateOfAgVote is null ? new DateTime(1950, 01, 01, 0, 0, 0, DateTimeKind.Utc).ToString(" yyyy-MM-dd") : ViewModel.DateOfAgVote.ToString())" />
+			<span>
+				@Labels.DateOfAgVote
+			</span>
+		</label>
+
+		<div>
+			<OutlinedDouble @bind-Double="ViewModel.MprCoproAids"
+							EditContext="@_editContext"
+							FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.MprCoproAids)"
+							Type="OutlinedDouble.TypeOfValue.Double"
+							IsNullable="true"
+							Label="@Labels.MprCoproAids"
+							disabled="@IsUserAllowedToEdit">
+			</OutlinedDouble>
+		</div>
+
+		<div>
+			<OutlinedDouble @bind-Double="ViewModel.ComplementaryAids"
+							EditContext="@_editContext"
+							FieldIdentifier="@FieldIdentifierHelper.GetFieldIdentifierForProperty(() => ViewModel.ComplementaryAids)"
+							Type="OutlinedDouble.TypeOfValue.Double"
+							IsNullable="true"
+							Label="@Labels.ComplementaryAids"
+							disabled="@IsUserAllowedToEdit">
+			</OutlinedDouble>
+		</div>
+
+		<div class="wrapper">
+			@foreach (var workPackage in ViewModel.WorkPackages)
+			{
+				var index = ViewModel.WorkPackages.IndexOf(workPackage);
+				<div>
+					<div class="bloc-container card">
+						<h2 class="section-title">
+							@($"{Labels.WorkQuote} {index + 1}")
+						</h2>
+						<WorkPackage EditContext="@_editContext"
+									 Index="index + 1"
+									 SelectedWorkTypesIds="@workPackage.WorkTypes.Select(w => w.Id).ToList()"
+									 ViewModel="ViewModel.WorkPackages[index]"
+									 WorkTypes="WorkTypes"
+									 IsUserAllowedToEdit="@IsUserAllowedToEdit">
+						</WorkPackage>
+
+						@if (index > 0)
+						{
+							<div>
+								<RadzenButton ButtonStyle="ButtonStyle.Danger"
+											  Click="() => OnDeleteWorkPackage(index)"
+											  Icon="@Icons.DeleteButton"
+											  Size="ButtonSize.Large"
+											  style="margin-top: 10px;"
+											  Disabled="@IsUserAllowedToEdit" />
+							</div>
+						}
+					</div>
+
+					@if (index == ViewModel.WorkPackages.Count - 1)
+					{
+						<div class="button-container">
+							<ZeeButton CssClass="btn-full-width"
+									   @onclick="OnAddWorkPackage"
+									   Text="@Labels.PreWorkPlanAddButton"
+									   disabled="@IsUserAllowedToEdit" />
+						</div>
+					}
+				</div>
+			}
+			<div class="flex @(ViewModel.WorkPackages.Count % 2 == 0 ? "even" : "odd")">
+				<div class="d-flex flex-column gap-3">
+					<div class="bloc-container card">
+						<h2 class="section-title">
+							@Labels.RecommendedWorkLabel
+						</h2>
+						<div>
+							<OutlinedDouble disabled="disabled"
+											Double="@((_editContext?.Model as CopropertyOrganizeAndFinanceViewModel)?.RecommendedWorkTotalPrice)"
+											Label="@Labels.TotalCostOfRecommendedWork"
+											readonly="readonly"
+											Type="OutlinedDouble.TypeOfValue.Currency">
+							</OutlinedDouble>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

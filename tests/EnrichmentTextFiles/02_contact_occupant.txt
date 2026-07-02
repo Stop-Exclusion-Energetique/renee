@@ -1,0 +1,6 @@
+Occupant principal: Dupont Marie
+Née le: 15/03/1958
+Téléphone: 06 12 34 56 78
+Email: marie.dupont@email.com
+Profession: Retraitée
+Catégorie socio-pro: Retraité

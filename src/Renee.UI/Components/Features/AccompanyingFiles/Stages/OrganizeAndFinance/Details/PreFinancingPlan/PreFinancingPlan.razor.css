@@ -1,0 +1,54 @@
+﻿.card {
+    display: flex;
+    row-gap: 10px;
+}
+
+.section-title {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.submission-folder-button {
+    display: flex;
+    justify-content: center;
+}
+
+.anah-mention {
+    font-style: italic;
+    font-size: 0.7857rem;
+}
+
+.tab-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);   
+    column-gap: 1.5rem;
+    row-gap: 10px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.right-balancing {
+    color: var(--green);
+}
+
+.financing-surplus {
+    color: var(--yellow);
+}
+
+.insufficient-financing {
+    color: var(--renee-primary);
+}
+
+@media (max-width: 1023px) {
+    .tab-container {
+        padding: 1em;
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}

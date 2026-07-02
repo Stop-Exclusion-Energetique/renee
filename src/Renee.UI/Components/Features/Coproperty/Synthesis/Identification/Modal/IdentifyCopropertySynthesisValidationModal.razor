@@ -1,0 +1,22 @@
+﻿@using Renee.Application.Helpers
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3 class="section-title">
+    @Labels.SynthesisModalTitle
+</h3>
+
+<div class="align-toggle">
+    <ZeeToggle @bind-Value="@ViewModel.IsUserAwareOfNoPossibilitiesToUpdateCopropertyProfile"
+               DisplayBackground="DisplayEnumBackground.Blue" />
+    <span>@Labels.NoMoreUpdateAllowedAfterValidation</span>
+</div>
+
+<div class="zeeButtonGroup">
+    <ZeeButton @onclick="@Close"
+               Text="@Labels.Cancel" />
+    <ZeeButton disabled="@(!ViewModel.IsUserAwareOfNoPossibilitiesToUpdateCopropertyProfile.GetValueOrDefault())"
+               DisplayBackground="DisplayEnumBackground.Blue"
+               IsSubmit="false"
+               @onclick="@SubmitValidation"
+               Text="@Labels.Submit" />
+</div>

@@ -1,0 +1,45 @@
+﻿@using Renee.Domain.Enums
+<section>
+    @if (Items != null)
+    {
+        foreach (var item in Items)
+        {
+            <div>
+                <input checked="@Compare(item.Value, CheckedValue)"
+                       id="@ElementName-@item.Value.ToString()"
+                       name="@ElementName"
+                       @onclick="@(() => OnCheckRadioClicked(item.Value))"
+                       required
+                       type="radio"
+                       value="@item.Value.ToString()"
+                       @attributes="@AdditionalAttributes">
+                <label for="@ElementName-@item.Value.ToString()">
+                    <span>@item.Label</span>
+                </label>
+            </div>
+        }
+    }
+</section>
+
+@code {
+    [Parameter] public List<ZeeSelectItem<GesLabel?>>? Items { get; set; }
+    [Parameter] public FieldIdentifier? FieldIdentifier { get; set; }
+    [Parameter] public GesLabel? CheckedValue { get; set; }
+    [Parameter] public EditContext? EditContext { get; set; }
+    [Parameter] public string? ElementName { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object?>? AdditionalAttributes { get; set; }
+
+    [Parameter] public EventCallback<GesLabel?> CheckedValueChanged { get; set; }
+
+    private async Task OnCheckRadioClicked(GesLabel? value)
+    {
+        CheckedValue = Compare(value, CheckedValue) ? default! : value;
+
+        await CheckedValueChanged.InvokeAsync(CheckedValue);
+        if (EditContext is not null && FieldIdentifier is not null) EditContext.NotifyFieldChanged(FieldIdentifier.Value);
+    }
+
+    private static bool Compare<TItem>(TItem x, TItem y) => EqualityComparer<TItem>.Default.Equals(x, y);
+}

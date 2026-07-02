@@ -1,0 +1,29 @@
+@using Renee.Domain.Enums
+@using Renee.UI
+
+<p>@Labels.UnsavedChangesModalText</p>
+
+<div class="zeeButtonGroup">
+    <ZeeButton Text="@Labels.Cancel"
+               id="unsaved-cancel"
+               @onclick="@Cancel"
+               DisplayBackground="DisplayEnumBackground.Red" />
+
+    <div class="d-flex gap-2">
+        <ZeeButton Text="@UnsavedChangesOptionLabels.SaveAndLeave"
+                   id="unsaved-save-leave"
+                   @onclick="() => ChooseOption(UnsavedChangesOption.SaveAndLeave)" />
+
+        <ZeeButton Text="@UnsavedChangesOptionLabels.LeaveWithoutSaving"
+                   id="unsaved-leave-without-save"
+                   @onclick="() => ChooseOption(UnsavedChangesOption.LeaveWithoutSaving)" />
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter] public BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private async Task ChooseOption(UnsavedChangesOption d) => await BlazoredModal.CloseAsync(ModalResult.Ok(d));
+    private async Task Cancel() => await BlazoredModal.CancelAsync();
+}

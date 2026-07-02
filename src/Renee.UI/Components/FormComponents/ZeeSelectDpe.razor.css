@@ -1,0 +1,125 @@
+section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+section div:first-child {
+    width: 30%;
+    clip-path: polygon(0% -50%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
+}
+
+section div:first-child input[type="radio"]:checked + label {
+    background-color: rgb(000, 128, 000);
+}
+
+section div:nth-child(2) {
+    width: 40%;
+    clip-path: polygon(0% -50%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+}
+
+section div:nth-child(2) input[type="radio"]:checked + label {
+    background-color: rgb(000, 255, 000);
+}
+
+section div:nth-child(3) {
+    width: 50%;
+    clip-path: polygon(0% -50%, 92% 0%, 100% 50%, 92% 100%, 0% 100%);
+}
+
+section div:nth-child(3) input[type="radio"]:checked + label {
+    background-color: rgb(128, 255, 000);
+}
+
+section div:nth-child(4) {
+    width: 60%;
+    clip-path: polygon(0% -50%, 94% 0%, 100% 50%, 94% 100%, 0% 100%);
+}
+
+section div:nth-child(4) input[type="radio"]:checked + label {
+    background-color: rgb(255, 255, 000);
+}
+
+section div:nth-child(5) {
+    width: 70%;
+    clip-path: polygon(0% -50%, 95% 0%, 100% 50%, 95% 100%, 0% 100%);
+}
+
+section div:nth-child(5) input[type="radio"]:checked + label {
+    background-color: rgb(255, 128, 000);
+}
+
+section div:nth-child(6) {
+    width: 80%;
+    clip-path: polygon(0% -50%, 96% 0%, 100% 50%, 96% 100%, 0% 100%);
+}
+
+section div:nth-child(6) input[type="radio"]:checked + label {
+    background-color: rgb(255, 128, 064);
+}
+
+section div:last-child {
+    width: 90%;
+    clip-path: polygon(0% -50%, 96% 0%, 100% 50%, 96% 100%, 0% 100%);
+}
+
+section div:last-child input[type="radio"]:checked + label {
+    background-color: rgb(255, 000, 000);
+}
+
+section div label span {
+    padding-right: 1.5em;
+}
+
+input[type="radio"] {
+    display: none;
+
+    &:not(:disabled) ~ label {
+        cursor: pointer;
+    }
+
+    &:disabled ~ label {
+        color: var(--sidebar);
+        border-color: var(--sidebar);
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+}
+
+label {
+    display: flex;
+    justify-content: flex-end;
+    text-align: center;
+    position: relative;
+    padding: 0.5em;
+    background-color: var(--grey);
+}
+
+
+input[type="radio"]:checked + label {
+    &::before {
+        color: var(--primary);
+        font-family: FontAwesome, "Roboto-Regular", sans-serif;
+        border: 2px solid var(--primary);
+        content: "\f00c";
+        font-size: 1.1429rem;
+        position: absolute;
+        left: 10px;
+        height: 25px;
+        width: 25px;
+        line-height: 25px;
+        text-align: center;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0px 2px 5px -2px var(--sidebar);
+    }
+
+}
+
+span {
+    font-weight: 900;
+}

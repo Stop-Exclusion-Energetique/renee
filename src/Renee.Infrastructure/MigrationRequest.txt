@@ -1,0 +1,1 @@
+dotnet ef migrations add <MigrationName> --project ./src/Renee.Infrastructure/Renee.Infrastructure.csproj --startup-project ./src/Renee.UI/Renee.UI.csproj 

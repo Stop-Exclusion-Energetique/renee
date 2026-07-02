@@ -1,0 +1,44 @@
+﻿.anah-notification .rz-datatable {
+    border: 1px solid #dee2e6;
+}
+
+.anah-notification .rz-datatable-scrollable {
+    overflow-y: auto;
+}
+
+.anah-notification .rz-radio-button-list-horizontal .rz-radiobutton-list-item {
+    margin-right: 1rem;
+}
+
+.anah-notification .date-picker-container {
+    padding-left: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.anah-notification .rz-invalid {
+    border-color: #dc3545;
+}
+
+.anah-notification .header {
+    border-bottom: 3px solid #ffc107;
+}
+
+.anah-notification .footer {
+    border-top: 2px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+.anah-notification .rz-datatable td {
+    vertical-align: middle;
+}
+
+.auto-layout-grid table {
+    table-layout: auto;
+    width: 10px;
+}
+
+
+
+::deep .rz-grid-table {
+    width: auto;
+}

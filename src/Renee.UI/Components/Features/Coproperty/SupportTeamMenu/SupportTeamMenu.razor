@@ -1,0 +1,37 @@
+﻿@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.AccompanyingFiles.Menu.SupportTeam.Components
+@attribute [Route(Endpoints.CopropertyProfileMenu + "/{CopropertyProfileId:guid}")]
+@attribute [Authorize]
+
+
+<AuthorizeView Context="_"
+			   Roles="@($"{Constants.SolidarBuilderRole}, {Constants.TerritorialBuilderRole}, {Constants.DiffuseCoordinatorRole}, {Constants.TargetedCoordinatorRole}, {Constants.AssociationMemberRole}, {Constants.AdminRole}, {Constants.StructuralReferentRole}")">
+	<Authorized>
+		@if (SupportTeamMembers is not null)
+		{
+			<div class="container-page">
+				<div class="container-items">
+					<div class="items-title">
+						<h3>@Domain.AccompanyingFileMenu.AccompanyingFileSupportTeam</h3>
+					</div>
+
+					<div class="support-team-members-display">
+						@foreach (var user in SupportTeamMembers)
+						{
+							<SupportTeamCard UserEmail="@user.Email"
+											 UserFullName="@user.FullName"
+											 UserPhone="@user.PhoneNumber"
+											 UserRole="@user.Role"
+											 IsEditable="@user.IsEditable"
+											 OnShowUpdateSupportTeamMemberModal="@ShowUpdateSupportTeamMemberModal" />
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</Authorized>
+
+	<NotAuthorized>
+		<ErrorPage />
+	</NotAuthorized>
+</AuthorizeView>

@@ -1,0 +1,198 @@
+@using Renee.Application.Abstraction.Query.SendEvent
+@using Renee.Application.DTOs.User
+@using Renee.Application.Interfaces
+@using Renee.Application.Queries.User
+@using Renee.UI.Components.ErrorHandling
+@using Renee.UI.Components.Features.Admin.NewSubscriptionDisplay.ViewModel
+@attribute [Route(Endpoints.NewSubscriptionDisplay)]
+
+@inject IUserValidationService UserValidationService
+@inject NavigationManager NavigationManager
+@inject ISendEventQuery Sender
+
+
+<AuthorizeView Context="_"
+               Roles="@Constants.AdminRole">
+    <Authorized>
+        <ZeeHeader ShouldRenderLogo="false"
+                   Title="@Labels.UserSubscriptionAsked">
+        </ZeeHeader>
+
+        @if (ViewModel.SuscribedUser.Any())
+        {
+            <ZeeDataGrid AllowFiltering="true"
+                         AllowSorting="true"
+                         Data="ViewModel.SuscribedUser"
+                         PageSize="10"
+                         TItem="UserDto">
+                <Columns>
+                    <RadzenDataGridColumn Property="Id"
+                                          TItem="UserDto"
+                                          Visible="false">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="SubscriptionDateUtc"
+                                          TItem="UserDto"
+                                          Title="@Labels.AskedAt">
+                        <Template Context="userDto">
+                            @userDto.SubscriptionDateUtc.ToLocalTime()
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="LastName"
+                                          TItem="UserDto"
+                                          Title="@Labels.Name">
+                        <Template Context="userDto">
+                            @userDto.LastName
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="FirstName"
+                                          TItem="UserDto"
+                                          Title="@Labels.FirstName">
+                        <Template Context="userDto">
+                            @userDto.FirstName
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="Email"
+                                          TItem="UserDto"
+                                          Title="@Labels.Mail">
+                        <Template Context="userDto">
+                            @userDto.Email
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Context="userDto"
+                                          Filterable="false"
+                                          Sortable="false"
+                                          TextAlign="TextAlign.Right"
+                                          TItem="UserDto"
+                                          Width="156px">
+                        <Template Context="userDto">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                          Click="@(_ => NavigationManager.NavigateTo($"/admin/DisplayDetails/{userDto.Id}"))"
+                                          Icon="edit"
+                                          @onclick:stopPropagation="true"
+                                          Size="ButtonSize.Medium"
+                                          Variant="Variant.Flat">
+                            </RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </ZeeDataGrid>
+        }
+        else
+        {
+            <span> @Labels.NoDemands</span>
+        }
+
+        <h1>@Labels.RegisteredUserList</h1>
+
+        <ZeeDataGrid AllowFiltering="true"
+                     AllowSorting="true"
+                     Data="ViewModel.RegisteredUser"
+                     PageSize="10"
+                     TItem="GetAllRegisteredQyeryObjectResult">
+            <Columns>
+                <RadzenDataGridColumn Property="LastName"
+                                      TItem="GetAllRegisteredQyeryObjectResult"
+                                      Title="@Labels.Name">
+                    <Template Context="registeredUser">
+                        @registeredUser.LastName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="FirstName"
+                                      TItem="GetAllRegisteredQyeryObjectResult"
+                                      Title="@Labels.FirstName">
+                    <Template Context="registeredUser">
+                        @registeredUser.FirstName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="RoleName"
+                                      TItem="GetAllRegisteredQyeryObjectResult"
+                                      Title="@Labels.Role">
+                    <Template Context="registeredUser">
+                        @registeredUser.RoleName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="ReportingStructureName"
+                                      TItem="GetAllRegisteredQyeryObjectResult"
+                                      Title="@Labels.StructureAssociated">
+                    <Template Context="registeredUser">
+                        @registeredUser.ReportingStructureName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Context="registeredUser"
+                                      Filterable="false"
+                                      Sortable="false"
+                                      TextAlign="TextAlign.Right"
+                                      TItem="GetAllRegisteredQyeryObjectResult"
+                                      Width="156px">
+                    <Template Context="registeredUser">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                      Click="@(_ => UpdateUserModal(registeredUser.UserId))"
+                                      Icon="edit"
+                                      @onclick:stopPropagation="true"
+                                      Size="ButtonSize.Medium"
+                                      Variant="Variant.Flat">
+                        </RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </ZeeDataGrid>
+    </Authorized>
+    <NotAuthorized>
+        <ErrorPage />
+    </NotAuthorized>
+
+</AuthorizeView>
+
+@code {
+    public AccountManagementViewModel ViewModel { get; set; } = new();
+
+    [Inject] private IModalService ModalService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var subscribedResult = await UserValidationService.GetAllSubscribedUsers();
+        if (subscribedResult.IsSuccess && subscribedResult.Value is not null)
+            ViewModel.SuscribedUser = subscribedResult.Value.ToList();
+
+        var registeredResult = await Sender.Send(new GetAllRegisteredUserQuery());
+        if (registeredResult.IsSuccess && registeredResult.Value is not null)
+            ViewModel.RegisteredUser = registeredResult.Value;
+    }
+
+    public async Task LoadUser()
+    {
+        var registeredResult = await Sender.Send(new GetAllRegisteredUserQuery());
+        if (registeredResult.IsSuccess && registeredResult.Value is not null)
+            ViewModel.RegisteredUser = registeredResult.Value;
+        StateHasChanged();
+    }
+
+    private async Task UpdateUserModal(Guid userId)
+    {
+        var selectedUser = ViewModel.RegisteredUser.Find(u => u.UserId == userId);
+
+        if (selectedUser is not null)
+        {
+            var modal = ModalService.Show<UpdateUser>(
+                new ModalParameters {
+                        {
+                            nameof(UpdateUser.UserDetailsViewModel), new UserDetailsViewModel
+                            {
+                                UserId = selectedUser.UserId,
+                                FirstName = selectedUser.FirstName,
+                                LastName = selectedUser.LastName,
+                                UserRoleId = selectedUser.UserRoleId,
+                                ReportingStructureId = selectedUser.ReportingStructureId
+                            }
+                        }
+                                        },
+                new ModalOptions { Position = ModalPosition.Middle, HideCloseButton = false, HideHeader = true }
+            );
+
+            var result = await modal.Result;
+
+            if (result.Confirmed)
+                await LoadUser();
+        }
+    }
+}
