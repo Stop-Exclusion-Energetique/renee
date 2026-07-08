@@ -1,0 +1,14 @@
+# CODEOWNERS — révision obligatoire par les mainteneurs désignés
+# Doc : https://docs.github.com/fr/repositories/managing-your-repositories-permissions-and-settings/managing-rules/about-code-owners
+#
+# ⚠️ Remplacez les identifiants @placeholder par les vrais comptes GitHub de l'équipe.
+# (Nicolas Guilbert — RSI/PO ; François Bonnard — RSI mécénat de compétences)
+
+# Par défaut : toute modification requiert la revue d'un mainteneur
+*                       @placeholder-nicolas-guilbert @placeholder-francois-bonnard
+
+# Sécurité, migrations et configuration : revue renforcée
+/src/Renee.Infrastructure/Migrations/          @placeholder-nicolas-guilbert
+/src/Renee.MigrationTool/                       @placeholder-nicolas-guilbert
+SECURITY.md                                     @placeholder-nicolas-guilbert
+/.github/                                        @placeholder-nicolas-guilbert
