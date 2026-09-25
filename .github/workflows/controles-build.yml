@@ -1,0 +1,36 @@
+# Construit la solution et lance les tests sur chaque PR : c'est ce contrôle qui permet de juger
+# d'un coup d'œil une PR Dependabot. Il ne déploie rien et n'utilise aucun secret.
+name: Contrôles de build
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: controles-build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: Construction et tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restauration
+        run: dotnet restore Renee.sln
+
+      - name: Construction
+        run: dotnet build Renee.sln -c Release --no-restore
+
+      - name: Tests
+        run: dotnet test Renee.sln -c Release --no-build

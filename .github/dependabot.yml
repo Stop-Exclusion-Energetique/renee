@@ -1,0 +1,42 @@
+# Mises à jour Dependabot, chaque lundi matin, regroupées pour limiter le nombre de PR :
+# une PR pour les mineures et correctifs, une pour les majeures, une pour les actions GitHub.
+# Les correctifs de sécurité (alertes) arrivent dès leur publication, regroupés eux aussi.
+# Chaque PR passe par « Contrôles de build » (dotnet build et dotnet test).
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "Dépendances"
+    groups:
+      securite:
+        applies-to: security-updates
+        patterns: ["*"]
+      mineures-et-correctifs:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      majeures:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "CI"
+    groups:
+      actions:
+        patterns: ["*"]
