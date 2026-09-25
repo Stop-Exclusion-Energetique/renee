@@ -1,0 +1,62 @@
+# Fusion automatique des PR Dependabot de correctif ou de version mineure, jamais des majeures.
+#
+# Le workflow ne fusionne rien lui-même : il active la fusion automatique de GitHub sur la PR, qui
+# n'a lieu qu'une fois les contrôles exigés sur main passés. Il ne fait donc rien tant que :
+#   1. l'option « Allow auto-merge » du dépôt n'est pas activée ;
+#   2. main n'exige pas le contrôle « Construction et tests » (protection de branche ou
+#      ruleset). L'étape « Garde » le vérifie : sans ce contrôle exigé, GitHub fusionnerait tout de
+#      suite, avant la fin de la construction.
+name: Fusion automatique Dependabot
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions: {}
+jobs:
+  fusion-auto:
+    name: Fusion automatique (correctifs et mineures)
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEPOT: ${{ github.repository }}
+      BRANCHE: ${{ github.event.pull_request.base.ref }}
+      PR: ${{ github.event.pull_request.html_url }}
+      CONTROLE_EXIGE: Construction et tests
+    steps:
+      - name: Métadonnées Dependabot
+        id: meta
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Garde (contrôle de build exigé sur la branche cible)
+        id: garde
+        run: |
+          classique=$(gh api "repos/$DEPOT/branches/$BRANCHE" --jq '.protection.required_status_checks.contexts[]?' 2>/dev/null || true)
+          regles=$(gh api "repos/$DEPOT/rules/branches/$BRANCHE" --jq '.[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context' 2>/dev/null || true)
+          if printf '%s\n%s\n' "$classique" "$regles" | grep -Fxq "$CONTROLE_EXIGE"; then
+            echo "pret=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::$BRANCHE n'exige pas le contrôle « $CONTROLE_EXIGE » : fusion automatique non activée."
+            echo "pret=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Activer la fusion automatique
+        if: >-
+          steps.garde.outputs.pret == 'true' &&
+          (steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+           steps.meta.outputs.update-type == 'version-update:semver-minor')
+        run: gh pr merge --auto --squash "$PR"
+
+      - name: Majeure ou type inconnu, fusion manuelle
+        if: >-
+          steps.meta.outputs.update-type != 'version-update:semver-patch' &&
+          steps.meta.outputs.update-type != 'version-update:semver-minor'
+        env:
+          TYPE: ${{ steps.meta.outputs.update-type }}
+        run: |
+          echo "::notice::Mise à jour « ${TYPE:-inconnue} » : à relire et fusionner à la main."
