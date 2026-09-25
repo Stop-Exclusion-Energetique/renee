@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <PackageReference Include="bunit" Version="2.0.66" />
+        <!-- AngleSharp tiré par bunit en version vulnérable (GHSA-pgww-w46g-26qg) : version corrigée imposée. -->
+        <PackageReference Include="AngleSharp" Version="1.5.2" />
         <PackageReference Include="coverlet.msbuild" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
