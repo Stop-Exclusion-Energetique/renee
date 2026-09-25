@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <PackageReference Include="bunit" Version="1.39.5" />
+        <!-- AngleSharp tiré par bunit en version vulnérable (GHSA-pgww-w46g-26qg) : version corrigée imposée. -->
+        <PackageReference Include="AngleSharp" Version="1.5.2" />
         <PackageReference Include="FakeItEasy" Version="8.3.0" />
         <PackageReference Include="FluentAssertions" Version="8.2.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
