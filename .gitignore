@@ -579,3 +579,5 @@ local.settings.json
 # Vs Code extension
 ## C# dev kit
 *.lscache
+# Claude Code local settings
+.claude/settings.local.json

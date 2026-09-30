@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp",
+    "editorconfig.editorconfig",
+    "github.vscode-github-actions"
+  ],
+  "unwantedRecommendations": [
+    "github.copilot",
+    "github.copilot-chat"
+  ]
+}

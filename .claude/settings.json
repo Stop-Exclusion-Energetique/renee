@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(//**/*.pfx)",
+      "Read(//**/*.key)",
+      "Read(./**/appsettings.Development.json)",
+      "Read(./**/local.settings.json)",
+      "Read(./src/Renee.Infrastructure/Migrations/[0-9]*_*.cs)",
+      "Read(./**/node_modules/**)",
+      "Read(./**/bin/**)",
+      "Read(./**/obj/**)",
+      "Grep(./**/bin/**)",
+      "Grep(./**/obj/**)"
+    ]
+  }
+}
