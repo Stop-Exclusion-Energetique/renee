@@ -74,7 +74,7 @@ public class DuplicateFolderManagementTests
 						new MainOccupantDto
 						{
 							Id = Guid.NewGuid(),
-							Email = "duplicateaddress@sqli.com",
+							Email = "duplicateaddress@example.com",
 							PhoneNumber = "+33 7.77.77.77.77",
 							PensionFund = PensionFund.Cnav,
 							SocialWelfareFund = SocialProtectionFund.Cgss,
@@ -107,7 +107,7 @@ public class DuplicateFolderManagementTests
 			ReneeOperationResult<IEnumerable<MainOccupantDto>>.Success(
 			new List<MainOccupantDto>
 			{
-				new() { Id = Guid.NewGuid(), Email = "testuser@sqli.com", PhoneNumber = "+33 9.99.99.99.99" }
+				new() { Id = Guid.NewGuid(), Email = "testuser@example.com", PhoneNumber = "+33 9.99.99.99.99" }
 			}));
 
 		ctx.Services.AddSingleton(mockMainOccupantService);
@@ -121,7 +121,7 @@ public class DuplicateFolderManagementTests
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 
 		ctx.JSInterop.Mode = JSRuntimeMode.Loose;
 		return ctx;
@@ -144,12 +144,12 @@ public class DuplicateFolderManagementTests
 		var emailComponent = cut.FindComponents<OutlinedText>()
 			.FirstOrDefault(c => c.Instance.Label == Labels.EmailOccupant);
 		var emailField = emailComponent?.Find("input");
-		emailField?.Change("testuser@sqli.com");
+		emailField?.Change("testuser@example.com");
 
 		cut.WaitForState(
 			() => cut.Instance.AccompanyingFileCreationFormViewModel!.HouseholdIdentityViewModel.MainOccupantViewModel
 				      .Email ==
-			      "testuser@sqli.com");
+			      "testuser@example.com");
 
 		cut.Find("#tab-4 > a").Click();
 		cut.WaitForState(() => cut.Instance.SelectedTab == 3);
@@ -177,12 +177,12 @@ public class DuplicateFolderManagementTests
 		var emailComponent = cut.FindComponents<OutlinedText>()
 			.FirstOrDefault(c => c.Instance.Label == Labels.EmailOccupant);
 		var emailField = emailComponent?.Find("input");
-		emailField?.Change("testuser@sqli.com");
+		emailField?.Change("testuser@example.com");
 
 		cut.WaitForState(
 			() => cut.Instance.AccompanyingFileCreationFormViewModel!.HouseholdIdentityViewModel.MainOccupantViewModel
 				      .Email ==
-			      "testuser@sqli.com");
+			      "testuser@example.com");
 
 		A.CallTo(
 			() => modalService.Show<ZeeErrorModal>(
@@ -273,12 +273,12 @@ public class DuplicateFolderManagementTests
 		var emailComponent = cut.FindComponents<OutlinedText>()
 			.FirstOrDefault(c => c.Instance.Label == Labels.EmailOccupant);
 		var emailField = emailComponent?.Find("input");
-		emailField?.Change("testuser1@sqli.com");
+		emailField?.Change("testuser1@example.com");
 
 		cut.WaitForState(
 			() => cut.Instance.AccompanyingFileCreationFormViewModel!.HouseholdIdentityViewModel.MainOccupantViewModel
 				      .Email ==
-			      "testuser1@sqli.com");
+			      "testuser1@example.com");
 
 		A.CallTo(
 			() => modalService.Show<ZeeErrorModal>(
@@ -303,12 +303,12 @@ public class DuplicateFolderManagementTests
 		var emailComponent = cut.FindComponents<OutlinedText>()
 			.FirstOrDefault(c => c.Instance.Label == Labels.EmailOccupant);
 		var emailField = emailComponent!.Find("input");
-		emailField.Change("testuser1@sqli.com");
+		emailField.Change("testuser1@example.com");
 
 		cut.WaitForState(
 			() => cut.Instance.AccompanyingFileCreationFormViewModel!.HouseholdIdentityViewModel.MainOccupantViewModel
 				      .Email ==
-			      "testuser1@sqli.com");
+			      "testuser1@example.com");
 
 		cut.Find("#tab-4 > a").Click();
 		cut.WaitForState(() => cut.Instance.SelectedTab == 3);

@@ -59,7 +59,7 @@ public class HorizontalTabsMenuOrganizeAndFinanceMilestoneTests
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		ctx.JSInterop.Mode = JSRuntimeMode.Loose;
 		return ctx;
 	}

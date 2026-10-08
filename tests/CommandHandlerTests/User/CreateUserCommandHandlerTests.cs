@@ -18,7 +18,7 @@ public class CreateUserCommandHandlerTests
 		A.CallTo(() => _unregisteredUserRepository.AddUser(A<UnregisteredUser>._)).Returns(1);
 
 		var command = new CreateUserCommand(
-			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@test.com"));
+			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@example.com"));
 
 		command.UserDto.SetDataForSignIn(
 			Guid.NewGuid(),
@@ -41,7 +41,7 @@ public class CreateUserCommandHandlerTests
 	{
 		//Arrange
 		var command = new CreateUserCommand(
-			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@test.com"));
+			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@example.com"));
 
 		command.UserDto.SetDataForSignIn(
 			Guid.NewGuid(),
@@ -64,7 +64,7 @@ public class CreateUserCommandHandlerTests
 	{
 		//Arrange
 		var command = new CreateUserCommand(
-			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@test.com"));
+			new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@example.com"));
 
 		command.UserDto.SetDataForSignIn(
 			Guid.NewGuid(),

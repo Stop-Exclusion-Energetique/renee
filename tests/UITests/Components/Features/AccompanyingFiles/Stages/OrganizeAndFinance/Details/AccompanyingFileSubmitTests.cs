@@ -46,7 +46,7 @@ public class AccompanyingFileSubmitTests
 			new(ClaimTypes.NameIdentifier, userGuid.ToString()),
 		};
 
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
 

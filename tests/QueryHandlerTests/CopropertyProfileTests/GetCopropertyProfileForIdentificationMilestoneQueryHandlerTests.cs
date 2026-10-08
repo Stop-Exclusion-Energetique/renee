@@ -56,7 +56,7 @@ public class GetCopropertyProfileForIdentificationMilestoneQueryHandlerTests
                 NatureOfSyndic = (int)NatureOfSyndicType.Professional,
                 NameOfSyndic = "SyndicPro",
                 PhoneOfSyndic = "0601020303",
-                MailOfSyndic = "syndic@pro.fr",
+                MailOfSyndic = "syndic@example.org",
                 NameOfAmo = "AMO",
                 ContactOfAmo = "ContactAMO",
                 NumberOfContacts = 2

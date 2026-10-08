@@ -1,5 +1,5 @@
-De: conseillere.habitat@renov.fr
-À: referent.solidaire@collectif.org
+De: conseillere.habitat@example.org
+À: referent.solidaire@example.org
 Objet: Dossier Mme Martin - infos complémentaires
 
 Bonjour,
@@ -13,6 +13,6 @@ Suite à notre échange, voici les infos collectées pour Mme Josette Martin (n�
 - Personne en perte d'autonomie partielle
 - Immeuble construit avant la guerre, état général médiocre
 
-Coordonnées: Josette MARTIN, 06 43 21 09 87, j.martin@example.fr
+Coordonnées: Josette MARTIN, 06 39 98 43 21, j.martin@example.org
 
 Cordialement
