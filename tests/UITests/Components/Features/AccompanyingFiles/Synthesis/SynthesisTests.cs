@@ -41,7 +41,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 		
 		A.CallTo(() => mockAccompanyingFileService.GetOrganizeAndFinanceSynthesis(A<Guid>._)).Returns(
@@ -84,7 +84,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 		A.CallTo(() => mockAccompanyingFileService.GetOrganizeAndFinanceSynthesis(A<Guid>._)).Returns(
 			ReneeOperationResult<GetOrganizeAndFinanceSynthesisQueryObjectResult>.Success(
@@ -124,7 +124,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 		A.CallTo(() => mockAccompanyingFileService.GetAccompanyingFileSynthesis(A<Guid>._)).Returns(
 			ReneeOperationResult<AccompanyingFileSynthesisDto>.Success(
@@ -161,7 +161,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 		A.CallTo(() => mockAccompanyingFileService.GetAccompanyingFileSynthesis(A<Guid>._)).Returns(
 			ReneeOperationResult<AccompanyingFileSynthesisDto>.Success(
@@ -198,7 +198,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 		A.CallTo(() => mockAccompanyingFileService.GetOrganizeAndFinanceSynthesis(A<Guid>._)).Returns(
 			ReneeOperationResult<GetOrganizeAndFinanceSynthesisQueryObjectResult>.Success(
@@ -235,7 +235,7 @@ public class SynthesisTests : BunitContext
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		var mockAccompanyingFileService = A.Fake<IAccompanyingFileService>();
 
 		Services.AddSingleton(mockAccompanyingFileService);

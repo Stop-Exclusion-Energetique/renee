@@ -5,7 +5,7 @@ Nom: GARCIA
 Prénom: Carmen
 Né(e) le: 12/07/1955
 Tél: 06 87 65 43 21
-Email: carmen.garcia@orange.fr
+Email: carmen.garcia@example.org
 Profession: Sans activité professionnelle
 
 LOGEMENT

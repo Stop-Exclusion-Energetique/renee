@@ -62,7 +62,7 @@ public class AccompanyingFileSubmitTests
 			new(ClaimTypes.NameIdentifier, userGuid.ToString()),
 		};
 
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
 
@@ -113,7 +113,7 @@ public class AccompanyingFileSubmitTests
 				{
 					Id = Guid.NewGuid(),
 					Trigram = "NDU",
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.RetirementInsurance,
 					SocialWelfareFund = SocialProtectionFund.Cgss,
@@ -199,7 +199,7 @@ public class AccompanyingFileSubmitTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					ComplementaryFund = AdditionalFund.Other
 				},
@@ -259,7 +259,7 @@ public class AccompanyingFileSubmitTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.Other
 				},
@@ -319,7 +319,7 @@ public class AccompanyingFileSubmitTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					SocialWelfareFund = SocialProtectionFund.Other
 				},
@@ -385,7 +385,7 @@ public class AccompanyingFileSubmitTests
 				{
 					Id = Guid.NewGuid(),
 					Trigram = "NDU",
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.Cnav,
 					SocialWelfareFund = SocialProtectionFund.Caf,
@@ -492,7 +492,7 @@ public class AccompanyingFileSubmitTests
 				{
 					Id = Guid.NewGuid(),
 					Trigram = "NDU",
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.RetirementInsurance,
 					SocialWelfareFund = SocialProtectionFund.Cgss,
@@ -578,7 +578,7 @@ public class AccompanyingFileSubmitTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.Cnav,
 					SocialWelfareFund = SocialProtectionFund.Caf,
@@ -651,7 +651,7 @@ public class AccompanyingFileSubmitTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					ComplementaryFund = AdditionalFund.Other,
 					OtherPensionFund = "Other pension fund",
@@ -732,7 +732,7 @@ public class AccompanyingFileSubmitTests
 				{
 					Id = Guid.NewGuid(),
 					Trigram = "NDU",
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					PensionFund = PensionFund.RetirementInsurance,
 					SocialWelfareFund = SocialProtectionFund.Cgss,

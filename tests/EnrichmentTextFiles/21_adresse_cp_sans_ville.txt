@@ -3,8 +3,8 @@ Code postal: 69003
 
 Occupant: Lefebvre Michel
 Né le: 03/04/1958
-Téléphone: 07 45 12 89 63
-Email: michel.lefebvre@gmail.com
+Téléphone: 06 39 98 45 12
+Email: michel.lefebvre@example.org
 Profession: Retraité
 
 Type de logement: Appartement collectif

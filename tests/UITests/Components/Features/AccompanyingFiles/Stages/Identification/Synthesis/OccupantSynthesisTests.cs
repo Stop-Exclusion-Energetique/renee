@@ -32,7 +32,7 @@ public class OccupantSynthesisTests
 		ctx.Services.AddSingleton(A.Fake<SynthesysLayoutStateManager>());
 		ctx.Services.AddSingleton(A.Fake<NavigationHistoryManager>());
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 
 		authContext.SetRoles("CD");
 		return ctx;

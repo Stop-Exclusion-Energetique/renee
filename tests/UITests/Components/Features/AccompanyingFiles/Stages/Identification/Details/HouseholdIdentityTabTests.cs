@@ -56,7 +56,7 @@ public class HouseholdIdentityTabTests
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 
 		ctx.JSInterop.Mode = JSRuntimeMode.Loose;
 		return ctx;
@@ -96,7 +96,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			SecondaryOccupants =
 			[
@@ -159,7 +159,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			SecondaryOccupants =
 			[
@@ -223,7 +223,7 @@ public class HouseholdIdentityTabTests
 				new MainOccupantDto
 				{
 					Id = Guid.NewGuid(),
-					Email = "duplicateaddress@sqli.com",
+					Email = "duplicateaddress@example.com",
 					PhoneNumber = "+33 7.77.77.77.77",
 					Age = 42
 				},
@@ -281,7 +281,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -346,7 +346,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -402,7 +402,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			SecondaryOccupants =
 			[
@@ -465,7 +465,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -518,7 +518,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -573,7 +573,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -632,7 +632,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
@@ -695,7 +695,7 @@ public class HouseholdIdentityTabTests
 			MainOccupant =
 				new MainOccupantDto
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				},
 			EnsemblierSolidaireUserId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc"),
 			EnsemblierTerritorialUserId = Guid.Parse("547de4d0-8ffc-4e1f-9b3d-a37a8b9fc1f9"),
