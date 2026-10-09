@@ -71,6 +71,9 @@ Architecture en couches (Clean Architecture) : `Domain` ne dépend de rien ;
 
 ## Démarrage rapide
 
+Une version étiquetée est téléchargeable dans l'onglet *Releases* du dépôt. Le code est fourni en
+l'état, sous licence Apache 2.0.
+
 ### Prérequis
 
 - SDK **.NET 10** installé

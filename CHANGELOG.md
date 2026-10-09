@@ -5,9 +5,29 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
-### À compléter par l'équipe
+## [1.0.1] - 2026-10-09
 
-- Documenter ici chaque changement notable à partir de la première version publique.
+Première version étiquetée, téléchargeable depuis les Releases GitHub. La version 1.0.0
+correspond à la première publication du code, sans étiquette.
+
+### Ajouté
+
+- Documentation fonctionnelle (rôles, parcours, tableaux de bord, import) et documentation
+  technique (architecture, modèle de données, configuration, déploiement) dans `docs/`.
+- Fichiers de gouvernance d'un projet ouvert : CONTRIBUTING, CODE_OF_CONDUCT, SECURITY,
+  CODEOWNERS, modèles d'issues et de demandes de fusion.
+- Intégration continue : build et tests à chaque demande de fusion, mises à jour
+  hebdomadaires des dépendances.
+
+### Sécurité
+
+- Mise à jour de `System.Security.Cryptography.Xml` en 10.0.12.
+
+### Modifié
+
+- Jeux d'essai : adresses de messagerie sur les domaines réservés example.com et
+  example.org, numéros de téléphone sur la plage fictive de l'ARCEP. Aucune donnée réelle.
+- `SECURITY.md` : le signalement se fait uniquement par GitHub Security Advisories.
 
 ## [1.0.0] - 2026-07-02
 
