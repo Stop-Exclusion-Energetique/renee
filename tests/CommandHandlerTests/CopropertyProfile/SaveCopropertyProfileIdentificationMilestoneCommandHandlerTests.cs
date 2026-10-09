@@ -22,7 +22,7 @@ public class SaveCopropertyProfileIdentificationMilestoneCommandHandlerTests
         NatureOfSyndic: 1,
         NameOfSyndic: "SyndicTest",
         PhoneOfSyndic: "0601020304",
-        MailOfSyndic: "syndic@test.fr",
+        MailOfSyndic: "syndic@example.org",
         NameOfAmo: "AmoTest",
         ContactOfAmo: "ContactAmo",
         NumberOfContacts: 2

@@ -23,7 +23,7 @@ public class ProfileManagementFormTests
 		ctx.Services.AddSingleton(A.Fake<IImpersonateService>());
 
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()), new(ClaimTypes.Role, role)

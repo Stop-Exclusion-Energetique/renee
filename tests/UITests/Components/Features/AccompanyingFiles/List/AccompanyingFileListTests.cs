@@ -23,7 +23,7 @@ public class AccompanyingFileListTests : BunitContext
     private void SetupContext(string role = Constants.SolidarBuilderRole)
     {
         var auth = this.AddAuthorization();
-        auth.SetAuthorized("testuser@sqli.com");
+        auth.SetAuthorized("testuser@example.com");
         auth.SetClaims(
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Role, role)

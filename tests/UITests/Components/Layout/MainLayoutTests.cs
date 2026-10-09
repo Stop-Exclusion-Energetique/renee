@@ -76,7 +76,7 @@ public class MainLayoutTests
 		ctx.Services.AddSingleton(cguInitializer);
 
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		
 		if (!string.IsNullOrEmpty(role))
 			authContext.SetRoles(role);
@@ -106,7 +106,7 @@ public class MainLayoutTests
 		ctx.Services.AddSingleton(A.Fake<IModalService>());
 
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 		
 		var claims = new List<Claim>
 		{
@@ -270,7 +270,7 @@ public class MainLayoutTests
 			new Claim(CustomClaimTypes.ShouldCheckAnahFiles, "true")
 		};
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 
 		var mockAccompanyingFileService = ctx.Services.GetRequiredService<IAccompanyingFileService>();
 

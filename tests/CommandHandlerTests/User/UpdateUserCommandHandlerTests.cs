@@ -71,7 +71,7 @@ public class UpdateUserCommandHandlerTests : TestContext
 			new UserDto(
 				Guid.NewGuid(),
 				new UserPersonnalInformations(
-					"test@test.com",
+					"test@example.com",
 					"FirstName",
 					"LastName",
 					"07.89.16.33.10", 

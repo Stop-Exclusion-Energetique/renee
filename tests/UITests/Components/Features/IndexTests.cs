@@ -39,7 +39,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -127,7 +127,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -218,7 +218,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -271,7 +271,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -352,7 +352,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -467,7 +467,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -538,7 +538,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
@@ -647,7 +647,7 @@ public class IndexTests : BunitContext
         Services.AddSingleton(A.Fake<IFileViewerService>());
 
         var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		var claims = new Claim[]
 		{
 			new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),

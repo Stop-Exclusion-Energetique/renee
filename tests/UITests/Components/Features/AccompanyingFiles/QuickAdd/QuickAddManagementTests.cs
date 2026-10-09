@@ -33,7 +33,7 @@ public class QuickAddManagementTests
 		vm.Trigram = "NIC";
 		vm.FirstName = "Nicolas";
 		vm.LastName = "Dupont";
-		vm.Email = "testuser@sqli.com";
+		vm.Email = "testuser@example.com";
 		vm.PhoneNumber = "+33 9.99.99.99.99";
 		vm.ReferentSolidarBuilderId = Guid.Parse("c933830b-debf-4cb2-b7db-c40e603ca3bc");
 		vm.ReferentEtId = Guid.Parse("a9088d7f-b021-45bc-b991-ea35d9cb2c67");
@@ -96,7 +96,7 @@ public class QuickAddManagementTests
 			{
 				new()
 				{
-					Id = Guid.NewGuid(), Email = "duplicateaddress@sqli.com", PhoneNumber = "+33 7.77.77.77.77"
+					Id = Guid.NewGuid(), Email = "duplicateaddress@example.com", PhoneNumber = "+33 7.77.77.77.77"
 				}
 			}));
 
@@ -110,7 +110,7 @@ public class QuickAddManagementTests
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 
 		ctx.JSInterop.Mode = JSRuntimeMode.Loose;
 		return ctx;
@@ -130,7 +130,7 @@ public class QuickAddManagementTests
 		var vm = cut.Instance.QuickAddFormViewModel;
 		vm.Should().NotBeNull();
 
-		vm.Email = "duplicateaddress@sqli.com";
+		vm.Email = "duplicateaddress@example.com";
 
 		var submitButton = cut.Find("button[type='submit']");
 		submitButton.Should().NotBeNull();

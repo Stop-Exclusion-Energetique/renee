@@ -28,7 +28,7 @@ public class AccompanyingFileCardTests : BunitContext
 	private void SetupAuthentication(Guid userId, string role = "ES")
 	{
 		var authContext = this.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		authContext.SetRoles(role);
 		var claims = new Claim[] { new(ClaimTypes.NameIdentifier, userId.ToString()), new(ClaimTypes.Role, role) };
 		authContext.SetClaims(claims);

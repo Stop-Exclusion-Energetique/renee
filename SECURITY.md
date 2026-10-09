@@ -12,11 +12,8 @@ de manière responsable.
 
 **Ne créez pas d'issue publique GitHub pour une faille de sécurité.**
 
-Merci de signaler toute vulnérabilité de façon confidentielle :
-
-- Via la fonction **GitHub Security Advisories** du dépôt
-  (onglet *Security* → *Report a vulnerability*), ou
-- Par courriel à **securite@stopexclusionenergetique.org** *(à créer / adresse à confirmer)*.
+Merci de signaler toute vulnérabilité de façon confidentielle, via la fonction
+**GitHub Security Advisories** du dépôt (onglet *Security* → *Report a vulnerability*).
 
 Merci d'inclure, dans la mesure du possible :
 

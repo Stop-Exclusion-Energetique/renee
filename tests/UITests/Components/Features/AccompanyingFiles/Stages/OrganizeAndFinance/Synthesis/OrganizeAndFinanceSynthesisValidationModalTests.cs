@@ -58,7 +58,7 @@ public class OrganizeAndFinanceSynthesisValidationModalTests
 		ctx.Services.AddSingleton(mockAccompanyingService);
 
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 		authContext.SetClaims(new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()));
 
 		return ctx;

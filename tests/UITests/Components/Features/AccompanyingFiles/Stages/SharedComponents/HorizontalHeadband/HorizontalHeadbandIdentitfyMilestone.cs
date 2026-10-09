@@ -66,7 +66,7 @@ public class HorizontalHeadbandIdentitfyMilestone
 						new MainOccupantDto
 						{
 							Id = Guid.NewGuid(),
-							Email = "duplicateaddress@sqli.com",
+							Email = "duplicateaddress@example.com",
 							PhoneNumber = "+33 7.77.77.77.77",
 							Gender = "Mr",
 							LastName = "test"
@@ -112,7 +112,7 @@ public class HorizontalHeadbandIdentitfyMilestone
 
 		authContext.SetRoles(Constants.SolidarBuilderRole);
 		authContext.SetClaims(claims);
-		authContext.SetAuthorized("testuser@sqli.com", AuthorizationState.Authorized);
+		authContext.SetAuthorized("testuser@example.com", AuthorizationState.Authorized);
 
 		ctx.JSInterop.Mode = JSRuntimeMode.Loose;
 		return ctx;

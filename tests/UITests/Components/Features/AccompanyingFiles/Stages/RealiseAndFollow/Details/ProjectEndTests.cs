@@ -16,7 +16,7 @@ public class ProjectEndTests
 		var ctx = new BunitContext();
 
 		var authContext = ctx.AddAuthorization();
-		authContext.SetAuthorized("testuser@sqli.com");
+		authContext.SetAuthorized("testuser@example.com");
 
 		ctx.Services.AddSingleton(A.Fake<NotificationService>());
 		ctx.Services.AddSingleton(A.Fake<IModalService>());

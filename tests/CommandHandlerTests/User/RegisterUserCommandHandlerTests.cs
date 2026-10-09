@@ -18,7 +18,7 @@ public class RegisterUserCommandHandlerTests
 		A.CallTo(() => _unregisteredUserRepository.AddRegisteredUser(A<Renee.Domain.Entity.User>._)).Returns(1);
 
 		var command = new RegisterUserCommand(
-				new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@test.com"));
+				new UserDto(Guid.NewGuid(), DateTime.UtcNow, "LastName", "FirstName", "test@example.com"));
 
 		command.UserDto.SetDataForSignIn(
 			Guid.NewGuid(),

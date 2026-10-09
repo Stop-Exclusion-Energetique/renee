@@ -71,7 +71,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User
@@ -201,7 +201,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User
@@ -371,7 +371,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User
@@ -541,7 +541,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User
@@ -718,7 +718,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User
@@ -884,7 +884,7 @@ public class GetAllAccompanyingFileTaskQueryHandlerTests
 				},
 				TrustedTierFirstName = "David",
 				TrustedTierLastName = "Bertrand",
-				TrustedTierEmail = "david.bertrand@test.com",
+				TrustedTierEmail = "david.bertrand@example.com",
 				TrustedTierPhoneNumber = "+33 6.68.87.12.45",
 				TerritorialBuilder = Guid.NewGuid(),
 				TerritorialBuilderNavigation = new User

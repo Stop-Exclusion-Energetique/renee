@@ -41,7 +41,7 @@ public class CreateCopropertyProfileWithQuickAddCommandHandlerTests
             CommentOnMarkerNature: "Bon syndic",
             TrustedTierFirstName: "Jean",
             TrustedTierPhoneNumber: "0601020303",
-            TrustedTierEmail: "jean.dupont@syndicpro.fr",
+            TrustedTierEmail: "jean.dupont@example.org",
             TrustedTierRole: TrustedTierRole.Identifier,
             CommentOnTrustedTierRole: "Expérimenté",
             SecondSolidarBuilder: Guid.NewGuid(),
