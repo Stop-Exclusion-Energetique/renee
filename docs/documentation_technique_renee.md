@@ -133,7 +133,7 @@ Cette couche n'a aucune dépendance vers les couches supérieures.
 | `Territory`                  | Territoire de rattachement                       |
 | `CopropertyProfile`          | Dossier copropriété (parcours distinct)          |
 
-Voir le document [mcd_mld_principal_menage.md](mcd_mld_principal_menage.md) pour le détail du modèle conceptuel et relationnel.
+Le détail du modèle relationnel se déduit des entités de `src/Renee.Domain` et du fichier `ReneeDbContextModelSnapshot.cs`.
 
 ### 4.3 Énumérations clés
 
@@ -1360,7 +1360,7 @@ L'accès aux dossiers repose sur trois dimensions cumulatives :
 2. **Rattachement** : l'utilisateur est explicitement membre de l'équipe du dossier.
 3. **Territoire** : le territoire de l'utilisateur correspond à celui du dossier.
 
-Aucun rôle ne donne à lui seul accès à tous les dossiers.
+Les rôles Admin et Membre STOP disposent d'une vue d'ensemble de la liste des dossiers ; pour les autres rôles, l'accès dépend du rattachement et du territoire.
 
 ### 10.3 Rôles définis
 

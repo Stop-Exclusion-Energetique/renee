@@ -5,6 +5,26 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+
+- `docs/conformite-rgpd.md` : ce que le logiciel fournit, services tiers pouvant recevoir
+  des données, obligations de l'organisation qui déploie Renée.
+- `README.md` du serveur MCP et de l'Azure Function d'import réécrits, en remplacement des
+  textes des gabarits d'origine.
+- `.gitignore` : fichiers `.env`, clés et secrets locaux.
+
+### Modifié
+
+- `CONTRIBUTING.md` : règles de prudence complétées (migrations chiffrées, infrastructure
+  privée, journaux, captures et PDF, numéros de téléphone fictifs).
+- `CODEOWNERS` : comptes réels en remplacement des identifiants provisoires.
+- `README.md` : lien vers le workflow de build corrigé, section sur ce qui reste possible
+  sans la clé de chiffrement, précision sur la protection des migrations.
+- Documentation technique et fonctionnelle : lien cassé et chemin d'image corrigés,
+  description des droits d'accès alignée sur le code.
+- Journalisation : suppression de traces de débogage et de contenus de dossier dans les
+  journaux.
+
 ## [1.0.1] - 2026-10-09
 
 Première version étiquetée, téléchargeable depuis les Releases GitHub. La version 1.0.0
@@ -38,5 +58,5 @@ correspond à la première publication du code, sans étiquette.
 - Application d'accompagnement des ménages : suivi de dossiers, gestion documentaire,
   import CSV, enrichissement IA, serveur MCP, Azure Function d'import SFTP.
 
-> ℹ️ Renseignez les versions suivantes au fil des évolutions. Chaque entrée doit
-> préciser : Ajouté / Modifié / Corrigé / Déprécié / Supprimé / Sécurité.
+[Non publié]: https://github.com/Stop-Exclusion-Energetique/renee/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Stop-Exclusion-Energetique/renee/releases/tag/v1.0.1

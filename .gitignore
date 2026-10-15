@@ -579,3 +579,10 @@ local.settings.json
 # Vs Code extension
 ## C# dev kit
 *.lscache
+
+# Secrets et fichiers locaux sensibles
+.env
+.env.*
+*.key
+*.pem
+secrets.json

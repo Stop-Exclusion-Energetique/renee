@@ -217,7 +217,7 @@ public class AccompanyingFileEnrichmentTools(
 		}
 		catch (Exception ex)
 		{
-			logger.LogError(ex, "JSON invalide pour enrichissement : {Json}", enrichmentChangesJson);
+			logger.LogError(ex, "JSON invalide pour enrichissement ({Length} caractères)", enrichmentChangesJson?.Length ?? 0);
 			return new CallToolResult
 			{
 				IsError = true,
@@ -415,7 +415,7 @@ public class AccompanyingFileEnrichmentTools(
 		}
 		catch (Exception ex)
 		{
-			logger.LogError(ex, "Erreur lors de l'analyse du document {Document} du dossier {Reference}", documentName, fileReference);
+			logger.LogError(ex, "Erreur lors de l'analyse d'un document du dossier {Reference}", fileReference);
 			return new CallToolResult
 			{
 				IsError = true,
