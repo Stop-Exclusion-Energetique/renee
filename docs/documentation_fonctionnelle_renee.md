@@ -587,7 +587,7 @@ Le dossier comprend également :
 
 Le schéma ci-dessous présente les acteurs, les actions et les principaux changements de statut.
 
-![Schéma fonctionnel du parcours d’un dossier avec les rôles explicites](images\renee_workflow_fonctionnel_roles_explicites.png)
+![Schéma fonctionnel du parcours d’un dossier avec les rôles explicites](images/renee_workflow_fonctionnel_roles_explicites.png)
 
 ## 12.1 Lecture synthétique
 

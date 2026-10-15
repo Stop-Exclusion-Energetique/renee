@@ -14,7 +14,8 @@ sous licence **Apache 2.0**.
 > sensibles (identité, adresse, situation sociale et financière de ménages).
 > Toute contribution doit respecter le RGPD : **aucune donnée réelle** dans le code,
 > les tests ou les fixtures. Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) et
-> [`SECURITY.md`](SECURITY.md).
+> [`SECURITY.md`](SECURITY.md). Les obligations de l'organisation qui déploie Renée
+> sont décrites dans [`docs/conformite-rgpd.md`](docs/conformite-rgpd.md).
 
 ## Sommaire
 
@@ -34,7 +35,8 @@ sous licence **Apache 2.0**.
 - Centraliser le suivi des dossiers d'accompagnement des ménages.
 - Structurer les traitements métier par cas d'usage (commandes / requêtes).
 - Intégrer des services externes (Azure, Microsoft Graph, Airtable, services IA…).
-- Exposer certaines capacités via un serveur MCP (Model Context Protocol).
+- Exposer certaines capacités via un serveur MCP (Model Context Protocol), voir
+  [`mcpserver/Renee.McpServer/README.md`](mcpserver/Renee.McpServer/README.md).
 
 ## Technologies principales
 
@@ -45,7 +47,7 @@ sous licence **Apache 2.0**.
 - **Azure Functions** (import CSV planifié via SFTP)
 - **MCP** (serveur d'outils)
 - **Application Insights** (télémétrie)
-- **Qodana** (analyse statique)
+- **Qodana** (analyse statique, à lancer en local)
 
 ## Organisation du code
 
@@ -127,11 +129,13 @@ Variable d'environnement requise hors `appsettings` :
 
 ## Base de données (migrations chiffrées)
 
-⚠️ **Spécificité importante du projet.** Pour des raisons de confidentialité du
+⚠️ **Spécificité importante du projet.** Pour protéger l'historique détaillé du
 schéma de données, les migrations EF Core sont stockées **chiffrées** (`*.cs.enc`)
 dans `src/Renee.Infrastructure/Migrations/`. Elles ne sont **pas lisibles ni
 utilisables telles quelles** : il faut les déchiffrer localement avec la clé
-`ENCRYPTION_KEY_RENEE` avant toute opération EF Core.
+`ENCRYPTION_KEY_RENEE` avant toute opération EF Core. Le fichier
+`ReneeDbContextModelSnapshot.cs` reste en clair : seul l'historique des migrations
+est protégé, pas la structure actuelle du modèle.
 
 Outils fournis dans `src/Renee.Infrastructure/MigrationScripts/` :
 
@@ -153,6 +157,12 @@ Outils fournis dans `src/Renee.Infrastructure/MigrationScripts/` :
 > à partir des migrations. Ce choix est un compromis assumé entre ouverture du code
 > et protection du schéma ; il est documenté ici pour éviter toute confusion.
 
+Ce que l'on peut faire **sans la clé** : compiler la solution, lancer les tests
+(`dotnet test Renee.sln`, qui n'ont pas besoin de base de données) et relire le code.
+Le lancement complet de l'application suppose une base SQL Server déjà créée, fournie
+par l'organisation qui exploite Renée. La clé est détenue par les mainteneurs et ne se
+demande pas dans un espace public (issue, pull request, commentaire).
+
 ## Tests
 
 ```bash
@@ -164,17 +174,19 @@ que des **données synthétiques**.
 
 ## CI/CD & qualité
 
-- Analyse statique **Qodana** configurée via [`qodana.yaml`](qodana.yaml).
-- Intégration continue **GitHub Actions** : build + tests + analyse à chaque PR
-  (voir [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+- Intégration continue **GitHub Actions** : build et tests à chaque pull request
+  (voir [`.github/workflows/controles-build.yml`](.github/workflows/controles-build.yml)),
+  et mises à jour hebdomadaires des dépendances par Dependabot.
+- Analyse statique **Qodana** configurée via [`qodana.yaml`](qodana.yaml), à lancer en
+  local : elle ne fait pas partie de l'intégration continue.
 
 > Note : ce dépôt public ne contient pas les pipelines de déploiement internes
 > (Azure DevOps), qui restent gérés hors du périmètre open source.
 
 ## Contribuer
 
-Voir [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
-et [`SECURITY.md`](SECURITY.md).
+Voir [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md),
+[`SECURITY.md`](SECURITY.md) et [`docs/conformite-rgpd.md`](docs/conformite-rgpd.md).
 
 ## Licence
 

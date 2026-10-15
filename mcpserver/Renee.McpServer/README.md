@@ -1,85 +1,72 @@
-# MCP Server
+# Serveur MCP de Renée
 
-This README was created using the C# MCP server project template. It demonstrates how you can easily create an MCP server using C# and publish it as a NuGet package.
+Ce projet expose une partie des données et des actions de Renée à des assistants et
+agents compatibles avec le protocole [Model Context Protocol](https://modelcontextprotocol.io/)
+(MCP), par un point d'accès HTTP authentifié. Il réutilise le domaine et l'infrastructure
+de l'application (`src/Renee.Domain`, `src/Renee.Infrastructure`) et la même base de données.
 
-See [aka.ms/nuget/mcp/guide](https://aka.ms/nuget/mcp/guide) for the full guide.
+Le serveur donne accès à des données de ménages. Il ne doit pas être exposé sur Internet
+sans mesure de protection adaptée : voir la section « Exploitation » et le document
+[`docs/conformite-rgpd.md`](../../docs/conformite-rgpd.md).
 
-Please note that this template is currently in an early preview stage. If you have feedback, please take a [brief survey](http://aka.ms/dotnet-mcp-template-survey).
+## Outils exposés
 
-## Checklist before publishing to NuGet.org
+Tous les outils exigent un jeton valide (`[Authorize]`).
 
-- Test the MCP server locally using the steps below.
-- Update the package metadata in the .csproj file, in particular the `<PackageId>`.
-- Update `.mcp/server.json` to declare your MCP server's inputs.
-  - See [configuring inputs](https://aka.ms/nuget/mcp/guide/configuring-inputs) for more details.
-- Pack the project using `dotnet pack`.
+| Outil | Rôle |
+| --- | --- |
+| `GetAccompanyingFilesHouseholdDataAsJson` | Données du ménage d'un dossier |
+| `GetAccompanyingFilesHousingDataAsJson` | Données du logement |
+| `GetAccompanyingFilesFinancingPlanDataAsJson` | Plan de financement |
+| `GetAccompanyingFilesWorkPlanDataAsJson` | Plan de travaux |
+| `GetAccompanyingFileBillingInfo` | Informations de facturation |
+| `GetRenovationAidEligibility` | Éligibilité aux aides de rénovation |
+| `CreateAccompanyingFile` | Création d'un dossier à partir d'informations minimales |
+| `GetAccompanyingFileEnrichmentContext` | Contexte d'un dossier pour son enrichissement |
+| `ApplyAccompanyingFileEnrichment` | Application des modifications d'enrichissement |
+| `AnalyzeDossierDocumentContent` | Analyse d'un document joint (Azure Document Intelligence) |
+| `ResolvePostalCode` | Résolution d'un code postal via une API publique |
 
-The `bin/Release` directory will contain the package file (.nupkg), which can be [published to NuGet.org](https://learn.microsoft.com/nuget/nuget-org/publish-a-package).
+Les descriptions de chaque outil, lues par l'assistant, se trouvent dans `Tools/`.
 
-## Developing locally
+## Configuration
 
-To test this MCP server from source code (locally) without using a built MCP server package, you can configure your IDE to run the project directly using `dotnet run`.
+Le fichier `appsettings.json` est un gabarit aux valeurs vides. Les valeurs sensibles se
+renseignent par `dotnet user-secrets` ou par variables d'environnement, jamais dans le dépôt.
 
-```json
-{
-  "servers": {
-    "Renee.McpServer": {
-      "type": "stdio",
-      "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "<PATH TO PROJECT DIRECTORY>"
-      ]
-    }
-  }
-}
+| Clé | Rôle |
+| --- | --- |
+| `ConnectionStrings:ReneeDbContext` | Base de données SQL Server de Renée |
+| `JwtGenerationKey:SecretKey`, `issuer`, `audience` | Clé (encodée en Base64), émetteur et audience des jetons acceptés |
+| `Cors:AllowedOrigins` | Origines autorisées à appeler le serveur depuis un navigateur |
+| `RenoHelp:BearerToken` | Jeton du service RenoHelp appelé par le serveur |
+| `ApplicationInsights:ConnectionString` | Télémétrie |
+
+Les clés de configuration du stockage documentaire et du chiffrement des pièces jointes
+sont celles de l'application principale (voir le `README.md` à la racine).
+
+## Lancer en local
+
+```bash
+dotnet run --project mcpserver/Renee.McpServer
 ```
 
-## Testing the MCP Server
+Le serveur écoute en HTTP et publie le point d'accès MCP à la racine de l'application.
+Pour le tester, déclarez-le dans un client MCP compatible comme serveur de type HTTP, avec
+un jeton émis par l'application avec la clé `JwtGenerationKey`.
 
-Once configured, you can ask Copilot Chat for a random number, for example, `Give me 3 random numbers`. It should prompt you to use the `get_random_number` tool on the `Renee.McpServer` MCP server and show you the results.
+## Exploitation
 
-## Publishing to NuGet.org
-
-1. Run `dotnet pack -c Release` to create the NuGet package
-2. Publish to NuGet.org with `dotnet nuget push bin/Release/*.nupkg --api-key <your-api-key> --source https://api.nuget.org/v3/index.json`
-
-## Using the MCP Server from NuGet.org
-
-Once the MCP server package is published to NuGet.org, you can configure it in your preferred IDE. Both VS Code and Visual Studio use the `dnx` command to download and install the MCP server package from NuGet.org.
-
-- **VS Code**: Create a `<WORKSPACE DIRECTORY>/.vscode/mcp.json` file
-- **Visual Studio**: Create a `<SOLUTION DIRECTORY>\.mcp.json` file
-
-For both VS Code and Visual Studio, the configuration file uses the following server definition:
-
-```json
-{
-  "servers": {
-    "Renee.McpServer": {
-      "type": "stdio",
-      "command": "dnx",
-      "args": [
-        "<your package ID here>",
-        "--version",
-        "<your package version here>",
-        "--yes"
-      ]
-    }
-  }
-}
-```
-
-## More information
-
-.NET MCP servers use the [ModelContextProtocol](https://www.nuget.org/packages/ModelContextProtocol) C# SDK. For more information about MCP:
-
-- [Official Documentation](https://modelcontextprotocol.io/)
-- [Protocol Specification](https://spec.modelcontextprotocol.io/)
-- [GitHub Organization](https://github.com/modelcontextprotocol)
-
-Refer to the VS Code or Visual Studio documentation for more information on configuring and using MCP servers:
-
-- [Use MCP servers in VS Code (Preview)](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
-- [Use MCP servers in Visual Studio (Preview)](https://learn.microsoft.com/visualstudio/ide/mcp-servers)
+- Les jetons sont émis par l'application principale et ont une durée de validité limitée.
+  La clé de signature est partagée entre l'application et ce serveur : protégez-la comme
+  un secret de production et prévoyez sa rotation.
+- Limitez l'accès réseau au serveur (réseau privé, pare-feu ou passerelle) et renseignez
+  `Cors:AllowedOrigins` avec les seules origines nécessaires.
+- Les outils d'écriture (`CreateAccompanyingFile`, `ApplyAccompanyingFileEnrichment`)
+  modifient la base. La confirmation de l'utilisateur avant écriture repose sur les
+  consignes données à l'assistant dans la description de l'outil, pas sur un contrôle
+  technique : prévoyez-la aussi dans le client.
+- Un document analysé ou une donnée de dossier peut contenir du texte qui cherche à
+  influencer l'assistant. Traitez le contenu renvoyé comme une donnée, jamais comme une
+  instruction.
+- Ne journalisez pas le contenu des dossiers (voir `CONTRIBUTING.md`).
