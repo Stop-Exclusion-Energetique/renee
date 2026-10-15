@@ -15,6 +15,7 @@ using Renee.Domain.Entity;
 using Renee.Domain.Enums;
 using Renee.Infrastructure.Data;
 using Renee.Infrastructure.FileServices;
+using Renee.McpServer.Extensions;
 using Renee.McpServer.Models;
 
 namespace Renee.McpServer.Tools;
@@ -45,7 +46,17 @@ public class AccompanyingFileEnrichmentTools(
 		[Description("Référence du dossier (portion acceptée).")] string fileReference
 	)
 	{
+		if (string.IsNullOrWhiteSpace(fileReference))
+		{
+			return new CallToolResult
+			{
+				IsError = true,
+				Content = [new TextContentBlock { Text = "La référence du dossier est obligatoire." }]
+			};
+		}
+
 		var af = await context.AccompanyingFiles
+			.ApplyUserAccessFilter(httpContextAccessor.HttpContext!.User)
 			.Include(a => a.AccompanyingFileHousingNavigation.HousingAddressNavigation)
 			.Include(a => a.AccompanyingFileHousingNavigation.HousingInitialStateNavigation)
 			.Include(a => a.AccompanyingFileHouseholdNavigation.MainOccupantNavigation)
@@ -222,7 +233,17 @@ public class AccompanyingFileEnrichmentTools(
 			};
 		}
 
+		if (string.IsNullOrWhiteSpace(fileReference))
+		{
+			return new CallToolResult
+			{
+				IsError = true,
+				Content = [new TextContentBlock { Text = "La référence du dossier est obligatoire." }]
+			};
+		}
+
 		var accompanyingFile = await context.AccompanyingFiles
+			.ApplyUserAccessFilter(httpContextAccessor.HttpContext!.User)
 			.Include(af => af.AccompanyingFileHousingNavigation.HousingAddressNavigation)
 			.Include(af => af.AccompanyingFileHousingNavigation.HousingInitialStateNavigation)
 			.Include(af => af.AccompanyingFileHouseholdNavigation.MainOccupantNavigation)
@@ -320,6 +341,17 @@ public class AccompanyingFileEnrichmentTools(
 			{
 				IsError = true,
 				Content = [new TextContentBlock { Text = "Azure Document Intelligence non configuré." }]
+			};
+
+		var hasAccess = !string.IsNullOrWhiteSpace(fileReference) &&
+			await context.AccompanyingFiles
+				.ApplyUserAccessFilter(httpContextAccessor.HttpContext!.User)
+				.AnyAsync(af => af.IsDeleted != true && af.AccompanyingFileReference == fileReference);
+		if (!hasAccess)
+			return new CallToolResult
+			{
+				IsError = true,
+				Content = [new TextContentBlock { Text = $"Aucun dossier accessible pour la référence '{fileReference}'." }]
 			};
 
 		try
