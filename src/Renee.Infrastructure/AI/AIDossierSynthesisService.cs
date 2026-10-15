@@ -174,8 +174,6 @@ public class AIDossierSynthesisService(
             }
         };
 
-        Console.WriteLine($"Données envoyées à l'IA : {aiData.Identification.SuiviTravailleurSocial}");
-
         var json = JsonSerializer.Serialize(aiData, NullOmittingSerializerOptions);
         var client = CreateClient();
 
